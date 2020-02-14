@@ -84,10 +84,10 @@ public class PPSN20205DStudy {
             .setReferenceFrontDirectory("resources/referenceFrontsCSV")
             .setIndicatorList(
                 Arrays.asList(
-                    new Epsilon<DoubleSolution>(),
-                    new PISAHypervolume<DoubleSolution>(),
-                    new InvertedGenerationalDistance<DoubleSolution>(),
-                    new InvertedGenerationalDistancePlus<DoubleSolution>()))
+                    new Epsilon<DoubleSolution>()))
+                    //new PISAHypervolume<DoubleSolution>(),
+                    //new InvertedGenerationalDistance<DoubleSolution>(),
+                    //new InvertedGenerationalDistancePlus<DoubleSolution>()))
             .setIndependentRuns(INDEPENDENT_RUNS)
             .setNumberOfCores(8)
             .build();
@@ -95,10 +95,10 @@ public class PPSN20205DStudy {
     //new ExecuteAlgorithms<>(experiment).run();
 
     new ComputeQualityIndicators<>(experiment).run();
-    new GenerateLatexTablesWithStatistics(experiment).run();
-    new GenerateWilcoxonTestTablesWithR<>(experiment).run();
-    new GenerateFriedmanTestTables<>(experiment).run();
-    new GenerateBoxplotsWithR<>(experiment).setRows(3).setColumns(3).run();
+    //new GenerateLatexTablesWithStatistics(experiment).run();
+    //new GenerateWilcoxonTestTablesWithR<>(experiment).run();
+    //new GenerateFriedmanTestTables<>(experiment).run();
+    //new GenerateBoxplotsWithR<>(experiment).setRows(3).setColumns(3).run();
   }
 
   public static Algorithm<List<DoubleSolution>> createAlgorithmToSelectPartOfTheResultSolutionList(

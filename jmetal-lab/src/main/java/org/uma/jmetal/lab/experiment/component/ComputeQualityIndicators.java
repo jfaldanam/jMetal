@@ -91,6 +91,7 @@ public class ComputeQualityIndicators<S extends Solution<?>, Result extends List
         }
       }
     }
+
     findBestIndicatorFronts(experiment) ;
     writeSummaryFile(experiment);
   }
