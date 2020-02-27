@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 /** @author Antonio J. Nebro <antonio@lcc.uma.es> */
 public class PPSN20205DStudy {
@@ -84,21 +85,21 @@ public class PPSN20205DStudy {
             .setReferenceFrontDirectory("resources/referenceFrontsCSV")
             .setIndicatorList(
                 Arrays.asList(
-                    new Epsilon<DoubleSolution>()))
-                    //new PISAHypervolume<DoubleSolution>(),
-                    //new InvertedGenerationalDistance<DoubleSolution>(),
-                    //new InvertedGenerationalDistancePlus<DoubleSolution>()))
+                    new Epsilon<DoubleSolution>(),
+                    new PISAHypervolume<DoubleSolution>(),
+                    new InvertedGenerationalDistance<DoubleSolution>(),
+                    new InvertedGenerationalDistancePlus<DoubleSolution>()))
             .setIndependentRuns(INDEPENDENT_RUNS)
             .setNumberOfCores(8)
             .build();
 
     //new ExecuteAlgorithms<>(experiment).run();
 
-    new ComputeQualityIndicators<>(experiment).run();
-    //new GenerateLatexTablesWithStatistics(experiment).run();
-    //new GenerateWilcoxonTestTablesWithR<>(experiment).run();
-    //new GenerateFriedmanTestTables<>(experiment).run();
-    //new GenerateBoxplotsWithR<>(experiment).setRows(3).setColumns(3).run();
+    //new ComputeQualityIndicators<>(experiment).run();
+    new GenerateLatexTablesWithStatistics(experiment).run();
+    new GenerateWilcoxonTestTablesWithR<>(experiment).run();
+    new GenerateFriedmanTestTables<>(experiment).run();
+    new GenerateBoxplotsWithR<>(experiment).setRows(4).setColumns(4).run();
   }
 
   public static Algorithm<List<DoubleSolution>> createAlgorithmToSelectPartOfTheResultSolutionList(

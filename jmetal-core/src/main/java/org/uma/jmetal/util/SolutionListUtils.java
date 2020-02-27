@@ -6,6 +6,8 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.util.attribute.util.attributecomparator.AttributeComparator;
 import org.uma.jmetal.solution.util.attribute.util.attributecomparator.impl.DoubleValueAttributeComparator;
+import org.uma.jmetal.util.archive.Archive;
+import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
 import org.uma.jmetal.util.checking.Check;
 import org.uma.jmetal.util.comparator.DominanceComparator;
 import org.uma.jmetal.util.comparator.ObjectiveComparator;
@@ -424,6 +426,13 @@ public class SolutionListUtils {
 
     if (originalSolutionList.size() <= finalListSize) {
       return originalSolutionList;
+    }
+
+    if (originalSolutionList.get(0).getNumberOfObjectives() == 2) {
+      Archive<S> archive = new CrowdingDistanceArchive<>(finalListSize) ;
+      originalSolutionList.forEach(solution -> archive.add(solution));
+
+      return archive.getSolutionList() ;
     }
 
     for (int i = 0; i < originalSolutionList.size(); i++) {
