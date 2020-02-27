@@ -45,7 +45,7 @@ public class NSGAII<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm
 
   protected InitialSolutionsCreation<S> initialSolutionsCreation;
   protected Termination termination;
-  protected Evaluation<S> evaluation ;
+  protected Evaluation<S> evaluation;
   protected Replacement<S> replacement;
   protected Variation<S> variation;
   protected MatingPoolSelection<S> selection;
@@ -162,7 +162,7 @@ public class NSGAII<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm
 
   @Override
   protected List<S> evaluatePopulation(List<S> population) {
-    return  evaluation.evaluate(population, getProblem());
+    return evaluation.evaluate(population, getProblem());
   }
 
   /**
@@ -232,7 +232,7 @@ public class NSGAII<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm
   }
 
   public NSGAII<S> setEvaluation(Evaluation<S> evaluation) {
-    this.evaluation = evaluation ;
+    this.evaluation = evaluation;
 
     return this;
   }

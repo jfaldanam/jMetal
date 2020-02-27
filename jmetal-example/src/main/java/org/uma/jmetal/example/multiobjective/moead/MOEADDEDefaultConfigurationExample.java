@@ -28,12 +28,12 @@ public class MOEADDEDefaultConfigurationExample extends AbstractAlgorithmRunner 
     DoubleProblem problem;
     MOEADDE algorithm;
 
-    String problemName = "org.uma.jmetal.problem.multiobjective.lz09.LZ09F6";
-    String referenceParetoFront = "resources/referenceFronts/LZ09_F6.pf";
+    String problemName = "org.uma.jmetal.problem.multiobjective.lz09.LZ09F2";
+    String referenceParetoFront = "resources/referenceFronts/LZ09_F2.pf";
 
     problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
 
-    int populationSize = 300;
+    int populationSize = 600;
 
     double cr = 1.0;
     double f = 0.5;
@@ -41,7 +41,7 @@ public class MOEADDEDefaultConfigurationExample extends AbstractAlgorithmRunner 
     double neighborhoodSelectionProbability = 0.9;
     int neighborhoodSize = 20;
     int maximumNumberOfReplacedSolutions = 2;
-    int maximumNumberOfFunctionEvaluations = 150000;
+    int maximumNumberOfFunctionEvaluations = 300000;
 
     AggregativeFunction aggregativeFunction = new Tschebyscheff();
 
