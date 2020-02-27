@@ -1,4 +1,4 @@
-package org.uma.jmetal.problem.multiobjective.UF;
+package org.uma.jmetal.problem.multiobjective.uf;
 
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
