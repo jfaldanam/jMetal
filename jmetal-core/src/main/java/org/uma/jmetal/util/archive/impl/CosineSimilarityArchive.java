@@ -25,11 +25,11 @@ import java.util.Comparator;
 /**
  * Created by Antonio J. Nebro on 24/09/14.
  */
-public class CosineDistanceArchive<S extends Solution<?>> extends AbstractBoundedArchive<S> {
+public class CosineSimilarityArchive<S extends Solution<?>> extends AbstractBoundedArchive<S> {
   private Comparator<S> comparator;
   private DensityEstimator<S> densityEstimator;
 
-  public CosineDistanceArchive(int maxSize, Point referencePoint, boolean normalize) {
+  public CosineSimilarityArchive(int maxSize, Point referencePoint, boolean normalize) {
     super(maxSize);
     densityEstimator = new CosineSimilarityDensityEstimator<S>(referencePoint, normalize) ;
     //densityEstimator = new CosineSimilarityDensityEstimatorV2<S>(3) ;

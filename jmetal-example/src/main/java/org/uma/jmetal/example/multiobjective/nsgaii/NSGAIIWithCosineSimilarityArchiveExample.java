@@ -14,12 +14,10 @@ import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.ProblemUtils;
 import org.uma.jmetal.util.archive.Archive;
-import org.uma.jmetal.util.archive.impl.CosineDistanceArchive;
-import org.uma.jmetal.util.archive.impl.KnnDistanceArchive;
+import org.uma.jmetal.util.archive.impl.CosineSimilarityArchive;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.point.Point;
-import org.uma.jmetal.util.point.impl.IdealPoint;
 import org.uma.jmetal.util.point.impl.NadirPoint;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
@@ -58,7 +56,7 @@ public class NSGAIIWithCosineSimilarityArchiveExample extends AbstractAlgorithmR
 
     Point referencePoint = new NadirPoint(problem.getNumberOfObjectives()) ;
 
-    Archive<DoubleSolution> archive = new CosineDistanceArchive<>(populationSize, referencePoint, true) ;
+    Archive<DoubleSolution> archive = new CosineSimilarityArchive<>(populationSize, referencePoint, true) ;
 
     algorithm =
             new NSGAIIWithArchive<>(
