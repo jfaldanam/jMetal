@@ -17,6 +17,7 @@ import org.uma.jmetal.util.pseudorandom.BoundedRandomGenerator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 /** @author Antonio J. Nebro */
 public class SolutionListUtils {
@@ -478,5 +479,19 @@ public class SolutionListUtils {
     }
 
     return resultList;
+  }
+
+  /**
+   * Given a list of solutions, returns a matrix with the objective values of all the solutions
+   * @param solutionList
+   * @param <S>
+   * @return
+   */
+  public static <S extends Solution<?>> double[][] getMatrixWithObjectiveValues(List<S> solutionList) {
+    double[][] matrix = new double[solutionList.size()][] ;
+
+    IntStream.range(0, solutionList.size()).forEach(i -> matrix[i] = solutionList.get(i).getObjectives()) ;
+
+    return matrix ;
   }
 }
