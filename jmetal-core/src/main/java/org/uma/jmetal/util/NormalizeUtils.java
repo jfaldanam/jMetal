@@ -42,7 +42,7 @@ public class NormalizeUtils {
           double value, double minRangeValue, double maxRangeValue, double min, double max) {
 
     if (max == min) {
-      throw new JMetalException("The max minus min should not be zero");
+      return 0 ; //throw new JMetalException("The max minus min should not be zero");
     }
 
     return minRangeValue + (((value - min) * (maxRangeValue - minRangeValue)) / (max - min));
