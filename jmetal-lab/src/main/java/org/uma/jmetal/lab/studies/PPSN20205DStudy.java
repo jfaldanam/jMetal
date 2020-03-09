@@ -51,7 +51,7 @@ import static org.uma.jmetal.lab.studies.util.AlgorithmBuilder.*;
 
 /** @author Antonio J. Nebro <antonio@lcc.uma.es> */
 public class PPSN20205DStudy {
-  private static final int INDEPENDENT_RUNS = 5;
+  private static final int INDEPENDENT_RUNS = 20;
   private static final int MAX_EVALUATIONS = 100000;
 
   public static void main(String[] args) throws IOException {
@@ -95,17 +95,18 @@ public class PPSN20205DStudy {
                     new InvertedGenerationalDistance<DoubleSolution>(),
                     new InvertedGenerationalDistancePlus<DoubleSolution>()))
             .setIndependentRuns(INDEPENDENT_RUNS)
-            .setNumberOfCores(8)
+            .setNumberOfCores(32)
             .build();
 
-    //new ExecuteAlgorithms<>(experiment).run();
+    new ExecuteAlgorithms<>(experiment).run();
 
+    /*
     new ComputeQualityIndicators<>(experiment).run();
     new GenerateLatexTablesWithStatistics(experiment).run();
     new GenerateWilcoxonTestTablesWithR<>(experiment).run();
     new GenerateFriedmanTestTables<>(experiment).run();
     new GenerateBoxplotsWithR<>(experiment).setRows(4).setColumns(4).run();
-
+   */
   }
 
   public static Algorithm<List<DoubleSolution>> createAlgorithmToSelectPartOfTheResultSolutionList(
@@ -126,7 +127,7 @@ public class PPSN20205DStudy {
 
     for (int run = 0; run < INDEPENDENT_RUNS; run++) {
       for (int i = 0; i < problemList.size(); i++) {
-
+        /*
         algorithms.add(
                 new ExperimentAlgorithm<>(
                         createNSGAII(problemList.get(i).getProblem(), 240, MAX_EVALUATIONS),
@@ -145,6 +146,8 @@ public class PPSN20205DStudy {
                         "NSGAIIA",
                         problemList.get(i),
                         run));
+
+         */
         algorithms.add(
             new ExperimentAlgorithm<>(
                     createNSGAIIWithArchive(
