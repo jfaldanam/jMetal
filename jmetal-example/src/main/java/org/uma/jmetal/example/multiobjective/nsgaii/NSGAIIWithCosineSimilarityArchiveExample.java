@@ -1,8 +1,6 @@
 package org.uma.jmetal.example.multiobjective.nsgaii;
 
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIWithArchive;
-import org.uma.jmetal.component.ranking.Ranking;
-import org.uma.jmetal.component.ranking.impl.MergeNonDominatedSortRanking;
 import org.uma.jmetal.component.termination.Termination;
 import org.uma.jmetal.component.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
@@ -11,11 +9,16 @@ import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.*;
+import org.uma.jmetal.util.AbstractAlgorithmRunner;
+import org.uma.jmetal.util.JMetalException;
+import org.uma.jmetal.util.JMetalLogger;
+import org.uma.jmetal.util.ProblemUtils;
 import org.uma.jmetal.util.archive.Archive;
-import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
+import org.uma.jmetal.util.archive.impl.CosineSimilarityArchive;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
+import org.uma.jmetal.util.point.Point;
+import org.uma.jmetal.util.point.impl.NadirPoint;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 import java.io.FileNotFoundException;
@@ -26,13 +29,14 @@ import java.util.List;
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
-public class NSGAIIWithUnboundedNonDominatedArchiveExample extends AbstractAlgorithmRunner {
+public class NSGAIIWithCosineSimilarityArchiveExample extends AbstractAlgorithmRunner {
   public static void main(String[] args) throws JMetalException, FileNotFoundException {
     Problem<DoubleSolution> problem;
     NSGAIIWithArchive<DoubleSolution> algorithm;
     CrossoverOperator<DoubleSolution> crossover;
     MutationOperator<DoubleSolution> mutation;
-    String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2" ;
+
+    String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2";
     String referenceParetoFront = "resources/referenceFronts/DTLZ2.3D.pf";
 
     problem = ProblemUtils.<DoubleSolution>loadProblem(problemName);
@@ -50,41 +54,29 @@ public class NSGAIIWithUnboundedNonDominatedArchiveExample extends AbstractAlgor
 
     Termination termination = new TerminationByEvaluations(50000);
 
-    Archive<DoubleSolution> archive = new NonDominatedSolutionListArchive<>();
+    Point referencePoint = new NadirPoint(problem.getNumberOfObjectives()) ;
 
-    Ranking<DoubleSolution> ranking = new MergeNonDominatedSortRanking<>();
+    Archive<DoubleSolution> archive = new CosineSimilarityArchive<>(populationSize, referencePoint, true) ;
 
     algorithm =
-        new NSGAIIWithArchive<>(
-            problem,
-            populationSize,
-            offspringPopulationSize,
-            crossover,
-            mutation,
-            termination,
-            ranking,
-            archive);
+            new NSGAIIWithArchive<>(
+                    problem,
+                    populationSize,
+                    offspringPopulationSize,
+                    crossover,
+                    mutation,
+                    termination,
+                    archive);
 
     algorithm.run();
 
-    List<DoubleSolution> population = SolutionListUtils.distanceBasedSubsetSelection(algorithm.getResult(), 100);
-
+    List<DoubleSolution> population = algorithm.getResult();
     JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
     JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
 
     new SolutionListOutput(population)
             .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv",","))
-            .print();
-
-    new SolutionListOutput(algorithm.getPopulation())
-            .setVarFileOutputContext(new DefaultFileOutputContext("POPVAR.csv", ","))
-            .setFunFileOutputContext(new DefaultFileOutputContext("POPFUN.csv", ","))
-            .print();
-
-    new SolutionListOutput(algorithm.getArchive().getSolutionList())
-            .setVarFileOutputContext(new DefaultFileOutputContext("ARCVAR.csv", ","))
-            .setFunFileOutputContext(new DefaultFileOutputContext("ARCFUN.csv", ","))
+            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
             .print();
 
     JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());

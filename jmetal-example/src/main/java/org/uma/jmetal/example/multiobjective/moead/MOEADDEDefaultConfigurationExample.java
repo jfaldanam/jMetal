@@ -33,7 +33,7 @@ public class MOEADDEDefaultConfigurationExample extends AbstractAlgorithmRunner 
 
     problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
 
-    int populationSize = 300;
+    int populationSize = 600;
 
     double cr = 1.0;
     double f = 0.5;
@@ -41,7 +41,7 @@ public class MOEADDEDefaultConfigurationExample extends AbstractAlgorithmRunner 
     double neighborhoodSelectionProbability = 0.9;
     int neighborhoodSize = 20;
     int maximumNumberOfReplacedSolutions = 2;
-    int maximumNumberOfFunctionEvaluations = 150000;
+    int maximumNumberOfFunctionEvaluations = 300000;
 
     AggregativeFunction aggregativeFunction = new Tschebyscheff();
 

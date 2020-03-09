@@ -96,7 +96,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
    * Initialize weight vectors
    */
   protected void initializeUniformWeight() {
-    if ((problem.getNumberOfObjectives() == 2) && (populationSize <= 300)) {
+    if (problem.getNumberOfObjectives() == 2) {
       for (int n = 0; n < populationSize; n++) {
         double a = 1.0 * n / (populationSize - 1);
         lambda[n][0] = a;

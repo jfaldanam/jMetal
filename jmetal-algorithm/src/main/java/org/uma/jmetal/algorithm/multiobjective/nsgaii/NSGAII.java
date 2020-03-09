@@ -67,8 +67,8 @@ public class NSGAII<S extends Solution<?>> extends ComponentBasedEvolutionaryAlg
       MutationOperator<S> mutationOperator,
       Termination termination,
       Ranking<S> ranking) {
-    this.name = "NSGA-II" ;
-    this.problem = problem ;
+    this.name = "NSGA-II";
+    this.problem = problem;
     this.observable = new DefaultObservable<>(name);
     this.attributes = new HashMap<>();
 

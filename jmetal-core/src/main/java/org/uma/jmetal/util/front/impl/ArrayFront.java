@@ -97,7 +97,6 @@ public class ArrayFront implements Front {
     String line;
     try {
       line = br.readLine();
-
       while (line != null) {
         String[] stringValues = line.split(separator);
         double[] values = new double[stringValues.length];

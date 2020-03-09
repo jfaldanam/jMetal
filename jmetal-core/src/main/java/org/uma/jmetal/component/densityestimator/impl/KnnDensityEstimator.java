@@ -32,7 +32,11 @@ public class KnnDensityEstimator<S extends Solution<?>> implements DensityEstima
   private boolean normalize ;
 
   public KnnDensityEstimator(int k) {
+<<<<<<< HEAD
     this(k, false) ;
+=======
+    this(k, true) ;
+>>>>>>> 7c31b10695a23e29c5a5a6044cd1f32907f48bb5
   }
 
   public KnnDensityEstimator(int k, boolean normalize) {
