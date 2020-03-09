@@ -211,7 +211,7 @@ public class ComputeQualityIndicators<S extends Solution<?>, Result extends List
                     + ".dat";
 
             Files.copy(Paths.get(bestFunFile), Paths.get(bestFunFileName), REPLACE_EXISTING);
-            Files.copy(Paths.get(bestVarFile), Paths.get(bestVarFileName), REPLACE_EXISTING);
+            //Files.copy(Paths.get(bestVarFile), Paths.get(bestVarFileName), REPLACE_EXISTING);
           } else {
             String bestFunFile =
                 outputDirectory
@@ -227,7 +227,7 @@ public class ComputeQualityIndicators<S extends Solution<?>, Result extends List
                     + ".dat";
 
             Files.copy(Paths.get(bestFunFile), Paths.get(bestFunFileName), REPLACE_EXISTING);
-            Files.copy(Paths.get(bestVarFile), Paths.get(bestVarFileName), REPLACE_EXISTING);
+            //Files.copy(Paths.get(bestVarFile), Paths.get(bestVarFileName), REPLACE_EXISTING);
           }
 
           int medianIndex = list.size() / 2;
@@ -245,7 +245,7 @@ public class ComputeQualityIndicators<S extends Solution<?>, Result extends List
                   + ".dat";
 
           Files.copy(Paths.get(medianFunFile), Paths.get(medianFunFileName), REPLACE_EXISTING);
-          Files.copy(Paths.get(medianVarFile), Paths.get(medianVarFileName), REPLACE_EXISTING);
+          //Files.copy(Paths.get(medianVarFile), Paths.get(medianVarFileName), REPLACE_EXISTING);
         }
       }
     }

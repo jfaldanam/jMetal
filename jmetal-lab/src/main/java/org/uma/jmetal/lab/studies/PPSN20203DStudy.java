@@ -24,6 +24,7 @@ import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.dtlz.*;
+import org.uma.jmetal.problem.multiobjective.wfg.*;
 import org.uma.jmetal.qualityindicator.impl.*;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -32,17 +33,24 @@ import org.uma.jmetal.util.aggregativefunction.AggregativeFunction;
 import org.uma.jmetal.util.aggregativefunction.impl.Tschebyscheff;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.archive.BoundedArchive;
+import org.uma.jmetal.util.archive.impl.CosineSimilarityArchive;
 import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
+import org.uma.jmetal.util.point.impl.IdealPoint;
+import org.uma.jmetal.util.point.impl.NadirPoint;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.uma.jmetal.lab.studies.util.AlgorithmBuilder.*;
+
 /** @author Antonio J. Nebro <antonio@lcc.uma.es> */
 public class PPSN20203DStudy {
   private static final int INDEPENDENT_RUNS = 25;
+  private static final int MAX_EVALUATIONS = 50000;
+  private static final int POPULATION_SIZE = 91;
 
   public static void main(String[] args) throws IOException {
 
@@ -59,18 +67,27 @@ public class PPSN20203DStudy {
     problemList.add(new ExperimentProblem<>(new DTLZ5()).setReferenceFront("DTLZ5.3D.pf"));
     problemList.add(new ExperimentProblem<>(new DTLZ6()).setReferenceFront("DTLZ6.3D.pf"));
     problemList.add(new ExperimentProblem<>(new DTLZ7()).setReferenceFront("DTLZ7.3D.pf"));
+    problemList.add(new ExperimentProblem<>(new WFG1(2, 4, 3)).setReferenceFront("WFG1.3D.pf"));
+    problemList.add(new ExperimentProblem<>(new WFG2(2, 4, 3)).setReferenceFront("WFG2.3D.pf"));
+    problemList.add(new ExperimentProblem<>(new WFG3(2, 4, 3)).setReferenceFront("WFG3.3D.pf"));
+    problemList.add(new ExperimentProblem<>(new WFG4(2, 4, 3)).setReferenceFront("WFG4.3D.pf"));
+    problemList.add(new ExperimentProblem<>(new WFG5(2, 4, 3)).setReferenceFront("WFG5.3D.pf"));
+    problemList.add(new ExperimentProblem<>(new WFG6(2, 4, 3)).setReferenceFront("WFG6.3D.pf"));
+    problemList.add(new ExperimentProblem<>(new WFG7(2, 4, 3)).setReferenceFront("WFG7.3D.pf"));
+    problemList.add(new ExperimentProblem<>(new WFG8(2, 4, 3)).setReferenceFront("WFG8.3D.pf"));
+    problemList.add(new ExperimentProblem<>(new WFG9(2, 4, 3)).setReferenceFront("WFG9.3D.pf"));
 
     List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithmList =
         configureAlgorithmList(problemList);
 
     Experiment<DoubleSolution, List<DoubleSolution>> experiment =
-        new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("PPSN2020Study")
+        new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("PPSN20203DStudy")
             .setAlgorithmList(algorithmList)
             .setProblemList(problemList)
             .setExperimentBaseDirectory(experimentBaseDirectory)
             .setOutputParetoFrontFileName("FUN")
             .setOutputParetoSetFileName("VAR")
-            .setReferenceFrontDirectory("resources/referenceFronts")
+            .setReferenceFrontDirectory("resources/referenceFrontsCSV")
             .setIndicatorList(
                 Arrays.asList(
                     new Epsilon<DoubleSolution>(),
@@ -78,7 +95,7 @@ public class PPSN20203DStudy {
                     new InvertedGenerationalDistance<DoubleSolution>(),
                     new InvertedGenerationalDistancePlus<DoubleSolution>()))
             .setIndependentRuns(INDEPENDENT_RUNS)
-            .setNumberOfCores(32)
+            .setNumberOfCores(8)
             .build();
 
     new ExecuteAlgorithms<>(experiment).run();
@@ -87,222 +104,13 @@ public class PPSN20203DStudy {
     new GenerateLatexTablesWithStatistics(experiment).run();
     new GenerateWilcoxonTestTablesWithR<>(experiment).run();
     new GenerateFriedmanTestTables<>(experiment).run();
-    new GenerateBoxplotsWithR<>(experiment).setRows(3).setColumns(3).run();
+    new GenerateBoxplotsWithR<>(experiment).setRows(5).setColumns(4).run();
   }
 
   public static Algorithm<List<DoubleSolution>> createAlgorithmToSelectPartOfTheResultSolutionList(
       Algorithm<List<DoubleSolution>> algorithm, int numberOfReturnedSolutions) {
 
     return new AlgorithmReturningASubSetOfSolutions<>(algorithm, numberOfReturnedSolutions);
-  }
-
-  public static Algorithm<List<DoubleSolution>> createNSGAII(Problem<DoubleSolution> problem) {
-    double crossoverProbability = 0.9;
-    double crossoverDistributionIndex = 20.0;
-
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    double mutationDistributionIndex = 20.0;
-
-    int populationSize = 100;
-    int offspringPopulationSize = populationSize;
-
-    Termination termination = new TerminationByEvaluations(50000);
-
-    Algorithm<List<DoubleSolution>> algorithm =
-        new NSGAII<>(
-            problem,
-            populationSize,
-            offspringPopulationSize,
-            new SBXCrossover(crossoverProbability, crossoverDistributionIndex),
-            new PolynomialMutation(mutationProbability, mutationDistributionIndex),
-            termination);
-
-    return algorithm;
-  }
-
-  public static Algorithm<List<DoubleSolution>> createNSGAIIWithArchive(
-      Problem<DoubleSolution> problem) {
-    double crossoverProbability = 0.9;
-    double crossoverDistributionIndex = 20.0;
-
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    double mutationDistributionIndex = 20.0;
-
-    int populationSize = 100;
-    int offspringPopulationSize = populationSize;
-
-    Termination termination = new TerminationByEvaluations(50000);
-
-    Archive<DoubleSolution> archive = new NonDominatedSolutionListArchive<>();
-
-    Algorithm<List<DoubleSolution>> algorithm =
-        new NSGAIIWithArchive<>(
-            problem,
-            populationSize,
-            offspringPopulationSize,
-            new SBXCrossover(crossoverProbability, crossoverDistributionIndex),
-            new PolynomialMutation(mutationProbability, mutationDistributionIndex),
-            termination,
-            archive);
-
-    return algorithm;
-  }
-
-  public static Algorithm<List<DoubleSolution>> createSMSEMOA(Problem<DoubleSolution> problem) {
-    double crossoverProbability = 0.9;
-    double crossoverDistributionIndex = 20.0;
-
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    double mutationDistributionIndex = 20.0;
-
-    int populationSize = 100;
-
-    Termination termination = new TerminationByEvaluations(50000);
-
-    Algorithm<List<DoubleSolution>> algorithm =
-        new SMSEMOA<>(
-            problem,
-            populationSize,
-            new SBXCrossover(crossoverProbability, crossoverDistributionIndex),
-            new PolynomialMutation(mutationProbability, mutationDistributionIndex),
-            termination);
-
-    return algorithm;
-  }
-
-  public static Algorithm<List<DoubleSolution>> createSMSEMOAWithArchive(
-      Problem<DoubleSolution> problem) {
-    double crossoverProbability = 0.9;
-    double crossoverDistributionIndex = 20.0;
-
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    double mutationDistributionIndex = 20.0;
-
-    int populationSize = 100;
-
-    Termination termination = new TerminationByEvaluations(50000);
-
-    Algorithm<List<DoubleSolution>> algorithm =
-        new SMSEMOAWithArchive<>(
-            problem,
-            populationSize,
-            new SBXCrossover(crossoverProbability, crossoverDistributionIndex),
-            new PolynomialMutation(mutationProbability, mutationDistributionIndex),
-            termination,
-            new NonDominatedSolutionListArchive<>());
-
-    return algorithm;
-  }
-
-  public static Algorithm<List<DoubleSolution>> createSMPSO(Problem<DoubleSolution> problem) {
-    int swarmSize = 100;
-    BoundedArchive<DoubleSolution> leadersArchive =
-        new CrowdingDistanceArchive<DoubleSolution>(swarmSize);
-
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    double mutationDistributionIndex = 20.0;
-
-    Evaluation<DoubleSolution> evaluation = new SequentialEvaluation<>();
-    Termination termination = new TerminationByEvaluations(50000);
-
-    Algorithm<List<DoubleSolution>> algorithm =
-        new SMPSO(
-            (DoubleProblem) problem,
-            swarmSize,
-            leadersArchive,
-            new PolynomialMutation(mutationProbability, mutationDistributionIndex),
-            evaluation,
-            termination);
-
-    return algorithm;
-  }
-
-  public static Algorithm<List<DoubleSolution>> createMOEADDE(Problem<DoubleSolution> problem) {
-    int populationSize = 300;
-
-    double cr = 1.0;
-    double f = 0.5;
-
-    double neighborhoodSelectionProbability = 0.9;
-    int neighborhoodSize = 20;
-    int maximumNumberOfReplacedSolutions = 2;
-    int maximumNumberOfFunctionEvaluations = 50000;
-
-    AggregativeFunction aggregativeFunction = new Tschebyscheff();
-
-    Algorithm<List<DoubleSolution>> algorithm =
-        new MOEADDE(
-            problem,
-            populationSize,
-            cr,
-            f,
-            aggregativeFunction,
-            neighborhoodSelectionProbability,
-            maximumNumberOfReplacedSolutions,
-            neighborhoodSize,
-            "resources/weightVectorFiles/moead",
-            new TerminationByEvaluations(maximumNumberOfFunctionEvaluations));
-
-    return algorithm;
-  }
-
-  public static Algorithm<List<DoubleSolution>> createMOEADDEWithArchive(
-      Problem<DoubleSolution> problem) {
-    int populationSize = 300;
-
-    double cr = 1.0;
-    double f = 0.5;
-
-    double neighborhoodSelectionProbability = 0.9;
-    int neighborhoodSize = 20;
-    int maximumNumberOfReplacedSolutions = 2;
-    int maximumNumberOfFunctionEvaluations = 50000;
-
-    AggregativeFunction aggregativeFunction = new Tschebyscheff();
-
-    Archive<DoubleSolution> externalArchive = new NonDominatedSolutionListArchive<>();
-
-    Algorithm<List<DoubleSolution>> algorithm =
-        new MOEADDEWithArchive(
-            problem,
-            populationSize,
-            cr,
-            f,
-            aggregativeFunction,
-            neighborhoodSelectionProbability,
-            maximumNumberOfReplacedSolutions,
-            neighborhoodSize,
-            "resources/weightVectorFiles/moead",
-            new TerminationByEvaluations(maximumNumberOfFunctionEvaluations),
-            externalArchive);
-    return algorithm;
-  }
-
-  public static Algorithm<List<DoubleSolution>> createSMPSOWithExternalArchive(
-      Problem<DoubleSolution> problem) {
-    int swarmSize = 100;
-    BoundedArchive<DoubleSolution> leadersArchive =
-        new CrowdingDistanceArchive<DoubleSolution>(swarmSize);
-
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
-    double mutationDistributionIndex = 20.0;
-
-    Evaluation<DoubleSolution> evaluation = new SequentialEvaluation<>();
-    Termination termination = new TerminationByEvaluations(50000);
-
-    Archive<DoubleSolution> externalArchive = new NonDominatedSolutionListArchive<>();
-
-    Algorithm<List<DoubleSolution>> algorithm =
-        new SMPSOWithArchive(
-            (DoubleProblem) problem,
-            swarmSize,
-            leadersArchive,
-            new PolynomialMutation(mutationProbability, mutationDistributionIndex),
-            evaluation,
-            termination,
-            externalArchive);
-
-    return algorithm;
   }
 
   /**
@@ -319,38 +127,61 @@ public class PPSN20203DStudy {
       for (int i = 0; i < problemList.size(); i++) {
         algorithms.add(
             new ExperimentAlgorithm<>(
-                createNSGAII(problemList.get(i).getProblem()), "NSGAII", problemList.get(i), run));
-        algorithms.add(
-            new ExperimentAlgorithm<>(
-                createAlgorithmToSelectPartOfTheResultSolutionList(
-                    createNSGAIIWithArchive(problemList.get(i).getProblem()), 100),
-                "NSGAIIA",
+                createNSGAII(problemList.get(i).getProblem(), POPULATION_SIZE, MAX_EVALUATIONS),
+                "NSGAII",
                 problemList.get(i),
                 run));
         algorithms.add(
             new ExperimentAlgorithm<>(
                 createAlgorithmToSelectPartOfTheResultSolutionList(
-                    createMOEADDE(problemList.get(i).getProblem()), 100),
+                    createNSGAIIWithArchive(
+                        problemList.get(i).getProblem(),
+                        new NonDominatedSolutionListArchive<>(),
+                        POPULATION_SIZE,
+                        MAX_EVALUATIONS),
+                    POPULATION_SIZE),
+                "NSGAIIUA",
+                problemList.get(i),
+                run));
+        algorithms.add(
+            new ExperimentAlgorithm<>(
+                createNSGAIIWithArchive(
+                    problemList.get(i).getProblem(),
+                    new CosineSimilarityArchive<>(POPULATION_SIZE, new NadirPoint(problemList.get(i).getProblem().getNumberOfObjectives()), true),
+                    POPULATION_SIZE,
+                    MAX_EVALUATIONS),
+                "NSGAIICN",
+                problemList.get(i),
+                run));
+        algorithms.add(
+            new ExperimentAlgorithm<>(
+                createNSGAIIWithArchive(
+                    problemList.get(i).getProblem(),
+                    new CosineSimilarityArchive<>(POPULATION_SIZE, new IdealPoint(problemList.get(i).getProblem().getNumberOfObjectives()), true),
+                    POPULATION_SIZE,
+                    MAX_EVALUATIONS),
+                "NSGAIICI",
+                problemList.get(i),
+                run));
+        algorithms.add(
+            new ExperimentAlgorithm<>(
+                createMOEAD(problemList.get(i).getProblem(), POPULATION_SIZE, MAX_EVALUATIONS),
                 "MOEAD",
                 problemList.get(i),
                 run));
         algorithms.add(
             new ExperimentAlgorithm<>(
                 createAlgorithmToSelectPartOfTheResultSolutionList(
-                    createMOEADDEWithArchive(problemList.get(i).getProblem()), 100),
-                "MOEADA",
+                    createMOEADDEWithArchive(
+                        problemList.get(i).getProblem(),
+                        new NonDominatedSolutionListArchive<>(),
+                        POPULATION_SIZE,
+                        MAX_EVALUATIONS),
+                    POPULATION_SIZE),
+                "MOEADUA",
                 problemList.get(i),
                 run));
-        algorithms.add(
-            new ExperimentAlgorithm<>(
-                createSMPSO(problemList.get(i).getProblem()), "SMPSO", problemList.get(i), run));
-        algorithms.add(
-            new ExperimentAlgorithm<>(
-                createAlgorithmToSelectPartOfTheResultSolutionList(
-                    createSMPSOWithExternalArchive(problemList.get(i).getProblem()), 100),
-                "SMPSOA",
-                problemList.get(i),
-                run));
+
         /*
         algorithms.add(
                 new ExperimentAlgorithm<>(
