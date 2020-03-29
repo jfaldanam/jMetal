@@ -58,8 +58,7 @@ public class NSGAIISteadyStateMNDSExample extends AbstractAlgorithmRunner {
             offspringPopulationSize,
             crossover,
             mutation,
-            termination,
-            new SteadyStateMergeNonDominatedSortRanking<>());
+            termination);
 
     algorithm.run();
 

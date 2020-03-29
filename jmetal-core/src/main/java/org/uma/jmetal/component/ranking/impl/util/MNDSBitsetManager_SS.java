@@ -60,7 +60,8 @@ public class MNDSBitsetManager_SS {
 		return size;
 	}
 
-	public void updatePopulation(int[] solutionList) {
+	public boolean updatePopulation(int[] solutionList) {
+		boolean existDominance = false;
 		for (int solId = 0; solId < nSols; solId++) {
 			if (solutionList[solId] == nObjs) { // newSol dominates solutionList[solId]
 				if (null == bitsets[solId]) {
@@ -74,6 +75,7 @@ public class MNDSBitsetManager_SS {
 						bsRanges[solId][LAST_WORD_RANGE] = newSolWordIndex;
 				}
 				bitsets[solId][newSolWordIndex] |= newSolSet1;
+				existDominance = true;
 				continue;
 			}
 			if (solutionList[solId] == -nObjs) { // solutionList[solId] dominates newSol
@@ -96,7 +98,9 @@ public class MNDSBitsetManager_SS {
 					cleanBitset(solId, fw, lw);
 				}
 			}
+			existDominance |= bsRanges[solId][LAST_WORD_RANGE] >= bsRanges[solId][FIRST_WORD_RANGE];
 		}
+		return existDominance;
 	}
 
 	public int computeSteadyStateRank(int solutionId) {
@@ -116,23 +120,6 @@ public class MNDSBitsetManager_SS {
 		ranking = null;
 	}
 
-	/*
-	public String toString(int solutionId) {
-		if (null == bitsets[solutionId])
-			return "{}";
-		return BitsetTools.toString(bitsets[solutionId], bsRanges[solutionId][FIRST_WORD_RANGE],
-				bsRanges[solutionId][LAST_WORD_RANGE]);
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder s = new StringBuilder(nSols * 10);
-		for (int i = 0; i < bitsets.length; i++) {
-			s.append(String.format("% 4d = %s\n", i, toString(i)));
-		}
-		return s.toString();
-	}
-*/
 	public boolean updateSolutionDominance(int solutionId) {
 		int fw = bsRanges[solutionId][FIRST_WORD_RANGE];
 		int lw = bsRanges[solutionId][LAST_WORD_RANGE];
@@ -152,7 +139,6 @@ public class MNDSBitsetManager_SS {
 		}
 		for (; fw <= lw; fw++)
 			bitsets[solutionId][fw] &= incrementalBitset[fw];
-
 		return true;
 	}
 
@@ -182,6 +168,10 @@ public class MNDSBitsetManager_SS {
 			wordRanking[i] = rank;
 
 		return rank;
+	}
+
+	public int getLastRank() {
+		return maxRank;
 	}
 
 	public int computeSolutionRanking(int solutionId) {
@@ -266,3 +256,4 @@ public class MNDSBitsetManager_SS {
 		incBsFstWord = Integer.MAX_VALUE;
 	}
 }
+

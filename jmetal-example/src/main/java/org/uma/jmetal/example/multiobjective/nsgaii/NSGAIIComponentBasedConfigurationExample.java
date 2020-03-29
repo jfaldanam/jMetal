@@ -1,6 +1,8 @@
 package org.uma.jmetal.example.multiobjective.nsgaii;
 
+import com.google.common.primitives.Doubles;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAII;
+import org.uma.jmetal.algorithm.multiobjective.nsgaii.SSNSGAII;
 import org.uma.jmetal.component.densityestimator.DensityEstimator;
 import org.uma.jmetal.component.densityestimator.impl.CrowdingDistanceDensityEstimator;
 import org.uma.jmetal.component.evaluation.Evaluation;
@@ -9,8 +11,10 @@ import org.uma.jmetal.component.initialsolutioncreation.InitialSolutionsCreation
 import org.uma.jmetal.component.initialsolutioncreation.impl.RandomSolutionsCreation;
 import org.uma.jmetal.component.ranking.Ranking;
 import org.uma.jmetal.component.ranking.impl.MergeNonDominatedSortRanking;
+import org.uma.jmetal.component.ranking.impl.SteadyStateMergeNonDominatedSortRanking;
 import org.uma.jmetal.component.replacement.Replacement;
 import org.uma.jmetal.component.replacement.impl.RankingAndDensityEstimatorReplacement;
+import org.uma.jmetal.component.replacement.impl.SteadyStateRankingAndDensityEstimatorReplacement;
 import org.uma.jmetal.component.selection.MatingPoolSelection;
 import org.uma.jmetal.component.selection.impl.NaryTournamentMatingPoolSelection;
 import org.uma.jmetal.component.termination.Termination;
@@ -46,25 +50,25 @@ import java.util.List;
 public class NSGAIIComponentBasedConfigurationExample extends AbstractAlgorithmRunner {
   public static void main(String[] args) throws JMetalException, FileNotFoundException {
     Problem<DoubleSolution> problem;
-    NSGAII<DoubleSolution> algorithm;
+    SSNSGAII<DoubleSolution> algorithm;
 
     String problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
     String referenceParetoFront = "resources/referenceFronts/ZDT1.pf";
 
     problem = ProblemUtils.<DoubleSolution>loadProblem(problemName);
 
-    int populationSize = 100;
+    int populationSize = 10;
     int offspringPopulationSize = 1;
-    int maxNumberOfEvaluations = 25000;
+    int maxNumberOfEvaluations = 250;
 
     DensityEstimator<DoubleSolution> densityEstimator = new CrowdingDistanceDensityEstimator<>();
-    Ranking<DoubleSolution> ranking = new MergeNonDominatedSortRanking<>();
+    SteadyStateMergeNonDominatedSortRanking<DoubleSolution> ranking = new SteadyStateMergeNonDominatedSortRanking<>(populationSize+1, 2);
 
     InitialSolutionsCreation<DoubleSolution> initialSolutionsCreation =
         new RandomSolutionsCreation<>(problem, populationSize);
 
-    RankingAndDensityEstimatorReplacement<DoubleSolution> replacement =
-        new RankingAndDensityEstimatorReplacement<>(
+    SteadyStateRankingAndDensityEstimatorReplacement<DoubleSolution> replacement =
+        new SteadyStateRankingAndDensityEstimatorReplacement<>(
             ranking, densityEstimator, Replacement.RemovalPolicy.oneShot);
 
     double crossoverProbability = 0.9;
@@ -93,7 +97,7 @@ public class NSGAIIComponentBasedConfigurationExample extends AbstractAlgorithmR
     Evaluation<DoubleSolution> evaluation = new SequentialEvaluation<>();
 
     algorithm =
-        new NSGAII<>(
+        new SSNSGAII<DoubleSolution>(
             problem,
             evaluation,
             initialSolutionsCreation,
