@@ -372,7 +372,7 @@ public class SteadyStateMergeNonDominatedSortRanking<S extends Solution<?>> impl
     }
   }
 
-  public Ranking<S> steadyStateRanking(int iter) {
+  public Ranking<S> steadyStateRanking() {
     int[] ranking = steadyStateSort(updatedSolutionIndex);
     createRankedSubPopulations(bsManager.getLastRank(), n, ranking);
     return this;
