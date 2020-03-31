@@ -39,6 +39,29 @@ public class MNDSBitsetManager_SS {
 		cleanBitset(newSol, 1, 0);
 	}
 
+	public int getStoredRank(int solution) {
+		return ranking[solution];
+	}
+
+	public int checkNullBitsets() {
+		for (int solId = 0; solId < nSols; solId++)
+			if (bitsets[solId] == null)
+				return solId;
+		return -1;
+	}
+
+	public void copyBitset(MNDSBitsetManager_SS src, int srcIndex, int newIndex) {
+		int fw = src.bsRanges[srcIndex][FIRST_WORD_RANGE];
+		int lw = src.bsRanges[srcIndex][LAST_WORD_RANGE];
+		bsRanges[newIndex][FIRST_WORD_RANGE] = fw;
+		bsRanges[newIndex][LAST_WORD_RANGE] = lw;
+		bitsets[newIndex] = new long[nWords];
+		ranking[newIndex] = src.ranking[srcIndex];
+		if (fw <= lw) {
+			System.arraycopy(src.bitsets[srcIndex], fw, bitsets[newIndex], fw, lw - fw + 1);
+		}
+	}
+
 	private int cleanBitset(int solutionId, int firstWord, int lastWord) {
 		if (firstWord > lastWord) {
 			ranking[solutionId] = 0;
@@ -51,9 +74,7 @@ public class MNDSBitsetManager_SS {
 		if (bsRanges[solutionId][FIRST_WORD_RANGE] != firstWord || bsRanges[solutionId][LAST_WORD_RANGE] != lastWord) {
 			long[] bs = new long[nWords];
 			System.arraycopy(bitsets[solutionId], firstWord, bs, firstWord, size);
-			bitsets[solutionId] = new long[nWords];
-			System.arraycopy(bs, firstWord, bitsets[solutionId], firstWord, size);
-			bs = null;
+			bitsets[solutionId] = bs;
 			bsRanges[solutionId][FIRST_WORD_RANGE] = firstWord;
 			bsRanges[solutionId][LAST_WORD_RANGE] = lastWord;
 		}
@@ -63,6 +84,19 @@ public class MNDSBitsetManager_SS {
 	public boolean updatePopulation(int[] solutionList) {
 		boolean existDominance = false;
 		for (int solId = 0; solId < nSols; solId++) {
+			if ((bitsets[solId][newSolWordIndex] & newSolSet1) != 0) {
+				bitsets[solId][newSolWordIndex] &= newSolClean; //borrado bit asociado a la solucion eliminada
+				//TODO REVISAR: Puede que el coste de compactar no compense. Esto es un intento de mantener los bitset lo mas pequeños posible
+				if (bitsets[solId][newSolWordIndex] == 0) { // compactacion
+					int fw = bsRanges[solId][FIRST_WORD_RANGE];
+					int lw = bsRanges[solId][LAST_WORD_RANGE];
+					while (fw <= lw && 0 == bitsets[solId][fw])
+						fw++;
+					while (fw <= lw && 0 == bitsets[solId][lw])
+						lw--;
+					cleanBitset(solId, fw, lw); //TODO realmente es necesario compactar??
+				}
+			}
 			if (solutionList[solId] == nObjs) { // newSol dominates solutionList[solId]
 				if (null == bitsets[solId]) {
 					bitsets[solId] = new long[nWords];
@@ -86,20 +120,10 @@ public class MNDSBitsetManager_SS {
 				if (bsRanges[newSol][FIRST_WORD_RANGE] > wordIndex)
 					bsRanges[newSol][FIRST_WORD_RANGE] = wordIndex;
 			}
-			if (bitsets[solId] != null && (bitsets[solId][newSolWordIndex] & newSolSet1) != 0) {
-				bitsets[solId][newSolWordIndex] &= newSolClean; //borrado bit asociado a la solucion eliminada
-				if (bitsets[solId][newSolWordIndex] == 0) { // compactacion
-					int fw = bsRanges[solId][FIRST_WORD_RANGE];
-					int lw = bsRanges[solId][LAST_WORD_RANGE];
-					while (fw <= lw && 0 == bitsets[solId][fw])
-						fw++;
-					while (fw <= lw && 0 == bitsets[solId][lw])
-						lw--;
-					cleanBitset(solId, fw, lw);
-				}
-			}
 			existDominance |= bsRanges[solId][LAST_WORD_RANGE] >= bsRanges[solId][FIRST_WORD_RANGE];
 		}
+		existDominance |= bsRanges[newSol][LAST_WORD_RANGE] >= bsRanges[newSol][FIRST_WORD_RANGE];
+
 		return existDominance;
 	}
 
@@ -211,7 +235,6 @@ public class MNDSBitsetManager_SS {
 			bsRanges[solutionId][FIRST_WORD_RANGE] = Integer.MAX_VALUE;
 			return false;
 		} else if (wordIndex == incBsFstWord) { //only 1 word in common
-			bitsets[solutionId] = new long[nWords];// ahora puece crecer y menguar --> tamaño maximo new long[wordIndex + 1];
 			long intersection = incrementalBitset[incBsFstWord] & ~(WORD_MASK << solutionId);
 			if (intersection != 0) {
 				bsRanges[solutionId][FIRST_WORD_RANGE] = wordIndex;
@@ -250,10 +273,13 @@ public class MNDSBitsetManager_SS {
 		ranking = new int[nSolutions];
 		wordRanking = new int[nWords];
 		bitsets = new long[nSolutions][];
+		for (int solutionId = 0; solutionId < nSolutions; solutionId++)
+			bitsets[solutionId] = new long[nWords];
 		bsRanges = new int[nSolutions][2];
 		incrementalBitset = new long[nWords];
 		incBsLstWord = 0;
 		incBsFstWord = Integer.MAX_VALUE;
 	}
 }
+
 

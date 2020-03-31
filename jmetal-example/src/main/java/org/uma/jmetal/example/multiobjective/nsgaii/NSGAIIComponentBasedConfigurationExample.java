@@ -59,10 +59,11 @@ public class NSGAIIComponentBasedConfigurationExample extends AbstractAlgorithmR
 
     int populationSize = 10;
     int offspringPopulationSize = 1;
-    int maxNumberOfEvaluations = 250;
+    int maxNumberOfEvaluations = 25000;
 
     DensityEstimator<DoubleSolution> densityEstimator = new CrowdingDistanceDensityEstimator<>();
-    SteadyStateMergeNonDominatedSortRanking<DoubleSolution> ranking = new SteadyStateMergeNonDominatedSortRanking<>(populationSize+1, 2);
+    SteadyStateMergeNonDominatedSortRanking<DoubleSolution> ranking =
+            new SteadyStateMergeNonDominatedSortRanking<>(populationSize*2, 2);
 
     InitialSolutionsCreation<DoubleSolution> initialSolutionsCreation =
         new RandomSolutionsCreation<>(problem, populationSize);

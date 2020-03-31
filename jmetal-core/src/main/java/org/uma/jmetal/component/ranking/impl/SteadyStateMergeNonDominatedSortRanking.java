@@ -44,11 +44,30 @@ public class SteadyStateMergeNonDominatedSortRanking<S extends Solution<?>> impl
   private int[] ranking;
   private double[][] population, initialPopulation;
   private double[][] work; // Work array
+  private ArrayList<Dup> duplicatedSolutions;
   private MNDSBitsetManager_SS bsManager;
   private Vector<S> solutionsList;
-  private int updatedSolutionIndex;
+  private int updatedSolutionIndex, initialPopulationSize;
   private List<ArrayList<S>> rankedSubPopulations;
-  //TODO SOLO PARA PRUEBAS, QUITAR!  private PopulationPrinter printer;
+
+  private class Dup {
+    public Dup(double[] srcSol, double sIDix, int dupOrdix) {
+      solSrc = srcSol;
+      solDup = new double[NumberOfix];
+      System.arraycopy(solSrc, 0, solDup, 0, m);
+      solDup[SolIDix] = sIDix;
+      solDup[ORDINALix] = dupOrdix;
+
+    }
+
+    public int updateRanking() {
+      solDup[RANKINGix] = solSrc[RANKINGix];
+      return (int) solDup[RANKINGix];
+    }
+
+    double[] solSrc;
+    double[] solDup;
+  }
 
   //////////////////////////////////////////////
   //////////////////////////////////////////////
@@ -72,17 +91,34 @@ public class SteadyStateMergeNonDominatedSortRanking<S extends Solution<?>> impl
 
     n = populationSize;
     m = nObjectives;
+    initialPopulationSize = n;
     SolIDix = m;
     ORDINALix = SolIDix + 1;
     RANKINGix = ORDINALix + 1;
     NumberOfix = RANKINGix + 1;
     _nonDomEarlyDetection = 0;
-    population = new double[n + 1][];
-    work = new double[n + 1][];
-    initialPopulation = new double[n + 1][];
-    initialPopulation[n] = new double[NumberOfix];
-    updatedSolutionIndex = n;
-    ranking = new int[n + 1];
+    ranking = new int[n];
+    population = new double[n][];
+    work = new double[n][];
+    duplicatedSolutions = new ArrayList<Dup>(n);
+
+    bsManager = new MNDSBitsetManager_SS(n, m);
+  }
+
+  private void initializeSteadySteateObjects(int popSize) {
+    n = popSize;
+    initialPopulationSize = n;
+    ranking = new int[n];
+    population = new double[n][];
+    duplicatedSolutions = new ArrayList<Dup>(n);
+    bsManager = new MNDSBitsetManager_SS(n, m);
+
+    population = new double[n][];
+    work = new double[n][];
+    initialPopulation = new double[n][];
+
+    solutionsList = new Vector<S>(n);
+    solutionsList.setSize(n);
   }
 
   private void initializeObjects(double[][] populationData) {
@@ -92,6 +128,7 @@ public class SteadyStateMergeNonDominatedSortRanking<S extends Solution<?>> impl
     updatedSolutionIndex = n;
     bsManager = new MNDSBitsetManager_SS(n + 1, m);
   }
+
 
   final public long getNumberOfEarlyDetections() {
     return _nonDomEarlyDetection;
@@ -152,19 +189,34 @@ public class SteadyStateMergeNonDominatedSortRanking<S extends Solution<?>> impl
     return false;
   }
 
-  private void sortFirstObjective() {
+  private boolean sortFirstObjective() {
+    int p = 0, iDup = n;
     System.arraycopy(population, 0, work, 0, n);
     merge_sort(population, work, 0, n, 0, m);
-    System.arraycopy(work, 0, population, 0, n);
-    for (int p = 1; p < n; p++) {
-      work[p][ORDINALix] = p;
-      population[p] = work[p];
+    population[0] = work[0];
+    population[0][ORDINALix] = 0;
+    for (int q = 1; q < n; q++) {
+      if (0 != compare_lex(population[p], work[q], 0, m)) {
+        p++;
+        population[p] = work[q];
+        population[p][ORDINALix] = p;
+      } else {
+        duplicatedSolutions.add(new Dup(population[p], work[q][SolIDix], --iDup));
+      }
     }
+    for (Dup duplicated : duplicatedSolutions) {
+      iDup = (int) duplicated.solDup[ORDINALix];
+      population[iDup] = duplicated.solDup;
+    }
+
+    n = p + 1;
+    return n > 1;
   }
 
   private boolean sortSecondObjective() {
     int p, solutionId, rank;
     boolean dominance = false;
+    System.arraycopy(population, 0, work, 0, n); //necesario cuando hay duplicadas
     merge_sort(population, work, 0, n, 1, 2);
     System.arraycopy(work, 0, population, 0, n);
     for (p = 0; p < n; p++) {
@@ -195,7 +247,6 @@ public class SteadyStateMergeNonDominatedSortRanking<S extends Solution<?>> impl
             ranking[(int) population[p][SolIDix]] = rank;
           }
         }
-        //TODO SOLO PARA PRUEBAS, QUITAR!  printer.updateObjective(obj);
         continue;
       }
       System.arraycopy(work, 0, population, 0, n);
@@ -219,71 +270,111 @@ public class SteadyStateMergeNonDominatedSortRanking<S extends Solution<?>> impl
     }
   }
 
-  //TODO: PASAR INFORMACION DE DUPLICADOS AL BS MANAGER!!!!
-  // main
-  final public int[] sort(double[][] populationData) {
+  //
+  private void updateDuplicated() {
+    for (Dup duplicated : duplicatedSolutions) {
+      int rank = duplicated.updateRanking();
+      int src = (int) duplicated.solSrc[ORDINALix];
+      int dup = (int) duplicated.solDup[ORDINALix];
+      int dupSid = (int) duplicated.solDup[SolIDix];
+      ranking[dupSid] = rank;
+      bsManager.copyBitset(bsManager, src, dup);
+    }
+    n = initialPopulationSize;
+  }
 
+  // main
+  final public int[] sort() {
     //INITIALIZATION
     _comparisonCounter = 0;
-    initializeObjects(populationData);
     //SORTING
-    sortFirstObjective();
-    if (sortSecondObjective()) {
-      sortRestOfObjectives();
+    if (sortFirstObjective()) {
+      if (sortSecondObjective()) {
+        sortRestOfObjectives();
+      }
     }
-    //Ordenamos la poblacion por el indice original de cada solucion
-    System.arraycopy(population, 0, initialPopulation, 0, n + 1);
-    merge_sort(population, initialPopulation, 0, n, SolIDix, SolIDix + 1);
-    n++; //a partir de ahora la poblacion tiene un elemento mas
+    updateDuplicated();
     return ranking;
   }
 
-  private void initializeSolutionsList(List<S> solutionSet, int[] ranking) {
+  private void initializeSolutionsList(List<S> solutionSet) {
     solutionsList = new Vector<S>(n);
     solutionsList.setSize(n);
-    int populationSize = solutionSet.size();
-    for (int i = 0; i < populationSize; i++) {
+    int sssize = solutionSet.size();
+    for (int i = 0; i < sssize; i++) {
       S solution = solutionSet.get(i);
-      solution.setAttribute(attributeId, ranking[i]);
-      int index = (int) initialPopulation[i][ORDINALix];
+      int index = (int) population[i][SolIDix];
       solution.setAttribute(SOLUTION_INDEX, index);
+      solution.setAttribute(rankAttr, (int) population[i][RANKINGix]);
       solutionsList.set(index, solution);
     }
   }
 
   @Override
   public Ranking<S> computeRanking(List<S> solutionSet) {
-    int populationSize = solutionSet.size();
-    for (int i = 0; i < populationSize; i++) {
-      initialPopulation[i] = new double[NumberOfix];
-      System.arraycopy(solutionSet.get(i).getObjectives(), 0, initialPopulation[i], 0, m);
-      initialPopulation[i][SolIDix] = i; // asignamos id a la solucion
+    for (int i = 0; i < n; i++) {
+      population[i] = new double[NumberOfix];
+      System.arraycopy(solutionSet.get(i).getObjectives(), 0, population[i], 0, m);
+      population[i][SolIDix] = i; // asignamos id a la solucion
     }
-    int ranking[] = sort(initialPopulation);
-    initializeSolutionsList(solutionSet, ranking);
-    createRankedSubPopulations(bsManager.getLastRank(), populationSize);
+    initializeSolutionsList(solutionSet);
 
+    int ranking[] = sort();
+    createRankedSubPopulations(bsManager.getLastRank(), solutionSet.size(), ranking);
     return this;
   }
 
-  private void createRankedSubPopulations(int lastRank, int populationSize) {
-    lastRank++;
-    rankedSubPopulations = new ArrayList<ArrayList<S>>(lastRank);
-    for (int r = rankedSubPopulations.size(); r <= lastRank; r++) {
-      rankedSubPopulations.add(new ArrayList<S>());
+  public void resizePopulation(List<S> solutionSet) {
+    int solSetSize = solutionSet.size();
+    initializeSteadySteateObjects(solSetSize + 1);
+    updatedSolutionIndex = n - 1;
+    for (int i = 0; i < updatedSolutionIndex; i++) {
+      population[i] = new double[NumberOfix];
+      System.arraycopy(solutionSet.get(i).getObjectives(), 0, population[i], 0, m);
+      population[i][SolIDix] = i; // asignamos id a la solucion
     }
-    Object rankAttr = attributeId;
-    for (int i = 0; i < populationSize; i++) {
-      S solution = solutionsList.get(i);
-      int rank = (int) solution.getAttribute(rankAttr);
-      rankedSubPopulations.get(rank).add(solution);
+
+    n--;
+    sort();
+    initialPopulation[updatedSolutionIndex] = new double[NumberOfix];
+    initialPopulation[updatedSolutionIndex][SolIDix] = updatedSolutionIndex;
+    initialPopulation[updatedSolutionIndex][ORDINALix] = updatedSolutionIndex;
+    population[updatedSolutionIndex] = initialPopulation[updatedSolutionIndex];
+
+    for (int i = 0; i < updatedSolutionIndex; i++) {
+      int ordix = (int) population[i][ORDINALix];
+      int solix = (int) population[i][SolIDix];
+      ranking[ordix] = (int) population[i][RANKINGix];
+      population[i][SolIDix] = ordix;
+      //initialize solution list
+      S solution = solutionSet.get(solix);
+      solution.setAttribute(SOLUTION_INDEX, ordix);
+      solution.setAttribute(rankAttr, ranking[ordix]);
+      solutionsList.set(ordix, solution);
+
+      initialPopulation[ordix] = population[i];
     }
   }
 
-  public Ranking<S> steadyStateRanking() {
-    steadyStateSort(updatedSolutionIndex);
-    solutionsList.get(updatedSolutionIndex).setAttribute(attributeId, ranking[updatedSolutionIndex]);
-    createRankedSubPopulations(bsManager.getLastRank(), n);
+  Object rankAttr = attributeId;
+
+  private void createRankedSubPopulations(int lastRank, int populationSize, int[] ranking) {
+    lastRank++;
+    rankedSubPopulations = new ArrayList<ArrayList<S>>(lastRank);
+    for (int r = rankedSubPopulations.size(); r < lastRank; r++) {
+      rankedSubPopulations.add(new ArrayList<S>());
+    }
+
+    for (int i = 0; i < populationSize; i++) {
+      S solution = solutionsList.get(i);
+      solution.setAttribute(rankAttr, ranking[i]);
+      rankedSubPopulations.get(ranking[i]).add(solution);
+    }
+  }
+
+  public Ranking<S> steadyStateRanking(int iter) {
+    int[] ranking = steadyStateSort(updatedSolutionIndex);
+    createRankedSubPopulations(bsManager.getLastRank(), n, ranking);
     return this;
   }
 
@@ -292,11 +383,8 @@ public class SteadyStateMergeNonDominatedSortRanking<S extends Solution<?>> impl
   }
 
   public void addSolution(S solution) {
-    System.arraycopy(population, 0, initialPopulation, 0, n);
-    merge_sort(population, initialPopulation, 0, n, ORDINALix, ORDINALix + 1);
-
     System.arraycopy(solution.getObjectives(), 0, initialPopulation[updatedSolutionIndex], 0, m);
-    initialPopulation[updatedSolutionIndex][ORDINALix] = updatedSolutionIndex;
+    initialPopulation[updatedSolutionIndex][RANKINGix] = 0;//reset ranking
     System.arraycopy(initialPopulation, 0, population, 0, n);
     bsManager.setNewSolution(updatedSolutionIndex);
     solution.setAttribute(SOLUTION_INDEX, updatedSolutionIndex);
@@ -305,34 +393,69 @@ public class SteadyStateMergeNonDominatedSortRanking<S extends Solution<?>> impl
 
   public void addSolution(double[] solution, int index) {
     System.arraycopy(solution, 0, initialPopulation[index], 0, m);
-    initialPopulation[index][ORDINALix] = initialPopulation[index][SolIDix];
     System.arraycopy(initialPopulation, 0, population, 0, n);
-    bsManager.setNewSolution(initialPopulation[index][ORDINALix]);
+    bsManager.setNewSolution(initialPopulation[index][SolIDix]);
+  }
+
+  private boolean[] getDuplicatedSols(double ordNewSol) {
+    boolean rankAssigned = false;
+    boolean[] dups = new boolean[n];
+    double[] newSol = initialPopulation[updatedSolutionIndex];
+    int solix = (int) newSol[SolIDix];
+    for (int p = 0; p < n; p++) {
+      int pix = (int) population[p][SolIDix];
+      if (pix != solix && 0 == compare_lex(population[p], newSol, 0, m)) {
+        dups[pix] = true;
+        if (!rankAssigned) {
+          rankAssigned = true;
+          bsManager.copyBitset(bsManager, (int) population[p][SolIDix], solix);
+          ranking[solix] = (int) population[p][RANKINGix];
+          newSol[RANKINGix] = population[p][RANKINGix];
+        }
+      }
+    }
+    if (!rankAssigned)
+      dups = null;
+    return dups;
   }
 
   public int[] steadyStateSort(double ordNewSol) {
     int dominanceModifications[] = new int[n];
     ranking = new int[n];
+    boolean[] dupSols = getDuplicatedSols(ordNewSol);
+
     System.arraycopy(population, 0, work, 0, n);
-    for (int p, obj = 0; obj < m; obj++) {
-      merge_sort(population, work, 0, n, obj, obj + 1);
+    for (
+
+            int p, obj = 0; obj < m; obj++) {
+      merge_sort(population, work, 0, n, obj, 0 == obj ? m : obj + 1);
       System.arraycopy(work, 0, population, 0, n);
-      for (p = 0; p < n && work[p][ORDINALix] != ordNewSol; p++) {
-        dominanceModifications[(int) work[p][ORDINALix]]--;
+      for (p = 0; p < n && work[p][SolIDix] != ordNewSol; p++) {
+        if (dupSols == null || !dupSols[(int) work[p][SolIDix]]) {
+          dominanceModifications[(int) work[p][SolIDix]]--;
+        }
       }
+
       for (p++; p < n; p++) {
-        dominanceModifications[(int) work[p][ORDINALix]]++;
+        if (dupSols == null || !dupSols[(int) work[p][SolIDix]]) {
+          dominanceModifications[(int) work[p][SolIDix]]++;
+        }
       }
     }
-    if (bsManager.updatePopulation(dominanceModifications)) {
-      for (int p = 0; p < n; p++) {
-        int rank = bsManager.computeSteadyStateRank((int) population[p][ORDINALix]);
-        ranking[(int) population[p][SolIDix]] = rank;
-        population[p][RANKINGix] = rank;
-      }
+
+    //if (bsManager.updatePopulation(dominanceModifications)) {
+    bsManager.updatePopulation(dominanceModifications);
+    for (int p = 0; p < n; p++) {
+      int rank = bsManager.computeSteadyStateRank((int) population[p][SolIDix]);
+      int six = (int) population[p][SolIDix];
+      ranking[six] = rank;
+      population[p][RANKINGix] = rank;
+      solutionsList.get(six).setAttribute(attributeId, rank);
     }
+    //}
     return ranking;
   }
+
   @Override
   public List<S> getSubFront(int rank) {
     if (rank >= rankedSubPopulations.size()) {

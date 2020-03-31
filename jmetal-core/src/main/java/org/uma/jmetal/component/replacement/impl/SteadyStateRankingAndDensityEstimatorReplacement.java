@@ -42,6 +42,7 @@ public class SteadyStateRankingAndDensityEstimatorReplacement<S extends Solution
       } else {
         resultList = sequentialTruncation(0, solutionList.size());
       }
+      ranking.resizePopulation(resultList);    // Reorganizar estructuras internas del MNDS
       return resultList;
     } else {
       ranking.addSolution(offspringList.get(0));
@@ -68,7 +69,6 @@ public class SteadyStateRankingAndDensityEstimatorReplacement<S extends Solution
       }
 
       if (found == false) {
-        int s = 4 ;
         throw new JMetalException("Solution to remove not found") ;
       }
 
