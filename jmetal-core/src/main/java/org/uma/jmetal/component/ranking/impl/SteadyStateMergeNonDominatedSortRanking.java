@@ -49,6 +49,7 @@ public class SteadyStateMergeNonDominatedSortRanking<S extends Solution<?>> impl
   private Vector<S> solutionsList;
   private int updatedSolutionIndex, initialPopulationSize;
   private List<ArrayList<S>> rankedSubPopulations;
+  //TODO SOLO PARA PRUEBAS, QUITAR!  private PopulationPrinter printer;
 
   private class Dup {
     public Dup(double[] srcSol, double sIDix, int dupOrdix) {
@@ -103,8 +104,12 @@ public class SteadyStateMergeNonDominatedSortRanking<S extends Solution<?>> impl
     duplicatedSolutions = new ArrayList<Dup>(n);
 
     bsManager = new MNDSBitsetManager_SS(n, m);
+    solutionsList = new Vector<S>(n);
+    solutionsList.setSize(n);
+    initialPopulation = new double[n][];
   }
 
+  /*
   private void initializeSteadySteateObjects(int popSize) {
     n = popSize;
     initialPopulationSize = n;
@@ -120,7 +125,7 @@ public class SteadyStateMergeNonDominatedSortRanking<S extends Solution<?>> impl
     solutionsList = new Vector<S>(n);
     solutionsList.setSize(n);
   }
-
+  */
   private void initializeObjects(double[][] populationData) {
     population = new double[n + 1][];
     System.arraycopy(populationData, 0, population, 0, n + 1);
@@ -321,39 +326,23 @@ public class SteadyStateMergeNonDominatedSortRanking<S extends Solution<?>> impl
 
     int ranking[] = sort();
     createRankedSubPopulations(bsManager.getLastRank(), solutionSet.size(), ranking);
+    prepareToAdd1();
     return this;
   }
 
-  public void resizePopulation(List<S> solutionSet) {
-    int solSetSize = solutionSet.size();
-    initializeSteadySteateObjects(solSetSize + 1);
-    updatedSolutionIndex = n - 1;
-    for (int i = 0; i < updatedSolutionIndex; i++) {
-      population[i] = new double[NumberOfix];
-      System.arraycopy(solutionSet.get(i).getObjectives(), 0, population[i], 0, m);
-      population[i][SolIDix] = i; // asignamos id a la solucion
-    }
-
-    n--;
-    sort();
-    initialPopulation[updatedSolutionIndex] = new double[NumberOfix];
-    initialPopulation[updatedSolutionIndex][SolIDix] = updatedSolutionIndex;
-    initialPopulation[updatedSolutionIndex][ORDINALix] = updatedSolutionIndex;
-    population[updatedSolutionIndex] = initialPopulation[updatedSolutionIndex];
-
-    for (int i = 0; i < updatedSolutionIndex; i++) {
-      int ordix = (int) population[i][ORDINALix];
+  private void prepareToAdd1() {
+    Vector<S> solutionsList2 = new Vector<S>(n);
+    solutionsList2.setSize(n);
+    for (int i = 0; i < n; i++) {
       int solix = (int) population[i][SolIDix];
-      ranking[ordix] = (int) population[i][RANKINGix];
+      int ordix = (int) population[i][ORDINALix];
+      S sol = solutionsList.get(solix);
+      sol.setAttribute(SOLUTION_INDEX, ordix);
+      solutionsList2.set(ordix, sol);
       population[i][SolIDix] = ordix;
-      //initialize solution list
-      S solution = solutionSet.get(solix);
-      solution.setAttribute(SOLUTION_INDEX, ordix);
-      solution.setAttribute(rankAttr, ranking[ordix]);
-      solutionsList.set(ordix, solution);
-
       initialPopulation[ordix] = population[i];
     }
+    solutionsList = solutionsList2;
   }
 
   Object rankAttr = attributeId;
@@ -443,16 +432,15 @@ public class SteadyStateMergeNonDominatedSortRanking<S extends Solution<?>> impl
       }
     }
 
-    //if (bsManager.updatePopulation(dominanceModifications)) {
-    bsManager.updatePopulation(dominanceModifications);
-    for (int p = 0; p < n; p++) {
-      int rank = bsManager.computeSteadyStateRank((int) population[p][SolIDix]);
-      int six = (int) population[p][SolIDix];
-      ranking[six] = rank;
-      population[p][RANKINGix] = rank;
-      solutionsList.get(six).setAttribute(attributeId, rank);
+    if (bsManager.updatePopulation(dominanceModifications)) {
+      for (int p = 0; p < n; p++) {
+        int rank = bsManager.computeSteadyStateRank((int) population[p][SolIDix]);
+        int six = (int) population[p][SolIDix];
+        ranking[six] = rank;
+        population[p][RANKINGix] = rank;
+        solutionsList.get(six).setAttribute(attributeId, rank);
+      }
     }
-    //}
     return ranking;
   }
 

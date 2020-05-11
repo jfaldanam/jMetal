@@ -27,6 +27,21 @@ public class SteadyStateRankingAndDensityEstimatorReplacement<S extends Solution
     this.ranking = ranking ;
   }
 
+  private S getRemovedSolution(List<S> jointPopulation, List<S> resultList){
+    S remSol = null;
+    for (S solution: jointPopulation) {
+      if (!resultList.contains(solution)) {
+        remSol = solution;
+        break ;
+      }
+    }
+    if (null == remSol) {
+      throw new JMetalException("Solution to remove not found") ;
+    }
+    return remSol;
+  }
+
+
   public List<S> replace(List<S> solutionList, List<S> offspringList) {
     if (firstTime == 0) {
       firstTime ++ ;
@@ -42,7 +57,7 @@ public class SteadyStateRankingAndDensityEstimatorReplacement<S extends Solution
       } else {
         resultList = sequentialTruncation(0, solutionList.size());
       }
-      ranking.resizePopulation(resultList);    // Reorganizar estructuras internas del MNDS
+      ranking.removeSolution(getRemovedSolution(jointPopulation, resultList));
       return resultList;
     } else {
       ranking.addSolution(offspringList.get(0));
@@ -58,20 +73,7 @@ public class SteadyStateRankingAndDensityEstimatorReplacement<S extends Solution
       List<S> jointPopulation = new ArrayList<>();
       jointPopulation.addAll(solutionList);
       jointPopulation.addAll(offspringList);
-
-      boolean found = false ;
-      for (S solution: jointPopulation) {
-        if (!resultList.contains(solution)) {
-          ranking.removeSolution(solution);
-          found = true ;
-          break ;
-        }
-      }
-
-      if (found == false) {
-        throw new JMetalException("Solution to remove not found") ;
-      }
-
+      ranking.removeSolution(getRemovedSolution(jointPopulation, resultList));
       return resultList ;
     }
   }

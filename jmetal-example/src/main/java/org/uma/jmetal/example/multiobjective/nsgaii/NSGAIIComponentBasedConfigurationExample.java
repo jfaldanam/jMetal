@@ -57,13 +57,15 @@ public class NSGAIIComponentBasedConfigurationExample extends AbstractAlgorithmR
 
     problem = ProblemUtils.<DoubleSolution>loadProblem(problemName);
 
-    int populationSize = 10;
+    JMetalRandom.getInstance().setSeed(1);
+
+    int populationSize = 100;
     int offspringPopulationSize = 1;
     int maxNumberOfEvaluations = 25000;
 
     DensityEstimator<DoubleSolution> densityEstimator = new CrowdingDistanceDensityEstimator<>();
     SteadyStateMergeNonDominatedSortRanking<DoubleSolution> ranking =
-            new SteadyStateMergeNonDominatedSortRanking<>(populationSize*2, 2);
+            new SteadyStateMergeNonDominatedSortRanking<>(populationSize, 2);
 
     InitialSolutionsCreation<DoubleSolution> initialSolutionsCreation =
         new RandomSolutionsCreation<>(problem, populationSize);
