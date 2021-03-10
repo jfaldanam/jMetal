@@ -22,7 +22,7 @@ public class AsynchronousJPPFBasedNSGAIIExample {
         MutationOperator<DoubleSolution> mutation;
         SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
         int populationSize = 100;
-        int maxEvaluations = 250;
+        int maxEvaluations = 25000;
 
         Problem<DoubleSolution> problem = new ZDT1();
 

@@ -1,9 +1,5 @@
 package org.uma.jmetal.parallel.asynchronous.algorithm.impl;
 
-
-import org.uma.jmetal.parallel.asynchronous.jppf.AbstractJPPFBasedNSGAII;
-import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
-import org.uma.jmetal.util.ranking.impl.MergeNonDominatedSortRanking;
 import org.uma.jmetal.experimental.componentbasedalgorithm.catalogue.replacement.Replacement;
 import org.uma.jmetal.experimental.componentbasedalgorithm.catalogue.replacement.impl.RankingAndDensityEstimatorReplacement;
 import org.uma.jmetal.experimental.componentbasedalgorithm.catalogue.termination.Termination;
@@ -11,31 +7,34 @@ import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.selection.SelectionOperator;
 import org.uma.jmetal.operator.selection.impl.BinaryTournamentSelection;
-import org.uma.jmetal.parallel.asynchronous.task.impl.SolutionTask;
+import org.uma.jmetal.parallel.asynchronous.jppf.AbstractJPPFBasedNSGAII;
+import org.uma.jmetal.parallel.asynchronous.task.ParallelTask;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
+import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
+import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.observable.Observable;
 import org.uma.jmetal.util.observable.impl.DefaultObservable;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
+import org.uma.jmetal.util.ranking.impl.MergeNonDominatedSortRanking;
+
 
 import java.util.*;
 import java.util.stream.IntStream;
 
-
 public class AsynchronousJPPFBasedNSGAII<S extends Solution<?>>
-        extends AbstractJPPFBasedNSGAII<SolutionTask<S>, S> {
+        extends AbstractJPPFBasedNSGAII<S> {
     private CrossoverOperator<S> crossover;
     private MutationOperator<S> mutation;
     private SelectionOperator<List<S>, S> selection;
     private Replacement<S> replacement;
-    private Termination termination ;
+    private Termination termination;
 
     private List<S> population = new ArrayList<>();
     private int populationSize;
     private int evaluations = 0;
-    private long initTime ;
+    private long initTime;
 
     private Map<String, Object> attributes;
     private Observable<Map<String, Object>> observable;
@@ -50,11 +49,9 @@ public class AsynchronousJPPFBasedNSGAII<S extends Solution<?>>
         this.crossover = crossover;
         this.mutation = mutation;
         this.populationSize = populationSize;
-        this.termination = termination ;
+        this.termination = termination;
 
-        selection =
-                new BinaryTournamentSelection<>(
-                        new RankingAndCrowdingDistanceComparator<>());
+        selection = new BinaryTournamentSelection<>(new RankingAndCrowdingDistanceComparator<>());
 
         replacement =
                 new RankingAndDensityEstimatorReplacement<S>(
@@ -62,8 +59,8 @@ public class AsynchronousJPPFBasedNSGAII<S extends Solution<?>>
                         new CrowdingDistanceDensityEstimator<S>(),
                         RankingAndDensityEstimatorReplacement.RemovalPolicy.oneShot);
 
-        attributes = new HashMap<>() ;
-        observable = new DefaultObservable<>("Asynchronous NSGAII observable") ;
+        attributes = new HashMap<>();
+        observable = new DefaultObservable<>("Asynchronous NSGAII observable");
     }
 
     @Override
@@ -87,22 +84,22 @@ public class AsynchronousJPPFBasedNSGAII<S extends Solution<?>>
     }
 
     @Override
-    public List<SolutionTask<S>> createInitialTasks() {
+    public List<ParallelTask<S>> createInitialTasks() {
         List<S> initialPopulation = new ArrayList<>();
-        List<SolutionTask<S>> initialTaskList = new LinkedList<>();
+        List<ParallelTask<S>> initialTaskList = new LinkedList<>();
         IntStream.range(0, populationSize)
                 .forEach(i -> initialPopulation.add(problem.createSolution()));
         initialPopulation.forEach(
                 solution -> {
                     int taskId = JMetalRandom.getInstance().nextInt(0, 1000);
-                    initialTaskList.add(new SolutionTask<>(taskId, solution));
+                    initialTaskList.add(ParallelTask.create(taskId, solution));
                 });
 
         return initialTaskList;
     }
 
     @Override
-    public void processComputedTask(SolutionTask<S> task) {
+    public void processComputedTask(ParallelTask<S> task) {
         evaluations++;
         if (population.size() < populationSize) {
             population.add(task.getContents());
@@ -116,7 +113,7 @@ public class AsynchronousJPPFBasedNSGAII<S extends Solution<?>>
     }
 
     @Override
-    public SolutionTask<S> createNewTask() {
+    public ParallelTask<S> createNewTask() {
         if (population.size() > 2) {
             List<S> parents = new ArrayList<>(2);
             parents.add(selection.execute(population));
@@ -126,9 +123,9 @@ public class AsynchronousJPPFBasedNSGAII<S extends Solution<?>>
 
             mutation.execute(offspring.get(0));
 
-            return new SolutionTask<>(0, (S) offspring.get(0));
+            return ParallelTask.create(0, (S) offspring.get(0));
         } else {
-            return new SolutionTask<>(0, problem.createSolution());
+            return ParallelTask.create(0, problem.createSolution());
         }
     }
 
@@ -139,7 +136,7 @@ public class AsynchronousJPPFBasedNSGAII<S extends Solution<?>>
 
     @Override
     public void run() {
-        initTime = System.currentTimeMillis() ;
+        initTime = System.currentTimeMillis();
         super.run();
         jppfClient.close();
     }
@@ -150,6 +147,6 @@ public class AsynchronousJPPFBasedNSGAII<S extends Solution<?>>
     }
 
     public Observable<Map<String, Object>> getObservable() {
-        return observable ;
+        return observable;
     }
 }

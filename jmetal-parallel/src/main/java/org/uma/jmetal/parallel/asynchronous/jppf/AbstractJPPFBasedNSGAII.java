@@ -2,25 +2,21 @@ package org.uma.jmetal.parallel.asynchronous.jppf;
 
 import org.jppf.JPPFException;
 import org.jppf.client.JPPFClient;
-
-
+import org.uma.jmetal.parallel.asynchronous.algorithm.AsynchronousParallelAlgorithm;
 import org.uma.jmetal.parallel.asynchronous.task.ParallelTask;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.parallel.asynchronous.algorithm.AsynchronousParallelAlgorithm;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-
-public abstract class AbstractJPPFBasedNSGAII<T extends ParallelTask<S>, S extends Solution<?>>
-        implements AsynchronousParallelAlgorithm<T,S> {
+public abstract class AbstractJPPFBasedNSGAII<S extends Solution<?>>
+        implements AsynchronousParallelAlgorithm<ParallelTask<S>, List<S>> {
 
     protected Problem<S> problem;
 
-    private BlockingQueue<T> completedTaskQueue;
+    private BlockingQueue<ParallelTask<S>> completedTaskQueue;
 
     protected final JPPFClient jppfClient;
     private final JPPFJobManager<S> jobManager;
@@ -28,23 +24,22 @@ public abstract class AbstractJPPFBasedNSGAII<T extends ParallelTask<S>, S exten
     public AbstractJPPFBasedNSGAII(Problem<S> problem) {
         this.completedTaskQueue = new LinkedBlockingQueue<>();
 
-        this.problem = problem ;
+        this.problem = problem;
 
         jppfClient = new JPPFClient();
         jobManager = new JPPFJobManager<>(jppfClient, problem, this);
     }
 
-
     @Override
-    public void submitInitialTasks(List<T> tasks) {
+    public void submitInitialTasks(List<ParallelTask<S>> tasks) {
         tasks.forEach(this::submitTask);
     }
 
     @Override
-    public T waitForComputedTask() {
-        T evaluatedTask = null;
+    public ParallelTask<S> waitForComputedTask() {
+        ParallelTask<S> evaluatedTask = null;
         try {
-            evaluatedTask = (T) completedTaskQueue.take();
+            evaluatedTask = completedTaskQueue.take();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -52,10 +47,10 @@ public abstract class AbstractJPPFBasedNSGAII<T extends ParallelTask<S>, S exten
     }
 
     @Override
-    public abstract void processComputedTask(T task);
+    public abstract void processComputedTask(ParallelTask<S> task);
 
     @Override
-    public void submitTask(T task) {
+    public void submitTask(ParallelTask<S> task) {
         try {
             jobManager.executeJob(task);
         } catch (JPPFException e) {
@@ -63,21 +58,21 @@ public abstract class AbstractJPPFBasedNSGAII<T extends ParallelTask<S>, S exten
         }
     }
 
-    public void completedTaskToQueue(T task) {
+    public void completedTaskToQueue(ParallelTask<S> task) {
         completedTaskQueue.add(task);
     }
 
     @Override
-    public abstract T createNewTask();
+    public abstract ParallelTask<S> createNewTask();
 
     @Override
-    public boolean thereAreInitialTasksPending(List<T> tasks) {
+    public boolean thereAreInitialTasksPending(List<ParallelTask<S>> tasks) {
         return tasks.size() > 0;
     }
 
     @Override
-    public T getInitialTask(List<T> tasks) {
-        T initialTask = tasks.get(0);
+    public ParallelTask<S> getInitialTask(List<ParallelTask<S>> tasks) {
+        ParallelTask<S> initialTask = tasks.get(0);
         tasks.remove(0);
         return initialTask;
     }
