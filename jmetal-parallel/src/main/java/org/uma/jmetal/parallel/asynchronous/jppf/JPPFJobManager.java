@@ -11,13 +11,17 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 
 import java.util.List;
-
+/**
+ * Class to manage JPPF jobs.
+ *
+ * @author Jose Francisco Aldana Martin <jfaldanam@gmail.com>
+ */
 public class JPPFJobManager<S extends Solution<?>> {
     private final JPPFClient jppfClient;
     private Problem problem;
-    private AbstractJPPFBasedNSGAII algorithm;
+    private AbstractJPPFBasedAlgorithm algorithm;
 
-    public JPPFJobManager(JPPFClient jppfClient, Problem problem, AbstractJPPFBasedNSGAII algorithm) {
+    public JPPFJobManager(JPPFClient jppfClient, Problem problem, AbstractJPPFBasedAlgorithm algorithm) {
         this.jppfClient = jppfClient;
         this.problem = problem;
         this.algorithm = algorithm;

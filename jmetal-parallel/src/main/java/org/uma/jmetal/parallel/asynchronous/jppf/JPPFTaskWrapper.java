@@ -5,6 +5,11 @@ import org.uma.jmetal.parallel.asynchronous.task.ParallelTask;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 
+/**
+ * Class to wrap a {@link ParallelTask} to be accepted as a {@link org.jppf.node.protocol.AbstractTask}.
+ *
+ * @author Jose Francisco Aldana Martin <jfaldanam@gmail.com>
+ */
 public class JPPFTaskWrapper<S extends Solution<?>> extends AbstractTask<ParallelTask> {
     private static final long serialVersionUID = 1L;
     private ParallelTask task;

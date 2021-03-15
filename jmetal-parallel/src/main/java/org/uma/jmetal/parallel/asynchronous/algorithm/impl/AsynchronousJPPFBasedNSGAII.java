@@ -7,7 +7,7 @@ import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.selection.SelectionOperator;
 import org.uma.jmetal.operator.selection.impl.BinaryTournamentSelection;
-import org.uma.jmetal.parallel.asynchronous.jppf.AbstractJPPFBasedNSGAII;
+import org.uma.jmetal.parallel.asynchronous.jppf.AbstractJPPFBasedAlgorithm;
 import org.uma.jmetal.parallel.asynchronous.task.ParallelTask;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
@@ -22,9 +22,13 @@ import org.uma.jmetal.util.ranking.impl.MergeNonDominatedSortRanking;
 
 import java.util.*;
 import java.util.stream.IntStream;
-
+/**
+ * NSGA-II implementation to run asynchronously on a JPPF grid
+ *
+ * @author Jose Francisco Aldana Martin <jfaldanam@gmail.com>
+ */
 public class AsynchronousJPPFBasedNSGAII<S extends Solution<?>>
-        extends AbstractJPPFBasedNSGAII<S> {
+        extends AbstractJPPFBasedAlgorithm<S> {
     private CrossoverOperator<S> crossover;
     private MutationOperator<S> mutation;
     private SelectionOperator<List<S>, S> selection;

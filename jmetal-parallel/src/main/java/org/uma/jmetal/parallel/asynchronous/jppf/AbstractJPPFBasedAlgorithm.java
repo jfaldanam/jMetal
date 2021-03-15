@@ -11,7 +11,12 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public abstract class AbstractJPPFBasedNSGAII<S extends Solution<?>>
+/**
+ * Base abstract class to implement an algorithm based on JPPF
+ *
+ * @author Jose Francisco Aldana Martin <jfaldanam@gmail.com>
+ */
+public abstract class AbstractJPPFBasedAlgorithm<S extends Solution<?>>
         implements AsynchronousParallelAlgorithm<ParallelTask<S>, List<S>> {
 
     protected Problem<S> problem;
@@ -21,7 +26,7 @@ public abstract class AbstractJPPFBasedNSGAII<S extends Solution<?>>
     protected final JPPFClient jppfClient;
     private final JPPFJobManager<S> jobManager;
 
-    public AbstractJPPFBasedNSGAII(Problem<S> problem) {
+    public AbstractJPPFBasedAlgorithm(Problem<S> problem) {
         this.completedTaskQueue = new LinkedBlockingQueue<>();
 
         this.problem = problem;

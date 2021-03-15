@@ -7,6 +7,7 @@ import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.operator.selection.SelectionOperator;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousJPPFBasedNSGAII;
+import org.uma.jmetal.parallel.synchronous.SparkEvaluation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -15,7 +16,11 @@ import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
 import java.util.List;
-
+/**
+ * Class to configure and run the NSGA-II algorithm using a JPPF grid.
+ *
+ * @author Jose Francisco Aldana Martin <jfaldanam@gmail.com>
+ */
 public class AsynchronousJPPFBasedNSGAIIExample {
     public static void main(String[] args) {
         CrossoverOperator<DoubleSolution> crossover;
