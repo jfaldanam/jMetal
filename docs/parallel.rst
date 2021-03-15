@@ -105,7 +105,7 @@ The current structure of the `jmetal-parallel` sub-module is the following:
                   ├── AsynchronousMultiThreadedGeneticAlgorithm
                   └── AsynchronousMultiThreadedNSGAII
           ├── jppf
-              ├── AbstractJPPFBasedNSGAII
+              ├── AbstractJPPFBasedAlgorithm
               ├── JPPFJobManager
               └── JPPFTaskWrapper
           ├── multithreaded
