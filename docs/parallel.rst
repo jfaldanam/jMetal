@@ -4,8 +4,8 @@ Sub-module jmetal-parallel
 ==========================
 
 :Author: Antonio J. Nebro
-:Version: 1.0
-:Date: 2020-14-09
+:Version: 1.1
+:Date: 2021-15-03
 
 This section describes the contents of the `jmetal-parallel` submodule. 
 
@@ -76,6 +76,19 @@ We studied this issue in: `J.J. Durillo, A.J. Nebro, F. Luna, E. Alba A Study of
 
 The `jmetal-parallel` sub-module contains an `AsynchronousParallelAlgorithm <https://github.com/jMetal/jMetal/blob/master/jmetal-parallel/src/main/java/org/uma/jmetal/parallel/asynchronous/algorithm/AsynchronousParallelAlgorithm.java>`_ interface and a multi-threaded implementation of it based on the master-worker scheme, which is applied in two classes: `AsynchronousMultiThreadedGeneticAlgorithm <https://github.com/jMetal/jMetal/blob/master/jmetal-parallel/src/main/java/org/uma/jmetal/parallel/asynchronous/algorithm/impl/AsynchronousMultiThreadedGeneticAlgorithm.java>`_ and `AsynchronousMultiThreadedNSGAII <https://github.com/jMetal/jMetal/blob/master/jmetal-parallel/src/main/java/org/uma/jmetal/parallel/asynchronous/algorithm/impl/AsynchronousMultiThreadedNSGAII.java>`_.
 
+Asynchronous parallelism with JPPF
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+`JPPF<https://jppf.org/>`_ is a framework that enables applications to scale from a single machine to a distributed grid of machines. This makes it very easy to deploy our algorithm into a cluster of machines, and take advantage of their combined number of cores.
+
+To deploy a basic JPPF grid, the following steps are necessary.
+
+* `Download the necessary software. <https://www.jppf.org/doc/6.2/index.php?title=A_first_taste_of_JPPF#Required_software>`_
+* `Start a master. <https://www.jppf.org/doc/6.2/index.php?title=A_first_taste_of_JPPF#Step_1:_start_a_server>`_
+* `Start at least one worker. <https://www.jppf.org/doc/6.2/index.php?title=A_first_taste_of_JPPF#Step_2:_start_a_node>`_
+
+Once the grid is set up, just running `AsynchronousJPPFBasedNSGAIIExample<jmetal-parallel/src/main/java/org/uma/jmetal/parallel/example/AsynchronousJPPFBasedNSGAIIExample.java>`_ will connect to the master and start the execution in all nodes.
+
+An implementation of NSGA-II utilizing JPPF can be found at `AsynchronousJPPFBasedNSGAII<jmetal-parallel/src/main/java/org/uma/jmetal/parallel/asynchronous/algorithm/impl/AsynchronousJPPFBasedNSGAII.java>`_.
 
 Module contents
 ---------------
@@ -88,8 +101,13 @@ The current structure of the `jmetal-parallel` sub-module is the following:
       ├── asynchronous
           ├── algorithm
               ├── impl
+                  ├── AsynchronousJPPFBasedNSGAII
                   ├── AsynchronousMultiThreadedGeneticAlgorithm
                   └── AsynchronousMultiThreadedNSGAII
+          ├── jppf
+              ├── AbstractJPPFBasedNSGAII
+              ├── JPPFJobManager
+              └── JPPFTaskWrapper
           ├── multithreaded
               ├── Master
               └── Worker
@@ -98,6 +116,7 @@ The current structure of the `jmetal-parallel` sub-module is the following:
           ├── SparkEvaluation
           └── SparkSolutionListEvaluator      
       └── example
+          ├── AsynchronousJPPFBasedNSGAIIExample
           ├── AsynchronousMasterWorkerBasedNSGAIIExample
           ├── AsynchronousMultiThreadedGeneticAlgorithmExample
           ├── SynchronousNSGAIIWithSparkExample
