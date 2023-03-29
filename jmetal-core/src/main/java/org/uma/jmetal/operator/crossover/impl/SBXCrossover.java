@@ -1,16 +1,15 @@
 package org.uma.jmetal.operator.crossover.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.solution.util.repairsolution.RepairDoubleSolution;
-import org.uma.jmetal.solution.util.repairsolution.impl.RepairDoubleSolutionWithBoundValue;
+import org.uma.jmetal.solution.doublesolution.repairsolution.RepairDoubleSolution;
+import org.uma.jmetal.solution.doublesolution.repairsolution.impl.RepairDoubleSolutionWithBoundValue;
 import org.uma.jmetal.util.bounds.Bounds;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.pseudorandom.RandomGenerator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class allows to apply a SBX crossover operator using two parent solutions (Double encoding).
@@ -25,21 +24,26 @@ import java.util.List;
  */
 @SuppressWarnings("serial")
 public class SBXCrossover implements CrossoverOperator<DoubleSolution> {
-  /** EPS defines the minimum difference allowed between real values */
-  private static final double EPS = 1.0e-14;
 
+  /**
+   * EPS defines the minimum difference allowed between real values
+   */
+  private static final double EPS = 1.0e-14;
   private double distributionIndex;
   private double crossoverProbability;
   private RepairDoubleSolution solutionRepair;
-
   private RandomGenerator<Double> randomGenerator;
 
-  /** Constructor */
+  /**
+   * Constructor
+   */
   public SBXCrossover(double crossoverProbability, double distributionIndex) {
     this(crossoverProbability, distributionIndex, new RepairDoubleSolutionWithBoundValue());
   }
 
-  /** Constructor */
+  /**
+   * Constructor
+   */
   public SBXCrossover(
       double crossoverProbability,
       double distributionIndex,
@@ -51,7 +55,9 @@ public class SBXCrossover implements CrossoverOperator<DoubleSolution> {
         randomGenerator);
   }
 
-  /** Constructor */
+  /**
+   * Constructor
+   */
   public SBXCrossover(
       double crossoverProbability, double distributionIndex, RepairDoubleSolution solutionRepair) {
     this(
@@ -61,7 +67,9 @@ public class SBXCrossover implements CrossoverOperator<DoubleSolution> {
         () -> JMetalRandom.getInstance().nextDouble());
   }
 
-  /** Constructor */
+  /**
+   * Constructor
+   */
   public SBXCrossover(
       double crossoverProbability,
       double distributionIndex,
@@ -79,24 +87,26 @@ public class SBXCrossover implements CrossoverOperator<DoubleSolution> {
 
   /* Getters */
   @Override
-  public double getCrossoverProbability() {
+  public double crossoverProbability() {
     return crossoverProbability;
   }
 
-  public double getDistributionIndex() {
+  public double distributionIndex() {
     return distributionIndex;
   }
 
   /* Setters */
-  public void setCrossoverProbability(double probability) {
+  public void crossoverProbability(double probability) {
     this.crossoverProbability = probability;
   }
 
-  public void setDistributionIndex(double distributionIndex) {
+  public void distributionIndex(double distributionIndex) {
     this.distributionIndex = distributionIndex;
   }
 
-  /** Execute() method */
+  /**
+   * Execute() method
+   */
   @Override
   public List<DoubleSolution> execute(List<DoubleSolution> solutions) {
     Check.notNull(solutions);
@@ -105,7 +115,9 @@ public class SBXCrossover implements CrossoverOperator<DoubleSolution> {
     return doCrossover(crossoverProbability, solutions.get(0), solutions.get(1));
   }
 
-  /** doCrossover method */
+  /**
+   * doCrossover method
+   */
   public List<DoubleSolution> doCrossover(
       double probability, DoubleSolution parent1, DoubleSolution parent2) {
     List<DoubleSolution> offspring = new ArrayList<DoubleSolution>(2);
@@ -184,12 +196,12 @@ public class SBXCrossover implements CrossoverOperator<DoubleSolution> {
   }
 
   @Override
-  public int getNumberOfRequiredParents() {
+  public int numberOfRequiredParents() {
     return 2;
   }
 
   @Override
-  public int getNumberOfGeneratedChildren() {
+  public int numberOfGeneratedChildren() {
     return 2;
   }
 }

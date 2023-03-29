@@ -1,5 +1,11 @@
 package org.uma.jmetal.util.legacy.qualityindicator.impl.hypervolume.impl;
 
+import java.io.FileNotFoundException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.comparator.HypervolumeContributionComparator;
 import org.uma.jmetal.util.errorchecking.Check;
@@ -8,9 +14,6 @@ import org.uma.jmetal.util.legacy.front.util.FrontNormalizer;
 import org.uma.jmetal.util.legacy.front.util.FrontUtils;
 import org.uma.jmetal.util.legacy.qualityindicator.impl.hypervolume.Hypervolume;
 import org.uma.jmetal.util.solutionattribute.impl.HypervolumeContributionAttribute;
-
-import java.io.FileNotFoundException;
-import java.util.*;
 
 /**
  * This class implements the hypervolume indicator developed by the WFG
@@ -563,7 +566,7 @@ public class WFGHypervolume<S extends Solution<?>> extends Hypervolume<S> {
     org.uma.jmetal.util.legacy.front.Front invertedFront;
     invertedFront = FrontUtils.getInvertedFront(front);
 
-    int numberOfObjectives = referenceFront.getPoint(0).getDimension();
+    int numberOfObjectives = referenceFront.getPoint(0).dimension();
 
     // STEP4. The hypervolume (control is passed to the Java version of Zitzler
     // code)
@@ -572,7 +575,7 @@ public class WFGHypervolume<S extends Solution<?>> extends Hypervolume<S> {
   }
 
   @Override
-  public String getDescription() {
+  public String description() {
     return "PISA implementation of the hypervolume quality indicator";
   }
 
@@ -603,8 +606,8 @@ public class WFGHypervolume<S extends Solution<?>> extends Hypervolume<S> {
       for (int i = 0; i < invertedFront.getNumberOfPoints(); i++) {
         org.uma.jmetal.util.point.Point point = invertedFront.getPoint(i);
 
-        for (int j = 0; j < point.getDimension(); j++) {
-          point.setValue(j, point.getValue(j) + offsets[j]);
+        for (int j = 0; j < point.dimension(); j++) {
+          point.value(j, point.value(j) + offsets[j]);
         }
       }
 

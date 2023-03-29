@@ -1,5 +1,7 @@
 package org.uma.jmetal.algorithm.multiobjective.abyss;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import org.uma.jmetal.algorithm.AlgorithmBuilder;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
@@ -11,12 +13,9 @@ import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
-import org.uma.jmetal.util.comparator.ConstraintViolationComparator;
-import org.uma.jmetal.util.comparator.DominanceComparator;
 import org.uma.jmetal.util.comparator.MultiComparator;
-
-import java.util.Arrays;
-import java.util.Comparator;
+import org.uma.jmetal.util.comparator.constraintcomparator.impl.OverallConstraintViolationDegreeComparator;
+import org.uma.jmetal.util.comparator.dominanceComparator.impl.DominanceWithConstraintsComparator;
 
 /** @author Cristobal Barba */
 public class ABYSSBuilder implements AlgorithmBuilder<ABYSS> {
@@ -44,7 +43,7 @@ public class ABYSSBuilder implements AlgorithmBuilder<ABYSS> {
     double crossoverProbability = 0.9;
     double distributionIndex = 20.0;
     this.crossoverOperator = new SBXCrossover(crossoverProbability, distributionIndex);
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
+    double mutationProbability = 1.0 / problem.numberOfVariables();
     this.mutationOperator = new PolynomialMutation(mutationProbability, distributionIndex);
     int improvementRounds = 1;
     this.archive = (CrowdingDistanceArchive<DoubleSolution>) archive;
@@ -52,7 +51,7 @@ public class ABYSSBuilder implements AlgorithmBuilder<ABYSS> {
     Comparator<DoubleSolution> comparator =
         new MultiComparator<>(
             Arrays.asList(
-                new ConstraintViolationComparator<>(), new DominanceComparator<>()));
+                new OverallConstraintViolationDegreeComparator<>(), new DominanceWithConstraintsComparator<>()));
 
     this.improvementOperator =
         new BasicLocalSearch<>(

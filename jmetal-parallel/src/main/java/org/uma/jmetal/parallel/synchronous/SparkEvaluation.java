@@ -1,13 +1,12 @@
 package org.uma.jmetal.parallel.synchronous;
 
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.uma.jmetal.experimental.componentbasedalgorithm.catalogue.evaluation.Evaluation;
-import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.solution.Solution;
-
 import java.io.Serializable;
 import java.util.List;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.uma.jmetal.component.catalogue.common.evaluation.Evaluation;
+import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.solution.Solution;
 
 /**
  * Class implementing an {@link Evaluation} based on Apache Spark.
@@ -20,7 +19,7 @@ import java.util.List;
 public class SparkEvaluation<S extends Solution<?>> implements Evaluation<S>, Serializable {
   private int numberOfComputedEvaluations ;
   private Problem<S> problem ;
-  static private JavaSparkContext sparkContext ;
+  private JavaSparkContext sparkContext ;
 
   public SparkEvaluation(JavaSparkContext sparkContext, Problem<S> problem) {
     this.numberOfComputedEvaluations = 0 ;
@@ -36,7 +35,13 @@ public class SparkEvaluation<S extends Solution<?>> implements Evaluation<S>, Se
     return evaluatedSolutions.collect() ;
   }
 
-  public int getComputedEvaluations() {
+  @Override
+  public int computedEvaluations() {
     return numberOfComputedEvaluations ;
+  }
+
+  @Override
+  public Problem<S> problem() {
+    return problem;
   }
 }

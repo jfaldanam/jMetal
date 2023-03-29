@@ -1,10 +1,9 @@
 package org.uma.jmetal.problem.multiobjective;
 
-import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
 import java.util.Arrays;
 import java.util.List;
+import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /** Class representing problem Water */
 @SuppressWarnings("serial")
@@ -15,15 +14,14 @@ public class Water extends AbstractDoubleProblem {
 
   /** Constructor. Creates a default instance of the Water problem. */
   public Water() {
-    setNumberOfVariables(3);
-    setNumberOfObjectives(5);
-    setNumberOfConstraints(7);
-    setName("Water");
+    numberOfObjectives(5);
+    numberOfConstraints(7);
+    name("Water");
 
     List<Double> lowerLimit = Arrays.asList(LOWERLIMIT);
     List<Double> upperLimit = Arrays.asList(UPPERLIMIT);
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */
@@ -53,7 +51,7 @@ public class Water extends AbstractDoubleProblem {
 
   /** EvaluateConstraints() method */
   public void evaluateConstraints(DoubleSolution solution) {
-    double[] constraint = new double[getNumberOfConstraints()];
+    double[] constraint = new double[numberOfConstraints()];
     double[] x = new double[solution.variables().size()];
     for (int i = 0; i < solution.variables().size(); i++) {
       x[i] = solution.variables().get(i);
@@ -67,7 +65,7 @@ public class Water extends AbstractDoubleProblem {
     constraint[5] = 2000 - (0.417 * x[0] * x[1] + 1721.26 * x[2] - 136.54);
     constraint[6] = 550 - (0.164 / (x[0] * x[1]) + 631.13 * x[2] - 54.48);
 
-    for (int i = 0; i < getNumberOfConstraints(); i++) {
+    for (int i = 0; i < numberOfConstraints(); i++) {
       solution.constraints()[i] = constraint[i];
     }
   }

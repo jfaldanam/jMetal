@@ -1,17 +1,14 @@
 package org.uma.jmetal.problem.multiobjective.fda;
 
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.errorchecking.JMetalException;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /** @author Cristóbal Barba <cbarba@lcc.uma.es> */
 @SuppressWarnings("serial")
 public class FDA4 extends FDA {
-
   private final int M = 3;
-
   public FDA4() {
     this(12, 3);
   }
@@ -19,19 +16,18 @@ public class FDA4 extends FDA {
   public FDA4(Integer numberOfVariables, Integer numberOfObjectives)
       throws JMetalException {
     super();
-    setNumberOfVariables(numberOfVariables);
-    setNumberOfObjectives(numberOfObjectives);
-    setName("FDA4");
+    numberOfObjectives(numberOfObjectives);
+    name("FDA4");
 
-    List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables());
-    List<Double> upperLimit = new ArrayList<>(getNumberOfVariables());
+    List<Double> lowerLimit = new ArrayList<>(numberOfVariables);
+    List<Double> upperLimit = new ArrayList<>(numberOfVariables);
 
-    for (int i = 0; i < getNumberOfVariables(); i++) {
+    for (int i = 0; i < numberOfVariables; i++) {
       lowerLimit.add(0.0);
       upperLimit.add(1.0);
     }
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   @Override

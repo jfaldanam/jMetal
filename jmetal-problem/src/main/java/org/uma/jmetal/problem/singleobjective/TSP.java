@@ -1,11 +1,15 @@
 package org.uma.jmetal.problem.singleobjective;
 
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StreamTokenizer;
 import org.uma.jmetal.problem.permutationproblem.impl.AbstractIntegerPermutationProblem;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
-
-import java.io.*;
 
 /**
  * Class representing a single-objective TSP (Traveling Salesman Problem) problem.
@@ -22,10 +26,26 @@ public class TSP extends AbstractIntegerPermutationProblem {
    */
   public TSP(String distanceFile) throws IOException {
     distanceMatrix = readProblem(distanceFile) ;
+  }
 
-    setNumberOfVariables(numberOfCities);
-    setNumberOfObjectives(1);
-    setName("TSP");
+  @Override
+  public int numberOfVariables() {
+    return numberOfCities ;
+  }
+
+  @Override
+  public int numberOfObjectives() {
+    return 1;
+  }
+
+  @Override
+  public int numberOfConstraints() {
+    return 0;
+  }
+
+  @Override
+  public String name() {
+    return "TSP";
   }
 
   /** Evaluate() method */
@@ -121,12 +141,12 @@ public class TSP extends AbstractIntegerPermutationProblem {
         }
       }
     } catch (Exception e) {
-      new JMetalException("TSP.readProblem(): error when reading data file " + e);
+      throw new JMetalException("TSP.readProblem(): error when reading data file " + e);
     }
     return matrix;
   }
 
-  @Override public int getLength() {
+  @Override public int length() {
     return numberOfCities ;
   }
 }

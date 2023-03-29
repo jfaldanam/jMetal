@@ -1,13 +1,12 @@
 package org.uma.jmetal.operator.crossover.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.compositesolution.CompositeSolution;
 import org.uma.jmetal.util.errorchecking.Check;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * This class allows to apply a list of crossover operator on the solutions belonging to a list of
@@ -21,15 +20,6 @@ public class CompositeCrossover implements CrossoverOperator<CompositeSolution> 
   private List<CrossoverOperator<Solution<?>>> operators;
   private double crossoverProbability = 1.0;
 
-  /** Constructor */
-  /*
-    public CompositeCrossover(List<CrossoverOperator<Solution<?>>> operators) {
-      Check.isNotNull(operators);
-      Check.collectionIsNotEmpty(operators);
-
-  	  this.operators = operators ;
-    }
-  */
   public CompositeCrossover(List<?> operators) {
     Check.notNull(operators);
     Check.collectionIsNotEmpty(operators);
@@ -45,7 +35,7 @@ public class CompositeCrossover implements CrossoverOperator<CompositeSolution> 
 
   /* Getters */
   @Override
-  public double getCrossoverProbability() {
+  public double crossoverProbability() {
     return crossoverProbability;
   }
 
@@ -72,11 +62,11 @@ public class CompositeCrossover implements CrossoverOperator<CompositeSolution> 
     return result;
   }
 
-  public int getNumberOfRequiredParents() {
+  public int numberOfRequiredParents() {
     return 2;
   }
 
-  public int getNumberOfGeneratedChildren() {
+  public int numberOfGeneratedChildren() {
     return 2;
   }
 

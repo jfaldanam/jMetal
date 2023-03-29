@@ -1,13 +1,11 @@
 package org.uma.jmetal.problem.multiobjective.zdt;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /** Class representing problem ZDT1 */
-@SuppressWarnings("serial")
 public class ZDT1 extends AbstractDoubleProblem {
 
   /** Constructor. Creates default instance of problem ZDT1 (30 decision variables) */
@@ -21,19 +19,18 @@ public class ZDT1 extends AbstractDoubleProblem {
    * @param numberOfVariables Number of variables.
    */
   public ZDT1(Integer numberOfVariables) {
-    setNumberOfVariables(numberOfVariables);
-    setNumberOfObjectives(2);
-    setName("ZDT1");
+    numberOfObjectives(2);
+    name("ZDT1");
 
-    List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables()) ;
-    List<Double> upperLimit = new ArrayList<>(getNumberOfVariables()) ;
+    List<Double> lowerLimit = new ArrayList<>(numberOfVariables) ;
+    List<Double> upperLimit = new ArrayList<>(numberOfVariables) ;
 
-    for (int i = 0; i < getNumberOfVariables(); i++) {
+    for (int i = 0; i < numberOfVariables; i++) {
       lowerLimit.add(0.0);
       upperLimit.add(1.0);
     }
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */

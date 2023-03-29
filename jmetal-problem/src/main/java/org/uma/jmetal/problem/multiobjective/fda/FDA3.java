@@ -1,13 +1,14 @@
 package org.uma.jmetal.problem.multiobjective.fda;
 
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.errorchecking.JMetalException;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.errorchecking.JMetalException;
 
-/** @author Cristóbal Barba <cbarba@lcc.uma.es> */
+/**
+ * @author Cristóbal Barba <cbarba@lcc.uma.es>
+ */
 @SuppressWarnings("serial")
 public class FDA3 extends FDA implements Serializable {
 
@@ -19,28 +20,26 @@ public class FDA3 extends FDA implements Serializable {
     this(30, 2);
   }
 
-
   public FDA3(Integer numberOfVariables, Integer numberOfObjectives)
       throws JMetalException {
     super();
-    setNumberOfVariables(numberOfVariables);
-    setNumberOfObjectives(numberOfObjectives);
-    setName("FDA3");
+    numberOfObjectives(numberOfObjectives);
+    name("FDA3");
 
-    List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables());
-    List<Double> upperLimit = new ArrayList<>(getNumberOfVariables());
+    List<Double> lowerLimit = new ArrayList<>(numberOfVariables);
+    List<Double> upperLimit = new ArrayList<>(numberOfVariables);
 
     for (int i = limitInfI; i < limitSupI; i++) {
       lowerLimit.add(0.0);
       upperLimit.add(1.0);
     }
 
-    for (int i = limitInfII; i < getNumberOfVariables(); i++) {
+    for (int i = limitInfII; i < numberOfVariables; i++) {
       lowerLimit.add(-1.0);
       upperLimit.add(1.0);
     }
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   @Override
@@ -52,7 +51,7 @@ public class FDA3 extends FDA implements Serializable {
     f[1] = g * h;
     solution.objectives()[0] = f[0];
     solution.objectives()[1] = f[1];
-    return solution ;
+    return solution;
   }
 
   private double evalF(DoubleSolution solution, int limitInf, int limitSup) {

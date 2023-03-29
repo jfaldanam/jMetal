@@ -1,10 +1,9 @@
 package org.uma.jmetal.operator.selection.impl;
 
-import org.uma.jmetal.operator.selection.SelectionOperator;
-import org.uma.jmetal.util.SolutionListUtils;
-import org.uma.jmetal.util.errorchecking.Check;
-
 import java.util.List;
+import org.uma.jmetal.operator.selection.SelectionOperator;
+import org.uma.jmetal.util.ListUtils;
+import org.uma.jmetal.util.errorchecking.Check;
 
 /**
  * This class implements a random selection operator used for selecting randomly a solution from a list
@@ -19,7 +18,7 @@ public class RandomSelection<S> implements SelectionOperator<List<S>, S> {
     Check.notNull(solutionList);
     Check.collectionIsNotEmpty(solutionList);
 
-    List<S> list = SolutionListUtils.selectNRandomDifferentSolutions(1, solutionList);
+    List<S> list = ListUtils.randomSelectionWithoutReplacement(1, solutionList);
 
     return list.get(0) ;
   }

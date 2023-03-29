@@ -1,13 +1,12 @@
 package org.uma.jmetal.util.densityestimator;
 
-import org.junit.Test;
-import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
-import org.uma.jmetal.util.point.PointSolution;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.uma.jmetal.solution.pointsolution.PointSolution;
+import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
 
 public class CrowdingDistanceDensityEstimatorTest {
   private static final double EPSILON = 0.000000001;
@@ -20,7 +19,7 @@ public class CrowdingDistanceDensityEstimatorTest {
     solutionList.add(new PointSolution(3));
 
     crowdingDistance.compute(solutionList);
-    double value = crowdingDistance.getValue(solutionList.get(0));
+    double value = crowdingDistance.value(solutionList.get(0));
 
     assertEquals(Double.POSITIVE_INFINITY, value, EPSILON);
   }
@@ -35,8 +34,8 @@ public class CrowdingDistanceDensityEstimatorTest {
 
     crowdingDistance.compute(solutionList);
 
-    assertEquals(Double.POSITIVE_INFINITY, crowdingDistance.getValue(solutionList.get(0)), EPSILON);
-    assertEquals(Double.POSITIVE_INFINITY, crowdingDistance.getValue(solutionList.get(1)), EPSILON);
+    assertEquals(Double.POSITIVE_INFINITY, crowdingDistance.value(solutionList.get(0)), EPSILON);
+    assertEquals(Double.POSITIVE_INFINITY, crowdingDistance.value(solutionList.get(1)), EPSILON);
   }
 
   @Test
@@ -61,8 +60,8 @@ public class CrowdingDistanceDensityEstimatorTest {
 
     crowdingDistance.compute(solutionList);
 
-    assertEquals(Double.POSITIVE_INFINITY, crowdingDistance.getValue(solution1), EPSILON);
-    assertEquals(Double.POSITIVE_INFINITY, crowdingDistance.getValue(solution2), EPSILON);
-    assertEquals(2.0, crowdingDistance.getValue(solution3), EPSILON);
+    assertEquals(Double.POSITIVE_INFINITY, crowdingDistance.value(solution1), EPSILON);
+    assertEquals(Double.POSITIVE_INFINITY, crowdingDistance.value(solution2), EPSILON);
+    assertEquals(2.0, crowdingDistance.value(solution3), EPSILON);
   }
 }

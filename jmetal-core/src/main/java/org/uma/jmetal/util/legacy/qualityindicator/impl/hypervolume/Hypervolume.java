@@ -1,14 +1,13 @@
 package org.uma.jmetal.util.legacy.qualityindicator.impl.hypervolume;
 
+import java.io.FileNotFoundException;
+import java.util.List;
 import org.uma.jmetal.util.legacy.front.Front;
 import org.uma.jmetal.util.legacy.front.impl.ArrayFront;
 import org.uma.jmetal.util.legacy.front.util.FrontUtils;
 import org.uma.jmetal.util.legacy.qualityindicator.impl.GenericIndicator;
 import org.uma.jmetal.util.point.Point;
 import org.uma.jmetal.util.point.impl.ArrayPoint;
-
-import java.io.FileNotFoundException;
-import java.util.List;
 
 /**
  * This interface represents implementations of the Hypervolume quality indicator
@@ -33,9 +32,9 @@ public abstract class Hypervolume<S> extends GenericIndicator<S> {
       for (int j = 0; j < referencePoint.length; j++) {
         if (j == i) {
           double v = referencePoint[i] ;
-          point.setValue(j, v);
+          point.value(j, v);
         } else {
-          point.setValue(j, 0.0);
+          point.value(j, 0.0);
         }
       }
       referenceFront.setPoint(i, point);
@@ -60,7 +59,7 @@ public abstract class Hypervolume<S> extends GenericIndicator<S> {
   public abstract void setOffset(double offset);
 
   @Override
-  public String getName() {
+  public String name() {
     return "HV";
   }
 

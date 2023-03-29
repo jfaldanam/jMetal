@@ -1,5 +1,8 @@
 package org.uma.jmetal.algorithm.singleobjective.differentialevolution;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import org.uma.jmetal.algorithm.impl.AbstractDifferentialEvolution;
 import org.uma.jmetal.operator.crossover.impl.DifferentialEvolutionCrossover;
 import org.uma.jmetal.operator.selection.impl.DifferentialEvolutionSelection;
@@ -8,16 +11,15 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.comparator.ObjectiveComparator;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
 /**
  * This class implements a differential evolution algorithm.
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 @SuppressWarnings("serial")
 public class DifferentialEvolution extends AbstractDifferentialEvolution<DoubleSolution> {
+  protected DifferentialEvolutionCrossover crossoverOperator ;
+  protected DifferentialEvolutionSelection selectionOperator ;
+
   private int populationSize;
   private int maxEvaluations;
   private SolutionListEvaluator<DoubleSolution> evaluator;
@@ -120,17 +122,27 @@ public class DifferentialEvolution extends AbstractDifferentialEvolution<DoubleS
   /**
    * Returns the best individual
    */
-  @Override public DoubleSolution getResult() {
+  @Override public DoubleSolution result() {
     getPopulation().sort(comparator);
 
     return getPopulation().get(0);
   }
 
-  @Override public String getName() {
+  @Override public String name() {
     return "DE" ;
   }
 
-  @Override public String getDescription() {
+  @Override public String description() {
     return "Differential Evolution Algorithm" ;
+  }
+
+  @Override
+  public DifferentialEvolutionCrossover getCrossoverOperator() {
+    return crossoverOperator ;
+  }
+
+  @Override
+  public  DifferentialEvolutionSelection getSelectionOperator() {
+    return selectionOperator ;
   }
 }

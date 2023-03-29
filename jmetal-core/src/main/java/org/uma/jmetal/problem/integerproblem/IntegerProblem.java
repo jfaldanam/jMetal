@@ -1,12 +1,15 @@
 package org.uma.jmetal.problem.integerproblem ;
 
-import org.uma.jmetal.problem.BoundedProblem;
+import java.util.List;
+import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
+import org.uma.jmetal.util.bounds.Bounds;
 
 /**
  * Interface representing integer problems
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
-public interface IntegerProblem extends BoundedProblem<Integer, IntegerSolution> {
+public interface IntegerProblem extends Problem<IntegerSolution> {
+  List<Bounds<Integer>> variableBounds() ;
 }

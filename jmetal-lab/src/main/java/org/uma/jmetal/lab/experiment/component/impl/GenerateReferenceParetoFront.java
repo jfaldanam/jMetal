@@ -1,23 +1,22 @@
 package org.uma.jmetal.lab.experiment.component.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import org.uma.jmetal.lab.experiment.Experiment;
 import org.uma.jmetal.lab.experiment.component.ExperimentComponent;
 import org.uma.jmetal.lab.experiment.util.ExperimentAlgorithm;
 import org.uma.jmetal.lab.experiment.util.ExperimentProblem;
+import org.uma.jmetal.solution.pointsolution.PointSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.legacy.front.Front;
 import org.uma.jmetal.util.legacy.front.impl.ArrayFront;
 import org.uma.jmetal.util.legacy.front.util.FrontUtils;
-import org.uma.jmetal.util.point.PointSolution;
 import org.uma.jmetal.util.solutionattribute.impl.GenericSolutionAttribute;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * This class computes a reference Pareto front from a set of files. Once the algorithms of an
@@ -72,11 +71,11 @@ public class GenerateReferenceParetoFront implements ExperimentComponent {
       }
       String referenceSetFileName = outputDirectoryName + "/" + problem.getTag() + ".csv" ;
       referenceFrontFileNames.add(problem.getTag() + ".csv");
-      new SolutionListOutput(nonDominatedSolutionArchive.getSolutionList())
+      new SolutionListOutput(nonDominatedSolutionArchive.solutions())
           .printObjectivesToFile(referenceSetFileName, ",");
 
       writeFilesWithTheSolutionsContributedByEachAlgorithm(outputDirectoryName, problem,
-          nonDominatedSolutionArchive.getSolutionList()) ;
+          nonDominatedSolutionArchive.solutions()) ;
     }
 
   }

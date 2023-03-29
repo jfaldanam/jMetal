@@ -1,16 +1,15 @@
 package org.uma.jmetal.operator.crossover.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.solution.util.repairsolution.RepairDoubleSolution;
-import org.uma.jmetal.solution.util.repairsolution.impl.RepairDoubleSolutionWithBoundValue;
+import org.uma.jmetal.solution.doublesolution.repairsolution.RepairDoubleSolution;
+import org.uma.jmetal.solution.doublesolution.repairsolution.impl.RepairDoubleSolutionWithBoundValue;
 import org.uma.jmetal.util.bounds.Bounds;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.pseudorandom.RandomGenerator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class allows to apply a whole arithmetic crossover operator to two parent solutions.
@@ -44,13 +43,13 @@ public class WholeArithmeticCrossover implements CrossoverOperator<DoubleSolutio
 
   /* Getters */
   @Override
-  public double getCrossoverProbability() {
+  public double crossoverProbability() {
     return crossoverProbability;
   }
 
 
   /* Setters */
-  public void setCrossoverProbability(double crossoverProbability) {
+  public void crossoverProbability(double crossoverProbability) {
     this.crossoverProbability = crossoverProbability;
   }
 
@@ -98,11 +97,11 @@ public class WholeArithmeticCrossover implements CrossoverOperator<DoubleSolutio
     return offspring;
   }
 
-  public int getNumberOfRequiredParents() {
+  public int numberOfRequiredParents() {
     return 2 ;
   }
 
-  public int getNumberOfGeneratedChildren() {
+  public int numberOfGeneratedChildren() {
     return 2 ;
   }
 }

@@ -1,13 +1,14 @@
 package org.uma.jmetal.algorithm.multiobjective.spea2.util;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 import org.uma.jmetal.operator.selection.SelectionOperator;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.SolutionListUtils;
-import org.uma.jmetal.util.solutionattribute.impl.LocationAttribute;
 import org.uma.jmetal.util.densityestimator.impl.StrenghtRawFitnessDensityEstimator;
-
-import java.util.*;
+import org.uma.jmetal.util.solutionattribute.impl.LocationAttribute;
 
 /**
  * @author Juanjo Durillo
@@ -41,7 +42,7 @@ public class EnvironmentalSelection<S extends Solution<?>> implements SelectionO
 
     int i = 0;
     while (i < source.size()){
-      double fitness = densityEstimator.getValue(source.get(i)) ;
+      double fitness = densityEstimator.value(source.get(i)) ;
       if (fitness<1.0){
         aux.add(source.get(i));
         source.remove(i);
@@ -51,7 +52,7 @@ public class EnvironmentalSelection<S extends Solution<?>> implements SelectionO
     }
 
     if (aux.size() < size){
-      Comparator<S> comparator = densityEstimator.getComparator() ;
+      Comparator<S> comparator = densityEstimator.comparator() ;
       source.sort(comparator);
       int remain = size - aux.size();
       for (i = 0; i < remain; i++){

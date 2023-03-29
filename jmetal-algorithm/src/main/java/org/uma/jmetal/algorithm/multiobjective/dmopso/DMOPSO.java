@@ -1,5 +1,15 @@
 package org.uma.jmetal.algorithm.multiobjective.dmopso;
 
+import static java.lang.Double.parseDouble;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringTokenizer;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -8,16 +18,6 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
-
-import static java.lang.Double.parseDouble;
 
 @SuppressWarnings("serial")
 public class DMOPSO implements Algorithm<List<DoubleSolution>> {
@@ -113,17 +113,17 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
     localBest = new DoubleSolution[swarmSize] ;
     globalBest = new DoubleSolution[swarmSize] ;
     shfGBest = new int[swarmSize] ;
-    speed = new double[swarmSize][problem.getNumberOfVariables()];
+    speed = new double[swarmSize][problem.numberOfVariables()];
     age = new int[swarmSize] ;
 
-    indArray = new DoubleSolution[problem.getNumberOfObjectives()];
-    z = new double[problem.getNumberOfObjectives()];
-    lambda = new double[swarmSize][problem.getNumberOfObjectives()];
+    indArray = new DoubleSolution[problem.numberOfObjectives()];
+    z = new double[problem.numberOfObjectives()];
+    lambda = new double[swarmSize][problem.numberOfObjectives()];
 
-    deltaMax = new double[problem.getNumberOfVariables()];
-    deltaMin = new double[problem.getNumberOfVariables()];
-    for (int i = 0; i < problem.getNumberOfVariables(); i++) {
-      Bounds<Double> bounds = problem.getBoundsForVariables().get(i) ;
+    deltaMax = new double[problem.numberOfVariables()];
+    deltaMin = new double[problem.numberOfVariables()];
+    for (int i = 0; i < problem.numberOfVariables(); i++) {
+      Bounds<Double> bounds = problem.variableBounds().get(i) ;
       deltaMax[i] = (bounds.getUpperBound() - bounds.getLowerBound()) / 2.0 ;
       deltaMin[i] = -deltaMax[i];
     }
@@ -182,7 +182,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
   protected void initializeVelocity(List<DoubleSolution> swarm) {
     // Initialize the speed and age of each particle to 0
     for (int i = 0; i < swarmSize; i++) {
-      for (int j = 0; j < problem.getNumberOfVariables(); j++) {
+      for (int j = 0; j < problem.numberOfVariables(); j++) {
         speed[i][j] = 0.0;
       }
       age[i] = 0;
@@ -222,22 +222,33 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
   /**
    * initUniformWeight
    */
-  private void initUniformWeight() {
-    if ((problem.getNumberOfObjectives() == 2) && (swarmSize < 300)) {
+  protected void initializeUniformWeight() {
+    if ((problem.numberOfObjectives() == 2) && (swarmSize <= 300)) {
       for (int n = 0; n < swarmSize; n++) {
         double a = 1.0 * n / (swarmSize - 1);
         lambda[n][0] = a;
         lambda[n][1] = 1 - a;
       }
-    }
-    else {
+    } else {
       String dataFileName;
-      dataFileName = "W" + problem.getNumberOfObjectives() + "D_" +
-              swarmSize + ".dat";
+      dataFileName = "W" + problem.numberOfObjectives() + "D_" +
+          swarmSize + ".dat";
 
       try {
-        InputStream in = getClass().getResourceAsStream("/" + dataDirectory + "/" + dataFileName);
-        InputStreamReader isr = new InputStreamReader(in);
+
+        //       String path =
+        // Paths.get(VectorFileUtils.class.getClassLoader().getResource(filePath).toURI()).toString
+        // ();
+        String path = "/" + dataDirectory + "/" + dataFileName;
+
+        InputStream inputStream =
+            getClass()
+                .getClassLoader()
+                .getResourceAsStream(path);
+        if (inputStream == null) {
+          inputStream = new FileInputStream(dataDirectory + "/" + dataFileName);
+        }
+        InputStreamReader isr = new InputStreamReader(inputStream);
         BufferedReader br = new BufferedReader(isr);
 
         int i = 0;
@@ -256,14 +267,16 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
         }
         br.close();
       } catch (Exception e) {
-        throw new JMetalException("initUniformWeight: failed when reading for file: " + dataDirectory + "/" + dataFileName);
+        throw new JMetalException("initializeUniformWeight: failed when reading for file: "
+            + dataDirectory + "/" + dataFileName, e);
       }
     }
   }
 
 
+
   private void initIdealPoint()  {
-    for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+    for (int i = 0; i < problem.numberOfObjectives(); i++) {
       z[i] = 1.0e+30;
       indArray[i] = problem.createSolution() ;
       problem.evaluate(indArray[i]);
@@ -275,7 +288,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
   }
 
   private void updateReference(DoubleSolution individual) {
-    for (int n = 0; n < problem.getNumberOfObjectives(); n++) {
+    for (int n = 0; n < problem.numberOfObjectives(); n++) {
       if (individual.objectives()[n] < z[n]) {
         z[n] = individual.objectives()[n];
 
@@ -324,7 +337,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
     if (functionType == FunctionType.TCHE) {
       double maxFun = -1.0e+30;
 
-      for (int n = 0; n < problem.getNumberOfObjectives(); n++) {
+      for (int n = 0; n < problem.numberOfObjectives(); n++) {
         double diff = Math.abs(sol.objectives()[n] - z[n]);
 
         double feval;
@@ -342,7 +355,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
 
     }else if(functionType == FunctionType.AGG){
       double sum = 0.0;
-      for (int n = 0; n < problem.getNumberOfObjectives(); n++) {
+      for (int n = 0; n < problem.numberOfObjectives(); n++) {
         sum += (lambda[n]) * sol.objectives()[n];
       }
 
@@ -354,7 +367,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
 
       d1 = d2 = nl = 0.0;
 
-      for (int i = 0; i < problem.getNumberOfObjectives(); i++)
+      for (int i = 0; i < problem.numberOfObjectives(); i++)
       {
         d1 += (sol.objectives()[i] - z[i]) * lambda[i];
         nl += Math.pow(lambda[i], 2.0);
@@ -362,7 +375,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
       nl = Math.sqrt(nl);
       d1 = Math.abs(d1) / nl;
 
-      for (int i = 0; i < problem.getNumberOfObjectives(); i++)
+      for (int i = 0; i < problem.numberOfObjectives(); i++)
       {
         d2 += Math.pow((sol.objectives()[i] - z[i]) - d1 * (lambda[i] / nl), 2.0);
       }
@@ -399,7 +412,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
     DoubleSolution particle = getSwarm().get(part) ;
 
     for(int var = 0; var < particle.variables().size(); var++){
-      Bounds<Double> bounds = problem.getBoundsForVariables().get(var) ;
+      Bounds<Double> bounds = problem.variableBounds().get(var) ;
       Double lowerBound = bounds.getLowerBound() ;
       Double upperBound = bounds.getUpperBound() ;
       if (particle.variables().get(var) < lowerBound) {
@@ -475,7 +488,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
     evaluateSwarm(swarm) ;
     initializeVelocity(getSwarm());
 
-    initUniformWeight();
+    initializeUniformWeight();
     initIdealPoint();
 
     initializeLeaders(getSwarm());
@@ -507,15 +520,15 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
   }
 
   @Override
-  public List<DoubleSolution> getResult() {
+  public List<DoubleSolution> result() {
     return Arrays.asList(globalBest) ;
   }
 
-  @Override public String getName() {
+  @Override public String name() {
     return this.name ;
   }
 
-  @Override public String getDescription() {
+  @Override public String description() {
     return "MOPSO with decomposition" ;
   }
 }

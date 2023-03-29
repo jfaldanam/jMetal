@@ -1,5 +1,7 @@
 package org.uma.jmetal.algorithm.multiobjective.espea;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.algorithm.impl.AbstractGeneticAlgorithm;
 import org.uma.jmetal.algorithm.multiobjective.espea.util.EnergyArchive;
 import org.uma.jmetal.algorithm.multiobjective.espea.util.EnergyArchive.ReplacementStrategy;
@@ -10,9 +12,6 @@ import org.uma.jmetal.operator.selection.SelectionOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Implementation of the Electrostatic Potential Energy Evolutionary Algorithm
@@ -84,12 +83,12 @@ public class ESPEA<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, Li
   }
 
   @Override
-  public String getName() {
+  public String name() {
     return "ESPEA";
   }
 
   @Override
-  public String getDescription() {
+  public String description() {
     return "Electrostatic Potential Energy Evolutionary Algorithms";
   }
 
@@ -121,12 +120,12 @@ public class ESPEA<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, Li
   protected List<S> replacement(List<S> population, List<S> offspringPopulation) {
     // population and archive are always in sync
     offspringPopulation.forEach(s -> archive.add(s));
-    return archive.getSolutionList();
+    return archive.solutions();
   }
 
   @Override
-  public List<S> getResult() {
-    return archive.getSolutionList();
+  public List<S> result() {
+    return archive.solutions();
   }
 
   /*
@@ -141,9 +140,9 @@ public class ESPEA<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, Li
     // Chosen operator depends on archive size
     CrossoverOperator<S> chosenOperator = archive.isFull() ? fullArchiveCrossoverOperator : crossoverOperator;
 
-    List<S> matingPopulation = new ArrayList<>(chosenOperator.getNumberOfRequiredParents());
+    List<S> matingPopulation = new ArrayList<>(chosenOperator.numberOfRequiredParents());
 
-    for (int i = 0; i < chosenOperator.getNumberOfRequiredParents(); i++) {
+    for (int i = 0; i < chosenOperator.numberOfRequiredParents(); i++) {
       S solution = selectionOperator.execute(population);
       matingPopulation.add(solution);
     }

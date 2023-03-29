@@ -1,5 +1,22 @@
 package org.uma.jmetal.util.legacy.front.impl;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -14,21 +31,8 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.errorchecking.exception.InvalidConditionException;
 import org.uma.jmetal.util.legacy.front.Front;
 import org.uma.jmetal.util.point.Point;
+import org.uma.jmetal.util.point.comparator.LexicographicalPointComparator;
 import org.uma.jmetal.util.point.impl.ArrayPoint;
-import org.uma.jmetal.util.point.util.comparator.LexicographicalPointComparator;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Antonio J. Nebro
@@ -75,10 +79,10 @@ public class ArrayFrontTest {
     Front storeFront = new ArrayFront(frontDirectory + "/ZDT1.csv");
 
     assertEquals(1001, storeFront.getNumberOfPoints());
-    assertEquals(0.0, storeFront.getPoint(0).getValues()[0], 0.0001);
-    assertEquals(1.0, storeFront.getPoint(0).getValues()[1], 0.0001);
-    assertEquals(1.0, storeFront.getPoint(1000).getValues()[0], 0.0001);
-    assertEquals(0.0, storeFront.getPoint(1000).getValues()[1], 0.0001);
+    assertEquals(0.0, storeFront.getPoint(0).values()[0], 0.0001);
+    assertEquals(1.0, storeFront.getPoint(0).values()[1], 0.0001);
+    assertEquals(1.0, storeFront.getPoint(1000).values()[0], 0.0001);
+    assertEquals(0.0, storeFront.getPoint(1000).values()[1], 0.0001);
   }
 
   @Test
@@ -89,12 +93,12 @@ public class ArrayFrontTest {
 
     assertEquals(9901, storeFront.getNumberOfPoints());
 
-    assertEquals(0.0, storeFront.getPoint(0).getValues()[0], 0.0001);
-    assertEquals(0.0, storeFront.getPoint(0).getValues()[1], 0.0001);
-    assertEquals(0.5, storeFront.getPoint(0).getValues()[2], 0.0001);
-    assertEquals(0.49005, storeFront.getPoint(9999).getValues()[0], 0.0001);
-    assertEquals(0.00495, storeFront.getPoint(9999).getValues()[1], 0.0001);
-    assertEquals(0.005, storeFront.getPoint(9999).getValues()[2], 0.0001);
+    assertEquals(0.0, storeFront.getPoint(0).values()[0], 0.0001);
+    assertEquals(0.0, storeFront.getPoint(0).values()[1], 0.0001);
+    assertEquals(0.5, storeFront.getPoint(0).values()[2], 0.0001);
+    assertEquals(0.49005, storeFront.getPoint(9999).values()[0], 0.0001);
+    assertEquals(0.00495, storeFront.getPoint(9999).values()[1], 0.0001);
+    assertEquals(0.005, storeFront.getPoint(9999).values()[2], 0.0001);
   }
 
   @Test
@@ -103,7 +107,7 @@ public class ArrayFrontTest {
 
     List<Bounds<Double>> bounds = Arrays.asList(Bounds.create(-1.0, 1.0));
     List<DoubleSolution> list =
-        Arrays.asList(new DefaultDoubleSolution(numberOfObjectives, bounds));
+        Arrays.asList(new DefaultDoubleSolution(bounds, numberOfObjectives, 0));
     Front front = new ArrayFront(list);
 
     assertNotNull(ReflectionTestUtils.getField(front, "points"));
@@ -118,8 +122,8 @@ public class ArrayFrontTest {
     List<Bounds<Double>> bounds = Arrays.asList(Bounds.create(-1.0, 1.0));
     List<DoubleSolution> list =
         Arrays.asList(
-            new DefaultDoubleSolution(numberOfObjectives, bounds),
-            new DefaultDoubleSolution(numberOfObjectives, bounds));
+            new DefaultDoubleSolution(bounds, numberOfObjectives, 0),
+            new DefaultDoubleSolution(bounds, numberOfObjectives, 0));
     Front front = new ArrayFront(list);
 
     assertNotNull(ReflectionTestUtils.getField(front, "points"));
@@ -135,7 +139,7 @@ public class ArrayFrontTest {
 
     List<IntegerSolution> list =
         Arrays.asList(
-            new DefaultIntegerSolution(numberOfObjectives, bounds)) ;
+            new DefaultIntegerSolution(bounds, numberOfObjectives, 0)) ;
     Front front = new ArrayFront(list);
 
     assertNotNull(ReflectionTestUtils.getField(front, "points"));
@@ -162,12 +166,12 @@ public class ArrayFrontTest {
     List<Bounds<Integer>> bounds = Arrays.asList(Bounds.create(0, 1)) ;
 
     IntegerSolution solution1 =
-        new DefaultIntegerSolution(numberOfObjectives, bounds);
+        new DefaultIntegerSolution(bounds, numberOfObjectives, 0);
     solution1.objectives()[0] = 2;
     solution1.objectives()[1] = 235;
     solution1.objectives()[2] =-123;
     IntegerSolution solution2 =
-        new DefaultIntegerSolution(numberOfObjectives, bounds);
+        new DefaultIntegerSolution(bounds, numberOfObjectives, 0);
     solution2.objectives()[0] = -13234;
     solution2.objectives()[1] = 523;
     solution2.objectives()[2] = -123423455;
@@ -180,12 +184,12 @@ public class ArrayFrontTest {
     assertEquals(2, ReflectionTestUtils.getField(front, "numberOfPoints"));
     assertEquals(numberOfObjectives, ReflectionTestUtils.getField(front, "pointDimensions"));
 
-    assertEquals(list.get(0).objectives()[0], front.getPoint(0).getValue(0), EPSILON);
-    assertEquals(list.get(0).objectives()[1], front.getPoint(0).getValue(1), EPSILON);
-    assertEquals(list.get(0).objectives()[2], front.getPoint(0).getValue(2), EPSILON);
-    assertEquals(list.get(1).objectives()[0], front.getPoint(1).getValue(0), EPSILON);
-    assertEquals(list.get(1).objectives()[1], front.getPoint(1).getValue(1), EPSILON);
-    assertEquals(list.get(1).objectives()[2], front.getPoint(1).getValue(2), EPSILON);
+    assertEquals(list.get(0).objectives()[0], front.getPoint(0).value(0), EPSILON);
+    assertEquals(list.get(0).objectives()[1], front.getPoint(0).value(1), EPSILON);
+    assertEquals(list.get(0).objectives()[2], front.getPoint(0).value(2), EPSILON);
+    assertEquals(list.get(1).objectives()[0], front.getPoint(1).value(0), EPSILON);
+    assertEquals(list.get(1).objectives()[1], front.getPoint(1).value(1), EPSILON);
+    assertEquals(list.get(1).objectives()[2], front.getPoint(1).value(2), EPSILON);
   }
 
   @Test
@@ -195,11 +199,11 @@ public class ArrayFrontTest {
     Front front = new ArrayFront(numberOfPoints, pointDimensions);
 
     Point point1 = new ArrayPoint(pointDimensions);
-    point1.setValue(0, 0.1323);
-    point1.setValue(1, -30.1323);
+    point1.value(0, 0.1323);
+    point1.value(1, -30.1323);
     Point point2 = new ArrayPoint(pointDimensions);
-    point2.setValue(0, +2342342.24232);
-    point2.setValue(1, -23423423425.234);
+    point2.value(0, +2342342.24232);
+    point2.value(1, -23423423425.234);
 
     front.setPoint(0, point1);
     front.setPoint(1, point2);
@@ -210,10 +214,10 @@ public class ArrayFrontTest {
     assertEquals(numberOfPoints, ReflectionTestUtils.getField(newFront, "numberOfPoints"));
     assertEquals(pointDimensions, ReflectionTestUtils.getField(newFront, "pointDimensions"));
 
-    assertEquals(front.getPoint(0).getValue(0), newFront.getPoint(0).getValue(0), EPSILON);
-    assertEquals(front.getPoint(0).getValue(1), newFront.getPoint(0).getValue(1), EPSILON);
-    assertEquals(front.getPoint(1).getValue(0), newFront.getPoint(1).getValue(0), EPSILON);
-    assertEquals(front.getPoint(1).getValue(1), newFront.getPoint(1).getValue(1), EPSILON);
+    assertEquals(front.getPoint(0).value(0), newFront.getPoint(0).value(0), EPSILON);
+    assertEquals(front.getPoint(0).value(1), newFront.getPoint(0).value(1), EPSILON);
+    assertEquals(front.getPoint(1).value(0), newFront.getPoint(1).value(0), EPSILON);
+    assertEquals(front.getPoint(1).value(1), newFront.getPoint(1).value(1), EPSILON);
   }
 
   @Test
@@ -337,11 +341,11 @@ public class ArrayFrontTest {
     Front front2 = new ArrayFront(numberOfPoints, pointDimensions);
 
     Point point1 = new ArrayPoint(pointDimensions);
-    point1.setValue(0, 0.1323);
-    point1.setValue(1, -30.1323);
+    point1.value(0, 0.1323);
+    point1.value(1, -30.1323);
     Point point2 = new ArrayPoint(pointDimensions);
-    point2.setValue(0, 0.1323);
-    point2.setValue(1, -30.1323);
+    point2.value(0, 0.1323);
+    point2.value(1, -30.1323);
 
     front1.setPoint(0, point1);
     front2.setPoint(0, point2);
@@ -374,11 +378,11 @@ public class ArrayFrontTest {
     Front front2 = new ArrayFront(numberOfPoints, pointDimensions);
 
     Point point1 = new ArrayPoint(pointDimensions);
-    point1.setValue(0, 0.1323);
-    point1.setValue(1, -3.1323);
+    point1.value(0, 0.1323);
+    point1.value(1, -3.1323);
     Point point2 = new ArrayPoint(pointDimensions);
-    point2.setValue(0, 0.1323);
-    point2.setValue(1, -30.1323);
+    point2.value(0, 0.1323);
+    point2.value(1, -30.1323);
 
     front1.setPoint(0, point1);
     front2.setPoint(0, point2);
@@ -393,14 +397,14 @@ public class ArrayFrontTest {
     Front front1 = new ArrayFront(numberOfPoints, pointDimensions);
 
     Point point1 = new ArrayPoint(pointDimensions);
-    point1.setValue(0, 10.0);
-    point1.setValue(1, 12.0);
+    point1.value(0, 10.0);
+    point1.value(1, 12.0);
     Point point2 = new ArrayPoint(pointDimensions);
-    point2.setValue(0, 8.0);
-    point2.setValue(1, 80.0);
+    point2.value(0, 8.0);
+    point2.value(1, 80.0);
     Point point3 = new ArrayPoint(pointDimensions);
-    point3.setValue(0, 5.0);
-    point3.setValue(1, 50.0);
+    point3.value(0, 5.0);
+    point3.value(1, 50.0);
 
     front1.setPoint(0, point1);
     front1.setPoint(1, point2);
@@ -408,12 +412,12 @@ public class ArrayFrontTest {
 
     front1.sort(new LexicographicalPointComparator());
 
-    assertEquals(5.0, front1.getPoint(0).getValue(0), EPSILON);
-    assertEquals(8.0, front1.getPoint(1).getValue(0), EPSILON);
-    assertEquals(10.0, front1.getPoint(2).getValue(0), EPSILON);
-    assertEquals(50.0, front1.getPoint(0).getValue(1), EPSILON);
-    assertEquals(80.0, front1.getPoint(1).getValue(1), EPSILON);
-    assertEquals(12.0, front1.getPoint(2).getValue(1), EPSILON);
+    assertEquals(5.0, front1.getPoint(0).value(0), EPSILON);
+    assertEquals(8.0, front1.getPoint(1).value(0), EPSILON);
+    assertEquals(10.0, front1.getPoint(2).value(0), EPSILON);
+    assertEquals(50.0, front1.getPoint(0).value(1), EPSILON);
+    assertEquals(80.0, front1.getPoint(1).value(1), EPSILON);
+    assertEquals(12.0, front1.getPoint(2).value(1), EPSILON);
   }
 
   // TODO more test for ordering are missing
@@ -443,9 +447,9 @@ public class ArrayFrontTest {
 
     assertEquals(1, front.getNumberOfPoints());
     assertEquals(3, ReflectionTestUtils.getField(front, "pointDimensions"));
-    assertEquals(1.0, front.getPoint(0).getValue(0), EPSILON);
-    assertEquals(2.0, front.getPoint(0).getValue(1), EPSILON);
-    assertEquals(-3.0, front.getPoint(0).getValue(2), EPSILON);
+    assertEquals(1.0, front.getPoint(0).value(0), EPSILON);
+    assertEquals(2.0, front.getPoint(0).value(1), EPSILON);
+    assertEquals(-3.0, front.getPoint(0).value(2), EPSILON);
   }
 
   /** Test using a file containing: 3.0 2.3 asdfg */
@@ -477,9 +481,9 @@ public class ArrayFrontTest {
 
     assertEquals(4, front.getNumberOfPoints());
     assertEquals(4, ReflectionTestUtils.getField(front, "pointDimensions"));
-    assertEquals(1, front.getPoint(0).getValue(0), EPSILON);
-    assertEquals(6, front.getPoint(1).getValue(1), EPSILON);
-    assertEquals(11, front.getPoint(2).getValue(2), EPSILON);
-    assertEquals(-4, front.getPoint(3).getValue(3), EPSILON);
+    assertEquals(1, front.getPoint(0).value(0), EPSILON);
+    assertEquals(6, front.getPoint(1).value(1), EPSILON);
+    assertEquals(11, front.getPoint(2).value(2), EPSILON);
+    assertEquals(-4, front.getPoint(3).value(3), EPSILON);
   }
 }

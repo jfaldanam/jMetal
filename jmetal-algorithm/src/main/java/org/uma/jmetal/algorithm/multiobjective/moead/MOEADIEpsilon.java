@@ -1,5 +1,11 @@
 package org.uma.jmetal.algorithm.multiobjective.moead;
 
+import static org.uma.jmetal.util.ConstraintHandling.feasibilityRatio;
+import static org.uma.jmetal.util.ConstraintHandling.isFeasible;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.uma.jmetal.algorithm.multiobjective.moead.util.MOEADUtils;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.crossover.impl.DifferentialEvolutionCrossover;
@@ -10,13 +16,6 @@ import org.uma.jmetal.util.ConstraintHandling;
 import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
 import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.uma.jmetal.util.ConstraintHandling.feasibilityRatio;
-import static org.uma.jmetal.util.ConstraintHandling.isFeasible;
 
 /**
  * This class implements the MOEA/D-IEpsilon algorithm based on the one presented in the paper: "Z.
@@ -200,18 +199,18 @@ public class MOEADIEpsilon extends AbstractMOEAD<DoubleSolution> {
   }
 
   @Override
-  public List<DoubleSolution> getResult() {
+  public List<DoubleSolution> result() {
     return archive ;
   }
 
   @Override
-  public String getName() {
+  public String name() {
     return "MOEA/D IEpsilon";
   }
 
 
   @Override
-  public String getDescription() {
+  public String description() {
     return "MOEA/D with improved epsilon constraint handling method";
   }
 
@@ -239,7 +238,7 @@ public class MOEADIEpsilon extends AbstractMOEAD<DoubleSolution> {
         CrowdingDistanceDensityEstimator<DoubleSolution> crowdingDistance = new CrowdingDistanceDensityEstimator<>() ;
         while (firstRankSolutions.size() > populationSize) {
           crowdingDistance.compute(firstRankSolutions);
-          firstRankSolutions.sort(crowdingDistance.getComparator());
+          firstRankSolutions.sort(crowdingDistance.comparator());
           firstRankSolutions.remove(firstRankSolutions.size() - 1) ;
         }
 

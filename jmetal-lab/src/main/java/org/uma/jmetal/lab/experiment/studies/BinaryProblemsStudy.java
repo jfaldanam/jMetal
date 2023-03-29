@@ -4,6 +4,10 @@
 
 package org.uma.jmetal.lab.experiment.studies;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.mocell.MOCellBuilder;
 import org.uma.jmetal.algorithm.multiobjective.mochc.MOCHCBuilder;
@@ -11,7 +15,13 @@ import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import org.uma.jmetal.algorithm.multiobjective.spea2.SPEA2Builder;
 import org.uma.jmetal.lab.experiment.Experiment;
 import org.uma.jmetal.lab.experiment.ExperimentBuilder;
-import org.uma.jmetal.lab.experiment.component.impl.*;
+import org.uma.jmetal.lab.experiment.component.impl.ComputeQualityIndicators;
+import org.uma.jmetal.lab.experiment.component.impl.ExecuteAlgorithms;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateBoxplotsWithR;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateFriedmanTestTables;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateLatexTablesWithStatistics;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateReferenceParetoFront;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateWilcoxonTestTablesWithR;
 import org.uma.jmetal.lab.experiment.util.ExperimentAlgorithm;
 import org.uma.jmetal.lab.experiment.util.ExperimentProblem;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
@@ -26,16 +36,16 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.binaryproblem.BinaryProblem;
 import org.uma.jmetal.problem.multiobjective.OneZeroMax;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT5;
-import org.uma.jmetal.qualityindicator.impl.*;
+import org.uma.jmetal.qualityindicator.impl.Epsilon;
+import org.uma.jmetal.qualityindicator.impl.GenerationalDistance;
+import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistance;
+import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
+import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
+import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.binarysolution.BinarySolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Example of experimental study based on solving two binary problems with four algorithms: NSGAII,
@@ -115,7 +125,7 @@ public class BinaryProblemsStudy {
                 problem.getProblem(),
                 new SinglePointCrossover(1.0),
                 new BitFlipMutation(
-                        1.0 / ((BinaryProblem) problem.getProblem()).getBitsFromVariable(0)),
+                        1.0 / ((BinaryProblem) problem.getProblem()).bitsFromVariable(0)),
                 100)
                 .setMaxEvaluations(25000)
                 .build();
@@ -127,7 +137,7 @@ public class BinaryProblemsStudy {
                 problem.getProblem(),
                 new SinglePointCrossover(1.0),
                 new BitFlipMutation(
-                        1.0 / ((BinaryProblem) problem.getProblem()).getBitsFromVariable(0)))
+                        1.0 / ((BinaryProblem) problem.getProblem()).bitsFromVariable(0)))
                 .setMaxIterations(250)
                 .setPopulationSize(100)
                 .build();
@@ -139,7 +149,7 @@ public class BinaryProblemsStudy {
                 problem.getProblem(),
                 new SinglePointCrossover(1.0),
                 new BitFlipMutation(
-                        1.0 / ((BinaryProblem) problem.getProblem()).getBitsFromVariable(0)))
+                        1.0 / ((BinaryProblem) problem.getProblem()).bitsFromVariable(0)))
                 .setMaxEvaluations(25000)
                 .setPopulationSize(100)
                 .build();

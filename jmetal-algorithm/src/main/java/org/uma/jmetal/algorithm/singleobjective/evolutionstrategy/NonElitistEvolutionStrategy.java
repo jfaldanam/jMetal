@@ -1,14 +1,13 @@
 package org.uma.jmetal.algorithm.singleobjective.evolutionstrategy;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import org.uma.jmetal.algorithm.impl.AbstractEvolutionStrategy;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.comparator.ObjectiveComparator;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * Class implementing a (mu , lambda) Evolution Strategy (lambda must be divisible by mu)
@@ -17,6 +16,7 @@ import java.util.List;
  */
 @SuppressWarnings("serial")
 public class NonElitistEvolutionStrategy<S extends Solution<?>> extends AbstractEvolutionStrategy<S, S> {
+  private Problem<S> problem ;
   private int mu;
   private int lambda;
   private int maxEvaluations;
@@ -30,7 +30,7 @@ public class NonElitistEvolutionStrategy<S extends Solution<?>> extends Abstract
    */
   public NonElitistEvolutionStrategy(Problem<S> problem, int mu, int lambda, int maxEvaluations,
       MutationOperator<S> mutation) {
-    super(problem) ;
+    this.problem = problem ;
     this.mu = mu;
     this.lambda = lambda;
     this.maxEvaluations = maxEvaluations;
@@ -103,15 +103,15 @@ public class NonElitistEvolutionStrategy<S extends Solution<?>> extends Abstract
     return newPopulation;
   }
 
-  @Override public S getResult() {
+  @Override public S result() {
     return getPopulation().get(0);
   }
 
-  @Override public String getName() {
+  @Override public String name() {
     return "NonElitistEA" ;
   }
 
-  @Override public String getDescription() {
+  @Override public String description() {
     return "Non Elitist Evolution Strategy Algorithm, i.e, (mu , lambda) EA" ;
   }
 }

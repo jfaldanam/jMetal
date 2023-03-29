@@ -1,5 +1,8 @@
 package org.uma.jmetal.algorithm.multiobjective.paes;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import org.uma.jmetal.algorithm.impl.AbstractEvolutionStrategy;
 import org.uma.jmetal.algorithm.multiobjective.pesa2.util.AdaptiveGridArchive;
 import org.uma.jmetal.operator.mutation.MutationOperator;
@@ -8,12 +11,8 @@ import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.BoundedArchive;
 import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
 import org.uma.jmetal.util.archive.impl.GenericBoundedArchive;
-import org.uma.jmetal.util.comparator.DominanceComparator;
+import org.uma.jmetal.util.comparator.dominanceComparator.impl.DominanceWithConstraintsComparator;
 import org.uma.jmetal.util.densityestimator.impl.GridDensityEstimator;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * @author Antonio J. Nebro
@@ -24,6 +23,7 @@ import java.util.List;
  */
 @SuppressWarnings("serial")
 public class PAES<S extends Solution<?>> extends AbstractEvolutionStrategy<S, List<S>> {
+  protected Problem<S> problem ;
   protected int maxEvaluations;
   protected int evaluations;
 
@@ -36,13 +36,12 @@ public class PAES<S extends Solution<?>> extends AbstractEvolutionStrategy<S, Li
       int maxEvaluations,
       BoundedArchive<S> archive,
       MutationOperator<S> mutationOperator) {
-    super(problem);
     setProblem(problem);
     this.maxEvaluations = maxEvaluations;
     this.archive = archive;
     this.mutationOperator = mutationOperator;
 
-    comparator = new DominanceComparator<S>();
+    comparator = new DominanceWithConstraintsComparator<S>();
   }
 
   public PAES(
@@ -55,7 +54,7 @@ public class PAES<S extends Solution<?>> extends AbstractEvolutionStrategy<S, Li
         problem,
         maxEvaluations,
         new GenericBoundedArchive<>(
-            archiveSize, new GridDensityEstimator<>(biSections, problem.getNumberOfObjectives())),
+            archiveSize, new GridDensityEstimator<>(biSections, problem.numberOfObjectives())),
         mutationOperator);
   }
 
@@ -128,7 +127,7 @@ public class PAES<S extends Solution<?>> extends AbstractEvolutionStrategy<S, Li
       archive.add(mutatedSolution);
     } else if (flag == 0) {
       if (archive.add(mutatedSolution)) {
-        if (archive.getComparator().compare(current, mutatedSolution) > 0) {
+        if (archive.comparator().compare(current, mutatedSolution) > 0) {
           current = mutatedSolution;
         }
       }
@@ -139,17 +138,17 @@ public class PAES<S extends Solution<?>> extends AbstractEvolutionStrategy<S, Li
   }
 
   @Override
-  public List<S> getResult() {
-    return archive.getSolutionList();
+  public List<S> result() {
+    return archive.solutions();
   }
 
   @Override
-  public String getName() {
+  public String name() {
     return "PAES";
   }
 
   @Override
-  public String getDescription() {
+  public String description() {
     return "Pareto-Archived Evolution Strategy";
   }
 }

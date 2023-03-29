@@ -1,5 +1,7 @@
 package org.uma.jmetal.algorithm.multiobjective.spea2;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.algorithm.impl.AbstractGeneticAlgorithm;
 import org.uma.jmetal.algorithm.multiobjective.spea2.util.EnvironmentalSelection;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
@@ -9,9 +11,6 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.densityestimator.impl.StrenghtRawFitnessDensityEstimator;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Juan J. Durillo
@@ -101,15 +100,15 @@ public class SPEA2<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, Li
   }
 
   @Override
-  public List<S> getResult() {
+  public List<S> result() {
     return archive;
   }
 
-  @Override public String getName() {
+  @Override public String name() {
     return "SPEA2" ;
   }
 
-  @Override public String getDescription() {
+  @Override public String description() {
     return "Strength Pareto. Evolutionary Algorithm" ;
   }
 }

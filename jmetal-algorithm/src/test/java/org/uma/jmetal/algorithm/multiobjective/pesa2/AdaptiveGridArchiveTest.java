@@ -1,10 +1,10 @@
 package org.uma.jmetal.algorithm.multiobjective.pesa2;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.uma.jmetal.algorithm.multiobjective.pesa2.util.AdaptiveGridArchive;
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Created by ajnebro on 16/11/16.
@@ -17,7 +17,7 @@ public class AdaptiveGridArchiveTest {
     int capacity = 100 ;
     archive = new AdaptiveGridArchive<>(100, 2, 2) ;
 
-    assertEquals(capacity, archive.getMaxSize()) ;
+    assertEquals(capacity, archive.maximumSize()) ;
   }
 
   @Test

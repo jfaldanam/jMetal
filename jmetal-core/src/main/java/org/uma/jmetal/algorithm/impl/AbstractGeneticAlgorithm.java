@@ -1,13 +1,12 @@
 package org.uma.jmetal.algorithm.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.selection.SelectionOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.util.errorchecking.JMetalException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Abstract class representing a genetic algorithm
@@ -81,7 +80,7 @@ public abstract class AbstractGeneticAlgorithm<S, Result> extends AbstractEvolut
   }
 
   /**
-   * This methods iteratively applies a {@link CrossoverOperator} a  {@link MutationOperator} to the population to
+   * This method iteratively applies a {@link CrossoverOperator} a  {@link MutationOperator} to the population to
    * create the offspring population. The population size must be divisible by the number of parents required
    * by the {@link CrossoverOperator}; this way, the needed parents are taken sequentially from the population.
    *
@@ -92,7 +91,7 @@ public abstract class AbstractGeneticAlgorithm<S, Result> extends AbstractEvolut
    */
   @Override
   protected List<S> reproduction(List<S> population) {
-    int numberOfParents = crossoverOperator.getNumberOfRequiredParents() ;
+    int numberOfParents = crossoverOperator.numberOfRequiredParents() ;
 
     checkNumberOfParents(population, numberOfParents);
 

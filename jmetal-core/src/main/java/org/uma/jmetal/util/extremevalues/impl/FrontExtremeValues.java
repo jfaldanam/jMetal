@@ -1,11 +1,10 @@
 package org.uma.jmetal.util.extremevalues.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.extremevalues.ExtremeValuesFinder;
 import org.uma.jmetal.util.legacy.front.Front;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class for finding the extreme values of front objects
@@ -31,8 +30,8 @@ public class FrontExtremeValues implements ExtremeValuesFinder <Front, List<Doub
 
     for (int i = 0 ; i < front.getNumberOfPoints(); i++) {
       for (int j = 0; j < numberOfObjectives; j++) {
-        if (front.getPoint(i).getValue(j) < minimumValue.get(j)) {
-          minimumValue.set(j, front.getPoint(i).getValue(j));
+        if (front.getPoint(i).value(j) < minimumValue.get(j)) {
+          minimumValue.set(j, front.getPoint(i).value(j));
         }
       }
     }
@@ -57,8 +56,8 @@ public class FrontExtremeValues implements ExtremeValuesFinder <Front, List<Doub
 
     for (int i = 0 ; i < front.getNumberOfPoints(); i++) {
       for (int j = 0; j < numberOfObjectives; j++) {
-        if (front.getPoint(i).getValue(j) > maximumValue.get(j)) {
-          maximumValue.set(j, front.getPoint(i).getValue(j));
+        if (front.getPoint(i).value(j) > maximumValue.get(j)) {
+          maximumValue.set(j, front.getPoint(i).value(j));
         }
       }
     }

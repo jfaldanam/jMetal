@@ -1,21 +1,20 @@
 package org.uma.jmetal.operator.mutation;
 
-import org.junit.Test;
-import org.uma.jmetal.operator.mutation.impl.BitFlipMutation;
-import org.uma.jmetal.operator.mutation.impl.CompositeMutation;
-import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
-import org.uma.jmetal.problem.doubleproblem.impl.DummyDoubleProblem;
-import org.uma.jmetal.solution.binarysolution.impl.DefaultBinarySolution;
-import org.uma.jmetal.solution.compositesolution.CompositeSolution;
-import org.uma.jmetal.util.errorchecking.exception.EmptyCollectionException;
-import org.uma.jmetal.util.errorchecking.exception.NullParameterException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.Test;
+import org.uma.jmetal.operator.mutation.impl.BitFlipMutation;
+import org.uma.jmetal.operator.mutation.impl.CompositeMutation;
+import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
+import org.uma.jmetal.problem.doubleproblem.impl.FakeDoubleProblem;
+import org.uma.jmetal.solution.binarysolution.impl.DefaultBinarySolution;
+import org.uma.jmetal.solution.compositesolution.CompositeSolution;
+import org.uma.jmetal.util.errorchecking.exception.EmptyCollectionException;
+import org.uma.jmetal.util.errorchecking.exception.NullParameterException;
 
 public class CompositeMutationTest {
 
@@ -58,7 +57,7 @@ public class CompositeMutationTest {
   public void shouldExecuteWorkProperlyWithASingleMutationOperator() {
     CompositeMutation operator =
             new CompositeMutation(Arrays.asList(new PolynomialMutation(1.0, 20.0)));
-    DummyDoubleProblem problem = new DummyDoubleProblem();
+    FakeDoubleProblem problem = new FakeDoubleProblem();
     CompositeSolution solution = new CompositeSolution(Arrays.asList(problem.createSolution()));
 
     CompositeSolution mutatedSolution = operator.execute(solution) ;
@@ -74,7 +73,7 @@ public class CompositeMutationTest {
             new CompositeMutation(
                     Arrays.asList(new PolynomialMutation(1.0, 20.0), new BitFlipMutation(0.01)));
 
-    DummyDoubleProblem doubleProblem = new DummyDoubleProblem(2, 2, 0);
+    FakeDoubleProblem doubleProblem = new FakeDoubleProblem(2, 2, 0);
     CompositeSolution solution =
             new CompositeSolution(
                     Arrays.asList(
@@ -93,7 +92,7 @@ public class CompositeMutationTest {
             new CompositeMutation(
                     Arrays.asList(new PolynomialMutation(1.0, 20.0), new BitFlipMutation(0.01)));
 
-    DummyDoubleProblem doubleProblem = new DummyDoubleProblem(2, 2, 0);
+    FakeDoubleProblem doubleProblem = new FakeDoubleProblem(2, 2, 0);
     CompositeSolution solution =
             new CompositeSolution(
                     Arrays.asList(

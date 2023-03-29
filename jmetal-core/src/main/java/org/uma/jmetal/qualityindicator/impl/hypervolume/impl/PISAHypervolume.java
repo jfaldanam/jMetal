@@ -1,10 +1,9 @@
 package org.uma.jmetal.qualityindicator.impl.hypervolume.impl;
 
+import java.io.FileNotFoundException;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.Hypervolume;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.errorchecking.Check;
-
-import java.io.FileNotFoundException;
 
 /**
  * This class implements the hypervolume indicator. The code is the a Java version of the original
@@ -17,9 +16,6 @@ import java.io.FileNotFoundException;
  */
 @SuppressWarnings("serial")
 public class PISAHypervolume extends Hypervolume {
-
-  private static final double DEFAULT_OFFSET = 100.0;
-  private double offset = DEFAULT_OFFSET;
 
   /**
    * Default constructor
@@ -58,13 +54,12 @@ public class PISAHypervolume extends Hypervolume {
   }
 
   @Override
-  public String getDescription() {
+  public String description() {
     return "PISA Hypervolume quality indicator" ;
   }
 
   /*
-  returns true if 'point1' dominates 'points2' with respect to the
-  to the first 'noObjectives' objectives
+  returns true if 'point1' dominates 'points2' with respect to the first 'noObjectives' objectives
   */
   private boolean dominates(double[] point1, double[] point2, int noObjectives) {
     int i;
@@ -204,7 +199,7 @@ public class PISAHypervolume extends Hypervolume {
   }
 
   @Override
-  public String getName() {
-    return "HV (PISA)";
+  public String name() {
+    return "HV";
   }
 }

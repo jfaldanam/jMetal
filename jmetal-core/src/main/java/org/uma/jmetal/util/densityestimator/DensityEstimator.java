@@ -1,5 +1,6 @@
 package org.uma.jmetal.util.densityestimator;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 
@@ -8,9 +9,11 @@ import java.util.List;
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
-public interface DensityEstimator<S> {
-  void compute(List<S> solutionSet) ;
+public interface DensityEstimator<S> extends Serializable {
 
-  Double getValue(S solution) ;
-  Comparator<S> getComparator() ;
+  void compute(List<S> solutionSet);
+
+  Double value(S solution);
+
+  Comparator<S> comparator();
 }

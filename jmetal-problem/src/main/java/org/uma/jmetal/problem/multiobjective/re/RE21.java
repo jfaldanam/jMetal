@@ -1,10 +1,9 @@
 package org.uma.jmetal.problem.multiobjective.re;
 
-import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
  * Class representing problem RE21. Source: Ryoji Tanabe and Hisao Ishibuchi, An easy-to-use
@@ -18,19 +17,19 @@ public class RE21 extends AbstractDoubleProblem {
 
   /** Constructor */
   public RE21() {
-    setNumberOfVariables(4);
-    setNumberOfObjectives(2);
-    setNumberOfConstraints(0);
-    setName("RE21");
+    int numberOfVariables = 4;
+    numberOfObjectives(2);
+    numberOfConstraints(0);
+    name("RE21");
 
-    List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables());
-    List<Double> upperLimit = new ArrayList<>(getNumberOfVariables());
+    List<Double> lowerLimit = new ArrayList<>(numberOfVariables);
+    List<Double> upperLimit = new ArrayList<>(numberOfVariables);
 
     double f = 10;
     double sigma = 10;
     double tmpVar = (f / sigma);
 
-    for (int i = 0; i < getNumberOfVariables(); i++) {
+    for (int i = 0; i < numberOfVariables; i++) {
       upperLimit.add(3 * tmpVar);
     }
 
@@ -39,7 +38,7 @@ public class RE21 extends AbstractDoubleProblem {
     lowerLimit.add(2, Math.sqrt(2.0) * tmpVar);
     lowerLimit.add(3, tmpVar);
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */

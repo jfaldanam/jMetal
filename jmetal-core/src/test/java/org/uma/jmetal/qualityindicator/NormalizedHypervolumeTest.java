@@ -1,14 +1,13 @@
 package org.uma.jmetal.qualityindicator;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.util.VectorUtils;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
 
 /**
  * @author Antonio J. Nebro
@@ -31,36 +30,20 @@ public class NormalizedHypervolumeTest {
   }
 
   @Test
-  public void shouldConstructorWithReferencePointCreateAValidInstance() {
+  void shouldConstructorWithReferencePointCreateAValidInstance() {
     var normalizedHypervolume = new NormalizedHypervolume(new double[] {1.0, 1.0});
 
     Assertions.assertNotNull(normalizedHypervolume);
   }
 
   @Test
-  public void shouldEvaluateReturnZeroIfTheReferenceFrontIsEvaluatedWithItself()
+  void shouldEvaluateReturnZeroIfTheReferenceFrontIsEvaluatedWithItself()
       throws IOException {
-    var relativeHypervolume =
+    var normalizedHypervolume =
         new NormalizedHypervolume(
             VectorUtils.readVectors("../resources/referenceFrontsCSV/ZDT1.csv", ","));
     double[][] front = VectorUtils.readVectors("../resources/referenceFrontsCSV/ZDT1.csv", ",");
 
-    Assertions.assertEquals(0.0, relativeHypervolume.compute(front), EPSILON);
+    Assertions.assertEquals(0.0, normalizedHypervolume.compute(front), EPSILON);
   }
-
-  /*
-  @Test
-  @Ignore
-  public void shouldEvaluateReturnZeroIfTheReferenceFrontIsEvaluatedWithAReferencePoint()
-      throws FileNotFoundException {
-    var normalizedHypervolume = new NormalizedHypervolume<PointSolution>(new double[] {1.0, 1.0});
-
-    Front frontToEvaluate = new ArrayFront(frontDirectory +"/ZDT1.pf");
-    assertEquals(
-        0.0,
-            normalizedHypervolume.evaluate(FrontUtils.convertFrontToSolutionList(frontToEvaluate)),
-        EPSILON);
-  }
-
-   */
 }

@@ -1,11 +1,10 @@
 package org.uma.jmetal.util.archive.impl;
 
+import java.util.Comparator;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.comparator.HypervolumeContributionComparator;
 import org.uma.jmetal.util.legacy.qualityindicator.impl.hypervolume.Hypervolume;
-
-import java.util.Comparator;
 
 /**
  * Created by Antonio J. Nebro on 24/09/14.
@@ -23,20 +22,20 @@ public class HypervolumeArchive<S extends Solution<?>> extends AbstractBoundedAr
 
   @Override
   public void prune() {
-    if (getSolutionList().size() > getMaxSize()) {
+    if (solutions().size() > maximumSize()) {
       computeDensityEstimator() ;
-      S worst = new SolutionListUtils().findWorstSolution(getSolutionList(), comparator) ;
-      getSolutionList().remove(worst);
+      S worst = new SolutionListUtils().findWorstSolution(solutions(), comparator) ;
+      solutions().remove(worst);
     }
   }
 
   @Override
-  public Comparator<S> getComparator() {
+  public Comparator<S> comparator() {
     return comparator ;
   }
 
   @Override
   public void computeDensityEstimator() {
-    hypervolume.computeHypervolumeContribution(archive.getSolutionList(), archive.getSolutionList()) ;
+    hypervolume.computeHypervolumeContribution(archive.solutions(), archive.solutions()) ;
   }
 }

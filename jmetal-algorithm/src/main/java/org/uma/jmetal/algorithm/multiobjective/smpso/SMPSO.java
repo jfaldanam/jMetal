@@ -1,19 +1,17 @@
 package org.uma.jmetal.algorithm.multiobjective.smpso;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import org.uma.jmetal.algorithm.impl.AbstractParticleSwarmOptimization;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.archive.BoundedArchive;
 import org.uma.jmetal.util.bounds.Bounds;
-import org.uma.jmetal.util.comparator.DominanceComparator;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.solutionattribute.impl.GenericSolutionAttribute;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * This class implements the SMPSO algorithm described in:
@@ -65,6 +63,7 @@ public class SMPSO extends AbstractParticleSwarmOptimization<DoubleSolution, Lis
                MutationOperator<DoubleSolution> mutationOperator, int maxIterations, double r1Min, double r1Max,
                double r2Min, double r2Max, double c1Min, double c1Max, double c2Min, double c2Max,
                double weightMin, double weightMax, double changeVelocity1, double changeVelocity2,
+               Comparator<DoubleSolution> dominanceComparator,
                SolutionListEvaluator<DoubleSolution> evaluator) {
     this.problem = problem;
     this.swarmSize = swarmSize;
@@ -88,14 +87,14 @@ public class SMPSO extends AbstractParticleSwarmOptimization<DoubleSolution, Lis
     randomGenerator = JMetalRandom.getInstance();
     this.evaluator = evaluator;
 
-    dominanceComparator = new DominanceComparator<DoubleSolution>();
+    this.dominanceComparator = dominanceComparator;
     localBest = new GenericSolutionAttribute<DoubleSolution, DoubleSolution>();
-    speed = new double[swarmSize][problem.getNumberOfVariables()];
+    speed = new double[swarmSize][problem.numberOfVariables()];
 
-    deltaMax = new double[problem.getNumberOfVariables()];
-    deltaMin = new double[problem.getNumberOfVariables()];
-    for (int i = 0; i < problem.getNumberOfVariables(); i++) {
-      Bounds<Double> bounds = problem.getBoundsForVariables().get(i) ;
+    deltaMax = new double[problem.numberOfVariables()];
+    deltaMin = new double[problem.numberOfVariables()];
+    for (int i = 0; i < problem.numberOfVariables(); i++) {
+      Bounds<Double> bounds = problem.variableBounds().get(i) ;
       deltaMax[i] = (bounds.getUpperBound() - bounds.getLowerBound()) / 2.0;
       deltaMin[i] = -deltaMax[i];
     }
@@ -152,7 +151,7 @@ public class SMPSO extends AbstractParticleSwarmOptimization<DoubleSolution, Lis
   @Override
   protected void initializeVelocity(List<DoubleSolution> swarm) {
     for (int i = 0; i < swarm.size(); i++) {
-      for (int j = 0; j < problem.getNumberOfVariables(); j++) {
+      for (int j = 0; j < problem.numberOfVariables(); j++) {
         speed[i][j] = 0.0;
       }
     }
@@ -201,7 +200,7 @@ public class SMPSO extends AbstractParticleSwarmOptimization<DoubleSolution, Lis
       for (int j = 0; j < particle.variables().size(); j++) {
         particle.variables().set(j, particle.variables().get(j) + speed[i][j]);
 
-        Bounds<Double> bounds = problem.getBoundsForVariables().get(j) ;
+        Bounds<Double> bounds = problem.variableBounds().get(j) ;
         Double lowerBound = bounds.getLowerBound() ;
         Double upperBound = bounds.getUpperBound() ;
         if (particle.variables().get(j) < lowerBound) {
@@ -244,19 +243,19 @@ public class SMPSO extends AbstractParticleSwarmOptimization<DoubleSolution, Lis
   }
 
   @Override
-  public List<DoubleSolution> getResult() {
-    return leaders.getSolutionList();
+  public List<DoubleSolution> result() {
+    return leaders.solutions();
   }
 
   protected DoubleSolution selectGlobalBest() {
     DoubleSolution one, two;
     DoubleSolution bestGlobal;
-    int pos1 = randomGenerator.nextInt(0, leaders.getSolutionList().size() - 1);
-    int pos2 = randomGenerator.nextInt(0, leaders.getSolutionList().size() - 1);
-    one = leaders.getSolutionList().get(pos1);
-    two = leaders.getSolutionList().get(pos2);
+    int pos1 = randomGenerator.nextInt(0, leaders.solutions().size() - 1);
+    int pos2 = randomGenerator.nextInt(0, leaders.solutions().size() - 1);
+    one = leaders.solutions().get(pos1);
+    two = leaders.solutions().get(pos2);
 
-    if (leaders.getComparator().compare(one, two) < 1) {
+    if (leaders.comparator().compare(one, two) < 1) {
       bestGlobal = (DoubleSolution) one.copy();
     } else {
       bestGlobal = (DoubleSolution) two.copy();
@@ -299,13 +298,13 @@ public class SMPSO extends AbstractParticleSwarmOptimization<DoubleSolution, Lis
   }
 
   @Override
-  public String getName() {
+  public String name() {
     return "SMPSO";
   }
 
   @Override
-  public String getDescription() {
-    return "Speed contrained Multiobjective PSO";
+  public String description() {
+    return "Speed constrained Multiobjective PSO";
   }
 
   /* Getters */

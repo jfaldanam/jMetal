@@ -1,14 +1,13 @@
 package org.uma.jmetal.lab.experiment.util;
 
+import java.io.File;
+import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.lab.experiment.Experiment;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
-
-import java.io.File;
-import java.util.List;
 
 /**
  * Class defining tasks for the execution of algorithms in parallel.
@@ -32,7 +31,7 @@ public class ExperimentAlgorithm<S extends Solution<?>, Result extends List<S>> 
 
   public ExperimentAlgorithm(Algorithm<Result> algorithm, ExperimentProblem<S> problem, int runId) {
 
-    this(algorithm, algorithm.getName(), problem, runId);
+    this(algorithm, algorithm.name(), problem, runId);
   }
 
   public void runAlgorithm(Experiment<?, ?> experimentData) {
@@ -53,19 +52,19 @@ public class ExperimentAlgorithm<S extends Solution<?>, Result extends List<S>> 
         outputDirectoryName + "/" + experimentData.getOutputParetoFrontFileName() + runId + ".csv";
     String varFile =
         outputDirectoryName + "/" + experimentData.getOutputParetoSetFileName() + runId + ".csv";
-    JMetalLogger.logger.info(
-        " Running algorithm: "
-            + algorithmTag
-            + ", problem: "
-            + problemTag
-            + ", run: "
-            + runId
-            + ", funFile: "
-            + funFile);
+    String message = " Running algorithm: "
+        + algorithmTag
+        + ", problem: "
+        + problemTag
+        + ", run: "
+        + runId
+        + ", funFile: "
+        + funFile ;
+    JMetalLogger.logger.info(message);
 
     try {
       algorithm.run();
-      Result population = algorithm.getResult();
+      Result population = algorithm.result();
 
       new SolutionListOutput(population)
           .setVarFileOutputContext(new DefaultFileOutputContext(varFile, ","))

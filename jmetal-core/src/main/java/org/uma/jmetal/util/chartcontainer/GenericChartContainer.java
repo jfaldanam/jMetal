@@ -1,17 +1,23 @@
 package org.uma.jmetal.util.chartcontainer;
 
-import org.knowm.xchart.*;
+import java.awt.Color;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import org.knowm.xchart.BitmapEncoder;
+import org.knowm.xchart.SwingWrapper;
+import org.knowm.xchart.XYChart;
+import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.XYSeries;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.legacy.front.impl.ArrayFront;
 import org.uma.jmetal.util.legacy.front.util.FrontUtils;
-
-import java.awt.*;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.List;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Class for configuring and displaying a XChart.
@@ -19,6 +25,7 @@ import java.util.concurrent.TimeUnit;
  * @author Jorge Rodriguez Ordonez
  */
 public class GenericChartContainer<S extends Solution<?>> {
+
   private Map<String, XYChart> charts;
   private XYChart frontChart;
   private XYChart varChart;
@@ -33,8 +40,8 @@ public class GenericChartContainer<S extends Solution<?>> {
   private Map<String, List<Double>> indicatorValues;
   private List<String> referencePointName;
 
-  private double[] xReferenceFrontData ;
-  private double[] yReferenceFrontData ;
+  private double[] xReferenceFrontData;
+  private double[] yReferenceFrontData;
 
   public GenericChartContainer(String name) {
     this(name, 0);
@@ -50,17 +57,43 @@ public class GenericChartContainer<S extends Solution<?>> {
   }
 
   public void setFrontChart(int objective1, int objective2) throws FileNotFoundException {
-    this.setFrontChart(objective1, objective2, null);
+    this.setFrontChart(objective1, objective2, null, "Objective " + objective1,
+        "Objective " + objective2);
   }
 
-  public void setFrontChart(int objective1, int objective2, String referenceFrontFileName)
+  public void setSingleValueChart
+      (String xLabel, String yLabel)
+      throws FileNotFoundException {
+    this.frontChart =
+        new XYChartBuilder()
+            .xAxisTitle(xLabel)
+            .yAxisTitle(yLabel)
+            .build();
+    this.frontChart
+        .getStyler()
+        .setDefaultSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Scatter)
+        .setMarkerSize(5);
+
+    double[] xData = new double[]{0};
+    double[] yData = new double[]{0};
+    XYSeries frontChartSeries = this.frontChart.addSeries(this.name, xData, yData);
+    frontChartSeries.setMarkerColor(Color.RED);
+
+    this.charts.put("Front", this.frontChart);
+  }
+
+
+  public void setFrontChart
+      (int objective1,
+          int objective2, String referenceFrontFileName,
+          String xLabel, String yLabel)
       throws FileNotFoundException {
     this.objective1 = objective1;
     this.objective2 = objective2;
     this.frontChart =
         new XYChartBuilder()
-            .xAxisTitle("Objective " + this.objective1)
-            .yAxisTitle("Objective " + this.objective2)
+            .xAxisTitle(xLabel)
+            .yAxisTitle(yLabel)
             .build();
     this.frontChart
         .getStyler()
@@ -72,8 +105,8 @@ public class GenericChartContainer<S extends Solution<?>> {
       displayReferenceFront();
     }
 
-    double[] xData = new double[] {0};
-    double[] yData = new double[] {0};
+    double[] xData = new double[]{0};
+    double[] yData = new double[]{0};
     XYSeries frontChartSeries = this.frontChart.addSeries(this.name, xData, yData);
     frontChartSeries.setMarkerColor(Color.RED);
 
@@ -89,7 +122,7 @@ public class GenericChartContainer<S extends Solution<?>> {
 
       XYSeries referencePointSeries =
           this.frontChart.addSeries(
-              referencePointName.get(i), new double[] {rp1}, new double[] {rp2});
+              referencePointName.get(i), new double[]{rp1}, new double[]{rp2});
       referencePointSeries.setMarkerColor(java.awt.Color.green);
     }
   }
@@ -105,7 +138,7 @@ public class GenericChartContainer<S extends Solution<?>> {
 
       XYSeries referencePointSeries =
           this.frontChart.addSeries(
-              referencePointName.get(i), new double[] {rp1}, new double[] {rp2});
+              referencePointName.get(i), new double[]{rp1}, new double[]{rp2});
       referencePointSeries.setMarkerColor(Color.green);
     }
   }
@@ -123,8 +156,8 @@ public class GenericChartContainer<S extends Solution<?>> {
         .setDefaultSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Scatter)
         .setMarkerSize(5);
 
-    double[] xData = new double[] {0};
-    double[] yData = new double[] {0};
+    double[] xData = new double[]{0};
+    double[] yData = new double[]{0};
 
     XYSeries varChartSeries = this.varChart.addSeries(this.name, xData, yData);
     varChartSeries.setMarkerColor(Color.blue);
@@ -223,12 +256,13 @@ public class GenericChartContainer<S extends Solution<?>> {
   private void getReferenceFrontData(String fileName) throws FileNotFoundException {
     ArrayFront front = new ArrayFront(fileName);
     double[][] data = FrontUtils.convertFrontToArray(front);
-    xReferenceFrontData = getObjectiveValues(data, objective1) ;
-    yReferenceFrontData = getObjectiveValues(data, objective2) ;
+    xReferenceFrontData = getObjectiveValues(data, objective1);
+    yReferenceFrontData = getObjectiveValues(data, objective2);
   }
 
   private void displayReferenceFront() {
-    XYSeries referenceFront = this.frontChart.addSeries("Reference Front", xReferenceFrontData, yReferenceFrontData);
+    XYSeries referenceFront = this.frontChart.addSeries("Reference Front", xReferenceFrontData,
+        yReferenceFrontData);
     referenceFront.setMarkerColor(Color.blue);
   }
 

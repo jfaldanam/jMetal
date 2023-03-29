@@ -1,23 +1,22 @@
 package org.uma.jmetal.util.densityestimator;
 
-import org.junit.jupiter.api.Test;
-import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.doubleproblem.impl.DummyDoubleProblem;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.densityestimator.impl.KnnDensityEstimator;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
+import org.uma.jmetal.problem.doubleproblem.impl.FakeDoubleProblem;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.densityestimator.impl.KnnDensityEstimator;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-public class KnnDensityEstimatorTest {
+class KnnDensityEstimatorTest {
   private double EPSILON = 0.00000000000001;
 
   @Test
-  public void shouldDensityEstimatorComputeTheRightDistancesCase1() {
+  void shouldDensityEstimatorComputeTheRightDistancesCase1() {
     /*
          5 1
          4   2
@@ -26,7 +25,7 @@ public class KnnDensityEstimatorTest {
          1         4
          0 1 2 3 4 5
     */
-    DoubleProblem problem = new DummyDoubleProblem(3, 2, 0) ;
+    DoubleProblem problem = new FakeDoubleProblem(3, 2, 0) ;
 
     KnnDensityEstimator<DoubleSolution> densityEstimator = new KnnDensityEstimator<>(1);
     DoubleSolution solution1 = problem.createSolution();
@@ -51,17 +50,17 @@ public class KnnDensityEstimatorTest {
     densityEstimator.compute(solutionList);
 
     assertEquals(
-        Math.sqrt(2), densityEstimator.getValue(solution1), EPSILON);
+        Math.sqrt(2), densityEstimator.value(solution1), EPSILON);
     assertEquals(
-        Math.sqrt(2), densityEstimator.getValue(solution2), EPSILON);
+        Math.sqrt(2), densityEstimator.value(solution2), EPSILON);
     assertEquals(
-        Math.sqrt(2), densityEstimator.getValue(solution3), EPSILON);
+        Math.sqrt(2), densityEstimator.value(solution3), EPSILON);
     assertEquals(
-        Math.sqrt(2 * 2 + 2 * 2), densityEstimator.getValue(solution4), EPSILON);
+        Math.sqrt(2 * 2 + 2 * 2), densityEstimator.value(solution4), EPSILON);
   }
 
   @Test
-  public void shouldSortOrderTheSolutions() {
+  void shouldSortOrderTheSolutions() {
     /*
          5 1
          4   2
@@ -74,7 +73,7 @@ public class KnnDensityEstimatorTest {
          Expected result: 4, 1, 2, 5, 3
     */
 
-    DoubleProblem problem = new DummyDoubleProblem(3, 2, 0) ;
+    DoubleProblem problem = new FakeDoubleProblem(3, 2, 0) ;
 
     KnnDensityEstimator<DoubleSolution> densityEstimator = new KnnDensityEstimator<>(1);
     DoubleSolution solution1 = problem.createSolution();
@@ -102,7 +101,7 @@ public class KnnDensityEstimatorTest {
         Arrays.asList(solution1, solution2, solution4, solution3, solution5);
 
     densityEstimator.compute(solutionList);
-    solutionList.sort(Comparator.comparing(densityEstimator::getValue).reversed());
+    solutionList.sort(Comparator.comparing(densityEstimator::value).reversed());
 
     assertEquals(solutionList.get(0), solution4);
     assertTrue((solutionList.get(1) == solution1) || (solutionList.get(1) == solution2)); ;

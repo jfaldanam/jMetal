@@ -1,15 +1,14 @@
 package org.uma.jmetal.util.neighborhood.impl;
 
-import org.junit.Test;
-import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.doubleproblem.impl.DummyDoubleProblem;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import org.junit.Test;
+import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
+import org.uma.jmetal.problem.doubleproblem.impl.FakeDoubleProblem;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 public class KNearestNeighborhoodTest {
 
@@ -18,7 +17,7 @@ public class KNearestNeighborhoodTest {
    */
   @Test
   public void shouldGetNeighborsWorkProperlyCaseA() {
-    DoubleProblem problem = new DummyDoubleProblem(3, 2, 0) ;
+    DoubleProblem problem = new FakeDoubleProblem(3, 2, 0) ;
 
     DoubleSolution solution1 = problem.createSolution() ;
     solution1.objectives()[0] = 0.0 ;
@@ -42,7 +41,7 @@ public class KNearestNeighborhoodTest {
    */
   @Test
   public void shouldGetNeighborsWorkProperlyCaseB() {
-    DoubleProblem problem = new DummyDoubleProblem(3, 2, 0) ;
+    DoubleProblem problem = new FakeDoubleProblem(3, 2, 0) ;
 
     DoubleSolution solution1 = problem.createSolution() ;
     solution1.objectives()[0] = 0.0 ;
@@ -71,7 +70,7 @@ public class KNearestNeighborhoodTest {
    */
   @Test
   public void shouldGetNeighborsWorkProperlyCaseC() {
-    DoubleProblem problem = new DummyDoubleProblem(3, 2, 0) ;
+    DoubleProblem problem = new FakeDoubleProblem(3, 2, 0) ;
 
     DoubleSolution solution1 = problem.createSolution() ;
     solution1.objectives()[0] = 0.0 ;
@@ -100,7 +99,7 @@ public class KNearestNeighborhoodTest {
    */
   @Test
   public void shouldGetNeighborsWorkProperlyCaseD() {
-    DoubleProblem problem = new DummyDoubleProblem(3, 2, 0) ;
+    DoubleProblem problem = new FakeDoubleProblem(3, 2, 0) ;
 
     DoubleSolution solution1 = problem.createSolution() ;
     solution1.objectives()[0] = 0.0 ;
@@ -129,7 +128,7 @@ public class KNearestNeighborhoodTest {
    */
   @Test
   public void shouldGetNeighborsWorkProperlyCaseE() {
-    DoubleProblem problem = new DummyDoubleProblem(3, 2, 0) ;
+    DoubleProblem problem = new FakeDoubleProblem(3, 2, 0) ;
 
     DoubleSolution solution1 = problem.createSolution() ;
     solution1.objectives()[0] = 0.0 ;
@@ -167,7 +166,7 @@ public class KNearestNeighborhoodTest {
    */
   @Test
   public void shouldGetNeighborsWorkProperlyCaseF() {
-    DoubleProblem problem = new DummyDoubleProblem(3, 2, 0) ;
+    DoubleProblem problem = new FakeDoubleProblem(3, 2, 0) ;
 
     DoubleSolution solution1 = problem.createSolution() ;
     solution1.objectives()[0] = 0.0 ;

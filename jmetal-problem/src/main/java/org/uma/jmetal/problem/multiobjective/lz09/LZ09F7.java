@@ -1,11 +1,10 @@
 package org.uma.jmetal.problem.multiobjective.lz09;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class representing problem LZ09F7
@@ -28,34 +27,34 @@ public class LZ09F7 extends AbstractDoubleProblem {
   public LZ09F7(Integer ptype,
                 Integer dtype,
                 Integer ltype) throws JMetalException {
-    setNumberOfVariables(10);
-    setNumberOfObjectives(2);
-    setNumberOfConstraints(0);
-    setName("LZ09F7");
+    int numberOfVariables = 10;
+    numberOfObjectives(2);
+    numberOfConstraints(0);
+    name("LZ09F7");
 
-    lz09 = new LZ09(getNumberOfVariables(),
-            getNumberOfObjectives(),
+    lz09 = new LZ09(numberOfVariables,
+            numberOfObjectives(),
             ptype,
             dtype,
             ltype);
 
-    List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables()) ;
-    List<Double> upperLimit = new ArrayList<>(getNumberOfVariables()) ;
+    List<Double> lowerLimit = new ArrayList<>(numberOfVariables) ;
+    List<Double> upperLimit = new ArrayList<>(numberOfVariables) ;
 
-    for (int i = 0; i < getNumberOfVariables(); i++) {
+    for (int i = 0; i < numberOfVariables; i++) {
       lowerLimit.add(0.0);
       upperLimit.add(1.0);
     }
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */
   public DoubleSolution evaluate(DoubleSolution solution) {
-    List<Double> x = new ArrayList<Double>(getNumberOfVariables());
+    List<Double> x = new ArrayList<Double>(numberOfVariables());
     List<Double> y = new ArrayList<Double>(solution.objectives().length);
 
-    for (int i = 0; i < getNumberOfVariables(); i++) {
+    for (int i = 0; i < numberOfVariables(); i++) {
       x.add(solution.variables().get(i));
       y.add(0.0);
     }

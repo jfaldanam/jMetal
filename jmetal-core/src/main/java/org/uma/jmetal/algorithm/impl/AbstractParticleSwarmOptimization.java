@@ -1,8 +1,7 @@
 package org.uma.jmetal.algorithm.impl;
 
-import org.uma.jmetal.algorithm.Algorithm;
-
 import java.util.List;
+import org.uma.jmetal.algorithm.Algorithm;
 
 /**
  * Abstract class representing a PSO algorithm
@@ -33,9 +32,6 @@ public abstract class AbstractParticleSwarmOptimization<S, Result> implements Al
   protected abstract void perturbation(List<S> swarm) ;
   protected abstract void updateLeaders(List<S> swarm) ;
   protected abstract void updateParticlesMemory(List<S> swarm) ;
-
-  @Override
-  public abstract Result getResult() ;
 
   @Override
   public void run() {

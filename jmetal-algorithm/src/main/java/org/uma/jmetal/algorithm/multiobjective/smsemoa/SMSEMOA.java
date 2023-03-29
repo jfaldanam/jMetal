@@ -1,5 +1,8 @@
 package org.uma.jmetal.algorithm.multiobjective.smsemoa;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import org.uma.jmetal.algorithm.impl.AbstractGeneticAlgorithm;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
@@ -9,10 +12,6 @@ import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.legacy.qualityindicator.impl.hypervolume.Hypervolume;
 import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.MergeNonDominatedSortRanking;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
@@ -116,15 +115,15 @@ public class SMSEMOA<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, 
     return resultPopulation ;
   }
 
-  @Override public List<S> getResult() {
+  @Override public List<S> result() {
     return getPopulation();
   }
 
-  @Override public String getName() {
+  @Override public String name() {
     return "SMSEMOA" ;
   }
 
-  @Override public String getDescription() {
+  @Override public String description() {
     return "S metric selection EMOA" ;
   }
 }

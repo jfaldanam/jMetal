@@ -1,13 +1,12 @@
 package org.uma.jmetal.problem.singleobjective;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.problem.singleobjective.cec2005competitioncode.Benchmark;
 import org.uma.jmetal.problem.singleobjective.cec2005competitioncode.TestFunc;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class representing for solving the CEC2005 competition problems.
@@ -18,16 +17,15 @@ public class CEC2005Problem extends AbstractDoubleProblem {
 
   /** Constructor */
   public CEC2005Problem(int problemID, int numberOfVariables) {
-    setNumberOfVariables(numberOfVariables);
-    setNumberOfObjectives(1);
-    setNumberOfConstraints(0) ;
-    setName("CEC2005");
+    numberOfObjectives(1);
+    numberOfConstraints(0) ;
+    name("CEC2005");
 
     Benchmark cec2005ProblemFactory = new Benchmark();
     testFunction = cec2005ProblemFactory.testFunctionFactory(problemID, numberOfVariables);
 
-    List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables()) ;
-    List<Double> upperLimit = new ArrayList<>(getNumberOfVariables()) ;
+    List<Double> lowerLimit = new ArrayList<>(numberOfVariables) ;
+    List<Double> upperLimit = new ArrayList<>(numberOfVariables) ;
 
     double ulimit = 0;
     double llimit = 0;
@@ -83,18 +81,18 @@ public class CEC2005Problem extends AbstractDoubleProblem {
         throw new JMetalException("Invalid problem value");
     }
 
-    for (int i = 0; i < this.getNumberOfVariables(); i++) {
+    for (int i = 0; i < this.numberOfVariables(); i++) {
       lowerLimit.add(llimit);
       upperLimit.add(ulimit);
     }
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */
   @Override
   public DoubleSolution evaluate(DoubleSolution solution) {
-    int numberOfVariables = getNumberOfVariables() ;
+    int numberOfVariables = numberOfVariables() ;
 
     double[] x = new double[numberOfVariables] ;
 

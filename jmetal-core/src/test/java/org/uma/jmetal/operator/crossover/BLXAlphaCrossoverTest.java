@@ -1,29 +1,33 @@
 package org.uma.jmetal.operator.crossover;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.uma.jmetal.operator.crossover.impl.BLXAlphaCrossover;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.problem.doubleproblem.impl.FakeDoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.solution.doublesolution.impl.DefaultDoubleSolution;
-import org.uma.jmetal.solution.util.repairsolution.impl.RepairDoubleSolutionWithBoundValue;
+import org.uma.jmetal.solution.doublesolution.repairsolution.impl.RepairDoubleSolutionWithBoundValue;
 import org.uma.jmetal.util.bounds.Bounds;
-import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.errorchecking.exception.InvalidConditionException;
+import org.uma.jmetal.util.errorchecking.exception.InvalidProbabilityValueException;
 import org.uma.jmetal.util.errorchecking.exception.NullParameterException;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.pseudorandom.RandomGenerator;
 import org.uma.jmetal.util.pseudorandom.impl.AuditableRandomGenerator;
-
-import java.util.*;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
 
 /**
  * Note: this class does check that the BLX-aplha crossover operator does not return invalid
@@ -52,13 +56,13 @@ public class BLXAlphaCrossoverTest {
         .getField(crossover, "alpha"), EPSILON) ;
   }
 
-  @Test (expected = JMetalException.class)
+  @Test (expected = InvalidProbabilityValueException.class)
   public void shouldConstructorFailWhenPassedANegativeProbabilityValue() {
     double crossoverProbability = -1.1 ;
     new BLXAlphaCrossover(crossoverProbability, 1.0) ;
   }
 
-  @Test (expected = JMetalException.class)
+  @Test (expected = InvalidConditionException.class)
   public void shouldConstructorFailWhenPassedANegativeAlphaValue() {
     double alpha = -0.1 ;
     new BLXAlphaCrossover(0.1, alpha) ;
@@ -67,14 +71,14 @@ public class BLXAlphaCrossoverTest {
   @Test
   public void shouldGetProbabilityReturnTheRightValue() {
     BLXAlphaCrossover crossover = new BLXAlphaCrossover(0.1, 0.5) ;
-    assertEquals(0.1, crossover.getCrossoverProbability(), EPSILON) ;
+    assertEquals(0.1, crossover.crossoverProbability(), EPSILON) ;
   }
 
   @Test
   public void shouldGetAlphaReturnTheRightValue() {
     double alpha = 0.75 ;
     BLXAlphaCrossover crossover = new BLXAlphaCrossover(0.1, alpha) ;
-    assertEquals(alpha, crossover.getAlpha(), EPSILON) ;
+    assertEquals(alpha, crossover.alpha(), EPSILON) ;
   }
 
   @Test (expected = NullParameterException.class)
@@ -86,7 +90,7 @@ public class BLXAlphaCrossoverTest {
 
   @Test (expected = InvalidConditionException.class)
   public void shouldExecuteWithInvalidSolutionListSizeThrowAnException() {
-    DoubleProblem problem = new MockDoubleProblem(1) ;
+    DoubleProblem problem = new FakeDoubleProblem(1, 2, 0) ;
 
     BLXAlphaCrossover crossover = new BLXAlphaCrossover(0.1, 0.1) ;
 
@@ -100,7 +104,7 @@ public class BLXAlphaCrossoverTest {
     double alpha = 0.25 ;
 
     BLXAlphaCrossover crossover = new BLXAlphaCrossover(crossoverProbability, alpha) ;
-    DoubleProblem problem = new MockDoubleProblem(1) ;
+    DoubleProblem problem = new FakeDoubleProblem(1, 2, 0) ;
     List<DoubleSolution> solutions = Arrays.asList(problem.createSolution(), problem.createSolution()) ;
 
     List<DoubleSolution> newSolutions = crossover.execute(solutions) ;
@@ -118,7 +122,7 @@ public class BLXAlphaCrossoverTest {
     double alpha = 0.3 ;
 
     BLXAlphaCrossover crossover = new BLXAlphaCrossover(crossoverProbability, alpha) ;
-    DoubleProblem problem = new MockDoubleProblem(1) ;
+    DoubleProblem problem = new FakeDoubleProblem(1, 2, 0) ;
     List<DoubleSolution> solutions = Arrays.asList(problem.createSolution(), problem.createSolution()) ;
 
     Mockito.when(randomGenerator.getRandomValue()).thenReturn(1.0) ;
@@ -141,7 +145,7 @@ public class BLXAlphaCrossoverTest {
     Mockito.when(randomGenerator.getRandomValue()).thenReturn(0.2, 0.2, 0.6) ;
 
     BLXAlphaCrossover crossover = new BLXAlphaCrossover(crossoverProbability, alpha) ;
-    DoubleProblem problem = new MockDoubleProblem(1) ;
+    DoubleProblem problem = new FakeDoubleProblem(1, 2, 0) ;
     List<DoubleSolution> solutions = Arrays.asList(problem.createSolution(),
         problem.createSolution()) ;
 
@@ -172,7 +176,7 @@ public class BLXAlphaCrossoverTest {
     Mockito.when(randomGenerator.getRandomValue()).thenReturn(0.2, 0.2, 0.3) ;
 
     BLXAlphaCrossover crossover = new BLXAlphaCrossover(crossoverProbability, alpha) ;
-    DoubleProblem problem = new MockDoubleProblem(1) ;
+    DoubleProblem problem = new FakeDoubleProblem(1, 2, 0) ;
     List<DoubleSolution> solutions = Arrays.asList(problem.createSolution(),
         problem.createSolution()) ;
     solutions.get(0).variables().set(0, 1.0);
@@ -197,7 +201,7 @@ public class BLXAlphaCrossoverTest {
     Mockito.when(randomGenerator.getRandomValue()).thenReturn(0.2, 0.2, 0.8, 0.3, 0.2) ;
 
     BLXAlphaCrossover crossover = new BLXAlphaCrossover(crossoverProbability, alpha) ;
-    DoubleProblem problem = new MockDoubleProblem(2) ;
+    DoubleProblem problem = new FakeDoubleProblem(2, 2, 0) ;
     DoubleSolution solution1 = problem.createSolution() ;
     DoubleSolution solution2 = problem.createSolution() ;
     solution1.variables().set(0, 1.0);
@@ -230,38 +234,6 @@ public class BLXAlphaCrossoverTest {
         .greaterThanOrEqualTo(bounds1.getLowerBound())) ;
     verify(randomGenerator, times(5)).getRandomValue();
   }
-
-  /**
-   * Mock class representing a double problem
-   */
-  @SuppressWarnings("serial")
-  private class MockDoubleProblem extends AbstractDoubleProblem {
-
-    /** Constructor */
-    public MockDoubleProblem(Integer numberOfVariables) {
-      setNumberOfVariables(numberOfVariables);
-      setNumberOfObjectives(2);
-
-      List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables()) ;
-      List<Double> upperLimit = new ArrayList<>(getNumberOfVariables()) ;
-
-      for (int i = 0; i < getNumberOfVariables(); i++) {
-        lowerLimit.add(-4.0);
-        upperLimit.add(4.0);
-      }
-
-      setVariableBounds(lowerLimit, upperLimit);
-    }
-
-    /** Evaluate() method */
-    @Override
-    public DoubleSolution evaluate(DoubleSolution solution) {
-      solution.objectives()[0] = 0.0;
-      solution.objectives()[1] = 1.0;
-
-      return solution ;
-    }
-  }
   
 	@Test
 	public void shouldJMetalRandomGeneratorNotBeUsedWhenCustomRandomGeneratorProvided() {
@@ -273,8 +245,8 @@ public class BLXAlphaCrossoverTest {
     List<Bounds<Double>> bounds = List.of(Bounds.create(0.0, 1.0)) ;
 
 		List<DoubleSolution> solutions = new LinkedList<>();
-		solutions.add(new DefaultDoubleSolution(2, bounds));
-		solutions.add(new DefaultDoubleSolution(2, bounds));
+		solutions.add(new DefaultDoubleSolution(bounds, 2, 0));
+		solutions.add(new DefaultDoubleSolution(bounds, 2, 0));
 
 		// Check configuration leads to use default generator by default
 		final int[] defaultUses = { 0 };

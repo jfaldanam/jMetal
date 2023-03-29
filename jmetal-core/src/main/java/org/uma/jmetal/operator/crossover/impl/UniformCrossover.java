@@ -1,24 +1,22 @@
 package org.uma.jmetal.operator.crossover.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.solution.binarysolution.BinarySolution;
 import org.uma.jmetal.util.errorchecking.Check;
-import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.pseudorandom.RandomGenerator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * This class implements a uniform crosoover operator for binary solutions.
+ * This class implements a uniform crossover operator for binary solutions.
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 @SuppressWarnings("serial")
-public class UniformCrossover implements CrossoverOperator<BinarySolution> {
+public class UniformCrossover<S extends BinarySolution> implements CrossoverOperator<S> {
   private double crossoverProbability;
-  private RandomGenerator<Double> crossoverRandomGenerator;
+    private final RandomGenerator<Double> crossoverRandomGenerator;
 
   /** Constructor */
   public UniformCrossover(double crossoverProbability) {
@@ -28,26 +26,24 @@ public class UniformCrossover implements CrossoverOperator<BinarySolution> {
   /** Constructor */
   public UniformCrossover(
       double crossoverProbability, RandomGenerator<Double> crossoverRandomGenerator) {
-    if (crossoverProbability < 0) {
-      throw new JMetalException("Crossover probability is negative: " + crossoverProbability);
-    }
+    Check.probabilityIsValid(crossoverProbability);
     this.crossoverProbability = crossoverProbability;
     this.crossoverRandomGenerator = crossoverRandomGenerator;
   }
 
   /* Getter */
   @Override
-  public double getCrossoverProbability() {
+  public double crossoverProbability() {
     return crossoverProbability;
   }
 
   /* Setter */
-  public void setCrossoverProbability(double crossoverProbability) {
+  public void crossoverProbability(double crossoverProbability) {
     this.crossoverProbability = crossoverProbability;
   }
 
   @Override
-  public List<BinarySolution> execute(List<BinarySolution> solutions) {
+  public List<S> execute(List<S> solutions) {
     Check.notNull(solutions);
     Check.that(solutions.size() == 2, "There must be two parents instead of " + solutions.size());
 
@@ -62,11 +58,11 @@ public class UniformCrossover implements CrossoverOperator<BinarySolution> {
    * @param parent2 The second parent
    * @return An array containing the two offspring
    */
-  public List<BinarySolution> doCrossover(
-      double probability, BinarySolution parent1, BinarySolution parent2) {
-    List<BinarySolution> offspring = new ArrayList<>(2);
-    offspring.add((BinarySolution) parent1.copy());
-    offspring.add((BinarySolution) parent2.copy());
+  public List<S> doCrossover(
+      double probability, S parent1, S parent2) {
+    List<S> offspring = new ArrayList<>(2);
+    offspring.add((S) parent1.copy());
+    offspring.add((S) parent2.copy());
 
     if (crossoverRandomGenerator.getRandomValue() < probability) {
       for (int variableIndex = 0; variableIndex < parent1.variables().size(); variableIndex++) {
@@ -90,12 +86,12 @@ public class UniformCrossover implements CrossoverOperator<BinarySolution> {
   }
 
   @Override
-  public int getNumberOfRequiredParents() {
+  public int numberOfRequiredParents() {
     return 2;
   }
 
   @Override
-  public int getNumberOfGeneratedChildren() {
+  public int numberOfGeneratedChildren() {
     return 2;
   }
 }

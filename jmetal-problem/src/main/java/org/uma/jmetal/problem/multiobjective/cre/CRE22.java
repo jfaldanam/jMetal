@@ -1,9 +1,8 @@
 package org.uma.jmetal.problem.multiobjective.cre;
 
+import java.util.List;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
-import java.util.List;
 
 /**
  * Class representing problem CRE22. Source: Ryoji Tanabe and Hisao Ishibuchi, An easy-to-use
@@ -20,15 +19,14 @@ public class CRE22 extends AbstractDoubleProblem {
 
   /** Constructor */
   public CRE22() {
-    setNumberOfVariables(4);
-    setNumberOfObjectives(2);
-    setNumberOfConstraints(4);
-    setName("CRE22");
+    numberOfObjectives(2);
+    numberOfConstraints(4);
+    name("CRE22");
 
     List<Double> lowerLimit = List.of(0.125, 0.1, 0.1, 0.125);
     List<Double> upperLimit = List.of(5.0, 10.0, 10.0, 5.0);
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */
@@ -49,7 +47,7 @@ public class CRE22 extends AbstractDoubleProblem {
 
   /** EvaluateConstraints() method */
   public void evaluateConstraints(DoubleSolution solution) {
-    double[] constraint = new double[this.getNumberOfConstraints()];
+    double[] constraint = new double[this.numberOfConstraints()];
     double x1, x2, x3, x4;
 
     x1 = solution.variables().get(0);
@@ -81,7 +79,7 @@ public class CRE22 extends AbstractDoubleProblem {
     constraint[2] = x4 - x1;
     constraint[3] = PC - P;
 
-    for (int i = 0; i < getNumberOfConstraints(); i++) {
+    for (int i = 0; i < numberOfConstraints(); i++) {
       if (constraint[i] < 0.0) {
         constraint[i] = -constraint[i];
       } else {
@@ -89,7 +87,7 @@ public class CRE22 extends AbstractDoubleProblem {
       }
     }
 
-    for (int i = 0; i < getNumberOfConstraints(); i++) {
+    for (int i = 0; i < numberOfConstraints(); i++) {
       solution.constraints()[i] = constraint[i];
     }
   }

@@ -1,5 +1,7 @@
 package org.uma.jmetal.algorithm.multiobjective.mombi;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.algorithm.impl.AbstractGeneticAlgorithm;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
@@ -8,9 +10,6 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Abstract class representing variants of the MOMBI algorithm
@@ -52,10 +51,10 @@ public abstract class AbstractMOMBI<S extends Solution<?>> extends AbstractGenet
 
 		this.evaluator = evaluator;
 
-		this.nadirPoint     = new ArrayList<Double>(this.getProblem().getNumberOfObjectives());
-		this.initializeNadirPoint(this.getProblem().getNumberOfObjectives());
-		this.referencePoint = new ArrayList<Double>(this.getProblem().getNumberOfObjectives());
-		this.initializeReferencePoint(this.getProblem().getNumberOfObjectives());
+		this.nadirPoint     = new ArrayList<Double>(this.getProblem().numberOfObjectives());
+		this.initializeNadirPoint(this.getProblem().numberOfObjectives());
+		this.referencePoint = new ArrayList<Double>(this.getProblem().numberOfObjectives());
+		this.initializeReferencePoint(this.getProblem().numberOfObjectives());
 	}
 
 	@Override
@@ -115,7 +114,7 @@ public abstract class AbstractMOMBI<S extends Solution<?>> extends AbstractGenet
 	}
 
 	@Override
-	public List<S> getResult() {
+	public List<S> result() {
 		this.setPopulation(evaluator.evaluate(this.getPopulation(), getProblem()));
 
 		return this.getPopulation();

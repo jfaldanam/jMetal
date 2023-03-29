@@ -1,13 +1,12 @@
 package org.uma.jmetal.problem.multiobjective;
 
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.List;
 import org.uma.jmetal.problem.binaryproblem.impl.AbstractBinaryProblem;
 import org.uma.jmetal.solution.binarysolution.BinarySolution;
 import org.uma.jmetal.solution.binarysolution.impl.DefaultBinarySolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
-
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.List;
 
 /**
  * Class representing problem OneZeroMax. The problem consist of maximizing the
@@ -23,20 +22,34 @@ public class OneZeroMax extends AbstractBinaryProblem {
 
   /** Constructor */
   public OneZeroMax(Integer numberOfBits) throws JMetalException {
-    setNumberOfVariables(1);
-    setNumberOfObjectives(2);
-    setName("OneZeroMax");
-
     bits = numberOfBits ;
   }
 
   @Override
-  public List<Integer> getListOfBitsPerVariable() {
+  public int numberOfVariables() {
+    return 1 ;
+  }
+  @Override
+  public int numberOfObjectives() {
+    return 2 ;
+  }
+  @Override
+  public int numberOfConstraints() {
+    return 0 ;
+  }
+
+  @Override
+  public String name() {
+    return "OneZeroMax" ;
+  }
+
+  @Override
+  public List<Integer> listOfBitsPerVariable() {
     return Arrays.asList(bits);
   }
 
   @Override
-  public int getBitsFromVariable(int index) {
+  public int bitsFromVariable(int index) {
   	if (index != 0) {
   		throw new JMetalException("Problem OneZeroMax has only a variable. Index = " + index) ;
   	}
@@ -45,7 +58,7 @@ public class OneZeroMax extends AbstractBinaryProblem {
 
   @Override
   public BinarySolution createSolution() {
-    return new DefaultBinarySolution(getListOfBitsPerVariable(), getNumberOfObjectives()) ;
+    return new DefaultBinarySolution(listOfBitsPerVariable(), numberOfObjectives()) ;
   }
 
   /** Evaluate() method */

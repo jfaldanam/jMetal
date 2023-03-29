@@ -1,15 +1,18 @@
 package org.uma.jmetal.problem.multiobjective.fda;
 
-import org.uma.jmetal.problem.BoundedProblem;
 import org.uma.jmetal.problem.DynamicProblem;
+import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 
-/** Cristóbal Barba <cbarba@lcc.uma.es> */
+/**
+ * Cristóbal Barba <cbarba@lcc.uma.es>
+ */
 @SuppressWarnings("serial")
 public abstract class FDA extends AbstractDoubleProblem
-    implements DynamicProblem<DoubleSolution, Integer>, BoundedProblem<Double, DoubleSolution> {
+    implements DynamicProblem<DoubleSolution, Integer>, DoubleProblem {
+
   protected double time;
   private boolean changeStatus = false;
 

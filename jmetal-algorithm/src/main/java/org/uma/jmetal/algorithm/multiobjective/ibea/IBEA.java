@@ -1,5 +1,7 @@
 package org.uma.jmetal.algorithm.multiobjective.ibea;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
@@ -7,11 +9,8 @@ import org.uma.jmetal.operator.selection.SelectionOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.SolutionListUtils;
-import org.uma.jmetal.util.comparator.DominanceComparator;
+import org.uma.jmetal.util.comparator.dominanceComparator.impl.DominanceWithConstraintsComparator;
 import org.uma.jmetal.util.solutionattribute.impl.Fitness;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class implements the IBEA algorithm
@@ -115,7 +114,7 @@ public class IBEA<S extends Solution<?>> implements Algorithm<List<S>> {
     }
   }
 
-  @Override public List<S> getResult() {
+  @Override public List<S> result() {
     return SolutionListUtils.getNonDominatedSolutions(archive);
   }
 
@@ -182,15 +181,15 @@ public class IBEA<S extends Solution<?>> implements Algorithm<List<S>> {
         B = new ArrayList<>(1);
         B.add(solution);
 
-        int flag = (new DominanceComparator<S>()).compare(A.get(0), B.get(0));
+        int flag = (new DominanceWithConstraintsComparator<S>()).compare(A.get(0), B.get(0));
 
         double value;
         if (flag == -1) {
           value =
-              -calculateHypervolumeIndicator(A.get(0), B.get(0), problem.getNumberOfObjectives(),
+              -calculateHypervolumeIndicator(A.get(0), B.get(0), problem.numberOfObjectives(),
                   maximumValues, minimumValues);
         } else {
-          value = calculateHypervolumeIndicator(B.get(0), A.get(0), problem.getNumberOfObjectives(),
+          value = calculateHypervolumeIndicator(B.get(0), A.get(0), problem.numberOfObjectives(),
               maximumValues, minimumValues);
         }
 
@@ -224,16 +223,16 @@ public class IBEA<S extends Solution<?>> implements Algorithm<List<S>> {
    */
   public void calculateFitness(List<S> solutionSet) {
     // Obtains the lower and upper bounds of the population
-    double[] maximumValues = new double[problem.getNumberOfObjectives()];
-    double[] minimumValues = new double[problem.getNumberOfObjectives()];
+    double[] maximumValues = new double[problem.numberOfObjectives()];
+    double[] minimumValues = new double[problem.numberOfObjectives()];
 
-    for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+    for (int i = 0; i < problem.numberOfObjectives(); i++) {
       maximumValues[i] = -Double.MAX_VALUE;
       minimumValues[i] = Double.MAX_VALUE;
     }
 
     for (S solution : solutionSet) {
-      for (int obj = 0; obj < problem.getNumberOfObjectives(); obj++) {
+      for (int obj = 0; obj < problem.numberOfObjectives(); obj++) {
         double value = solution.objectives()[obj];
         if (value > maximumValues[obj]) {
           maximumValues[obj] = value;
@@ -285,11 +284,11 @@ public class IBEA<S extends Solution<?>> implements Algorithm<List<S>> {
     solutionSet.remove(worstIndex);
   }
 
-  @Override public String getName() {
+  @Override public String name() {
     return "IBEA" ;
   }
 
-  @Override public String getDescription() {
+  @Override public String description() {
     return "Indicator based Evolutionary Algorithm" ;
   }
 }

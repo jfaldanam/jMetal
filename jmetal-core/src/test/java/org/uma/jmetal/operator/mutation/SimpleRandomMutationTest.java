@@ -1,5 +1,10 @@
 package org.uma.jmetal.operator.mutation;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 import org.junit.Test;
 import org.uma.jmetal.operator.mutation.impl.SimpleRandomMutation;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -8,12 +13,6 @@ import org.uma.jmetal.util.bounds.Bounds;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.pseudorandom.impl.AuditableRandomGenerator;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
-import static org.junit.Assert.assertTrue;
-
 public class SimpleRandomMutationTest {
 
 	@Test
@@ -21,7 +20,7 @@ public class SimpleRandomMutationTest {
 		// Configuration
 
 		List<Bounds<Double>> bounds = Arrays.asList(Bounds.create(0.0, 1.0)) ;
-		DoubleSolution solution = new DefaultDoubleSolution(2, bounds) ;
+		DoubleSolution solution = new DefaultDoubleSolution(bounds, 2, 0) ;
 
 		// Check configuration leads to use default generator by default
 		final int[] defaultUses = { 0 };

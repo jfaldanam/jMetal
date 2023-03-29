@@ -6,6 +6,9 @@ import com.fuzzylite.rule.RuleBlock;
 import com.fuzzylite.term.Triangle;
 import com.fuzzylite.variable.InputVariable;
 import com.fuzzylite.variable.OutputVariable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.SteadyStateNSGAII;
 import org.uma.jmetal.operator.crossover.impl.DifferentialEvolutionCrossover;
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
@@ -16,16 +19,12 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.archive.impl.SpatialSpreadDeviationArchive;
-import org.uma.jmetal.util.comparator.DominanceComparator;
 import org.uma.jmetal.util.comparator.SpatialSpreadDeviationComparator;
+import org.uma.jmetal.util.comparator.dominanceComparator.impl.DominanceWithConstraintsComparator;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
 import org.uma.jmetal.util.solutionattribute.impl.SpatialSpreadDeviation;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 /**
  * This class implements the FAME algorithm described in: A. Santiago, B. Dorronsoro, A.J. Nebro,
@@ -62,7 +61,7 @@ public class FAME<S extends DoubleSolution> extends SteadyStateNSGAII<S> {
         null,
         null,
         selectionOperator,
-        new DominanceComparator<>(),
+        new DominanceWithConstraintsComparator<>(),
         evaluator);
     archiveSSD = new SpatialSpreadDeviationArchive<S>(archiveSize);
     OpProb = new double[operators];
@@ -169,7 +168,7 @@ public class FAME<S extends DoubleSolution> extends SteadyStateNSGAII<S> {
       if (aleat <= 0.1) // 0.1 n_n wiiii (0.1 lo hace parecido a measo1 (0.05 asco))
       matingPopulation.add((S) selectionOperator.execute(population));
       else {
-        matingPopulation.add((S) selectionOperator.execute(archiveSSD.getSolutionList()));
+        matingPopulation.add((S) selectionOperator.execute(archiveSSD.solutions()));
       }
     }
 
@@ -291,12 +290,12 @@ public class FAME<S extends DoubleSolution> extends SteadyStateNSGAII<S> {
   }
 
   @Override
-  public String getName() {
+  public String name() {
     return "FAME";
   }
 
   @Override
-  public String getDescription() {
+  public String description() {
     return "FAME ultima version";
   }
 
@@ -317,8 +316,8 @@ public class FAME<S extends DoubleSolution> extends SteadyStateNSGAII<S> {
   }
 
   @Override
-  public List<S> getResult() {
-    return SolutionListUtils.getNonDominatedSolutions(archiveSSD.getSolutionList());
+  public List<S> result() {
+    return SolutionListUtils.getNonDominatedSolutions(archiveSSD.solutions());
   }
 
   @Override

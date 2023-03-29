@@ -1,12 +1,11 @@
 package org.uma.jmetal.qualityindicator.impl.hypervolume.impl;
 
-import org.uma.jmetal.qualityindicator.impl.hypervolume.Hypervolume;
-import org.uma.jmetal.util.VectorUtils;
-import org.uma.jmetal.util.errorchecking.Check;
-
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Comparator;
+import org.uma.jmetal.qualityindicator.impl.hypervolume.Hypervolume;
+import org.uma.jmetal.util.VectorUtils;
+import org.uma.jmetal.util.errorchecking.Check;
 
 /**
  * This class implements the hypervolume indicator developed by the WFG
@@ -15,12 +14,6 @@ import java.util.Comparator;
  */
 @SuppressWarnings("serial")
 public class WFGHypervolume extends Hypervolume {
-
-  /**
-   * Default constructor
-   */
-  public WFGHypervolume() {
-  }
 
   /**
    * Constructor with reference point
@@ -42,7 +35,7 @@ public class WFGHypervolume extends Hypervolume {
   }
 
   @Override
-  public String getDescription() {
+  public String description() {
     return "WFG Hypervolume quality indicator" ;
   }
 
@@ -542,7 +535,7 @@ public class WFGHypervolume extends Hypervolume {
   }
 
   @Override
-  public String getName() {
-    return "WFG implementation of the hypervolume quality indicator";
+  public String name() {
+    return "HV";
   }
 }

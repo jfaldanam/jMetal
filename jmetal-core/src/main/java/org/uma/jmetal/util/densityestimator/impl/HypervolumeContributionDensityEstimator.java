@@ -1,14 +1,13 @@
 package org.uma.jmetal.util.densityestimator.impl;
 
+import java.util.Comparator;
+import java.util.List;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.densityestimator.DensityEstimator;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.legacy.front.impl.ArrayFront;
 import org.uma.jmetal.util.legacy.qualityindicator.impl.hypervolume.Hypervolume;
 import org.uma.jmetal.util.legacy.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
-
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * This class implements a density estimator based on the hypervolume contribution
@@ -46,7 +45,7 @@ public class HypervolumeContributionDensityEstimator<S extends Solution<?>> impl
   }
 
   @Override
-  public Double getValue(S solution) {
+  public Double value(S solution) {
     Check.notNull(solution);
 
     Double result = 0.0 ;
@@ -57,8 +56,8 @@ public class HypervolumeContributionDensityEstimator<S extends Solution<?>> impl
   }
 
   @Override
-  public Comparator<S> getComparator() {
-    return Comparator.comparing(this::getValue) ;
+  public Comparator<S> comparator() {
+    return Comparator.comparing(this::value) ;
   }
 }
 

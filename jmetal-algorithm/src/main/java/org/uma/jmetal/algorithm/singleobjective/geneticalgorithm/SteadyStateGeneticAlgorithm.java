@@ -1,5 +1,8 @@
 package org.uma.jmetal.algorithm.singleobjective.geneticalgorithm;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import org.uma.jmetal.algorithm.impl.AbstractGeneticAlgorithm;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
@@ -7,11 +10,6 @@ import org.uma.jmetal.operator.selection.SelectionOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.comparator.ObjectiveComparator;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
@@ -44,7 +42,7 @@ public class SteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstract
   }
 
   @Override protected List<S> replacement(List<S> population, List<S> offspringPopulation) {
-    Collections.sort(population, comparator) ;
+    population.sort(comparator);
     int worstSolutionIndex = population.size() - 1;
     if (comparator.compare(population.get(worstSolutionIndex), offspringPopulation.get(0)) > 0) {
       population.remove(worstSolutionIndex);
@@ -86,8 +84,8 @@ public class SteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstract
     return population;
   }
 
-  @Override public S getResult() {
-    Collections.sort(getPopulation(), comparator) ;
+  @Override public S result() {
+    getPopulation().sort(comparator);
     return getPopulation().get(0);
   }
 
@@ -99,11 +97,11 @@ public class SteadyStateGeneticAlgorithm<S extends Solution<?>> extends Abstract
     evaluations++;
   }
 
-  @Override public String getName() {
+  @Override public String name() {
     return "ssGA" ;
   }
 
-  @Override public String getDescription() {
+  @Override public String description() {
     return "Steady-State Genetic Algorithm" ;
   }
 }

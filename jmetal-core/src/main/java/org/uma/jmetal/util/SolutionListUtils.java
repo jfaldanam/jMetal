@@ -1,32 +1,33 @@
 package org.uma.jmetal.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.IntStream;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.solution.util.attribute.util.attributecomparator.AttributeComparator;
-import org.uma.jmetal.solution.util.attribute.util.attributecomparator.impl.DoubleValueAttributeComparator;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
-import org.uma.jmetal.util.comparator.DominanceComparator;
 import org.uma.jmetal.util.comparator.ObjectiveComparator;
+import org.uma.jmetal.util.comparator.dominanceComparator.impl.DominanceWithConstraintsComparator;
 import org.uma.jmetal.util.distance.Distance;
 import org.uma.jmetal.util.distance.impl.EuclideanDistanceBetweenSolutionAndASolutionListInObjectiveSpace;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
-import org.uma.jmetal.util.pseudorandom.BoundedRandomGenerator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
-import java.util.*;
-import java.util.stream.IntStream;
-
-/** @author Antonio J. Nebro */
+/**
+ * @author Antonio J. Nebro
+ */
 public class SolutionListUtils {
 
   public static <S extends Solution<?>> List<S> getNonDominatedSolutions(List<S> solutionList) {
-    Archive<S> nonDominatedSolutionArchive = new NonDominatedSolutionListArchive<>() ;
+    Archive<S> nonDominatedSolutionArchive = new NonDominatedSolutionListArchive<>();
     solutionList.forEach(nonDominatedSolutionArchive::add);
 
-    return nonDominatedSolutionArchive.getSolutionList();
+    return nonDominatedSolutionArchive.solutions();
   }
 
   public <S> S findWorstSolution(Collection<S> solutionList, Comparator<S> comparator) {
@@ -108,7 +109,7 @@ public class SolutionListUtils {
   }
 
   public static <S extends Solution<?>> double[][] writeObjectivesToMatrix(List<S> solutionList) {
-    if (solutionList.size() == 0) {
+    if (solutionList.isEmpty()) {
       return new double[0][0];
     }
 
@@ -200,7 +201,7 @@ public class SolutionListUtils {
   public static <S extends Solution<?>> boolean isSolutionDominatedBySolutionList(
       S solution, List<? extends S> solutionSet) {
     boolean result = false;
-    Comparator<S> dominance = new DominanceComparator<S>();
+    Comparator<S> dominance = new DominanceWithConstraintsComparator<>();
 
     int i = 0;
 
@@ -212,61 +213,6 @@ public class SolutionListUtils {
     }
 
     return result;
-  }
-
-  /**
-   * This method receives a normalized list of non-dominated solutions and return the inverted one.
-   * This operation is needed for minimization problem
-   *
-   * @param solutionList The front to invert
-   * @return The inverted front
-   */
-  public static <S> List<S> selectNRandomDifferentSolutions(
-      int numberOfSolutionsToBeReturned, List<S> solutionList) {
-    JMetalRandom random = JMetalRandom.getInstance();
-    return selectNRandomDifferentSolutions(
-        numberOfSolutionsToBeReturned, solutionList, (low, up) -> random.nextInt(low, up));
-  }
-
-  /**
-   * This method receives a normalized list of non-dominated solutions and return the inverted one.
-   * This operation is needed for minimization problem
-   *
-   * @param solutionList The front to invert
-   * @param randomGenerator The random generator to use
-   * @return The inverted front
-   */
-  public static <S> List<S> selectNRandomDifferentSolutions(
-      int numberOfSolutionsToBeReturned,
-      List<S> solutionList,
-      BoundedRandomGenerator<Integer> randomGenerator) {
-    Check.notNull(solutionList);
-    Check.collectionIsNotEmpty(solutionList);
-    Check.that(
-        solutionList.size() >= numberOfSolutionsToBeReturned,
-        "The solution list size ("
-            + solutionList.size()
-            + ") is less than "
-            + "the number of requested solutions ("
-            + numberOfSolutionsToBeReturned
-            + ")");
-
-    List<S> resultList = new ArrayList<>(numberOfSolutionsToBeReturned);
-
-    if (solutionList.size() == 1) {
-      resultList.add(solutionList.get(0));
-    } else {
-      Collection<Integer> positions = new HashSet<>(numberOfSolutionsToBeReturned);
-      while (positions.size() < numberOfSolutionsToBeReturned) {
-        int nextPosition = randomGenerator.getRandomValue(0, solutionList.size() - 1);
-        if (!positions.contains(nextPosition)) {
-          positions.add(nextPosition);
-          resultList.add(solutionList.get(nextPosition));
-        }
-      }
-    }
-
-    return resultList;
   }
 
   /**
@@ -290,7 +236,7 @@ public class SolutionListUtils {
   }
 
   public static <S extends Solution<?>> double[][] normalizedDistanceMatrix(
-      List<S> solutionSet, double maxs[], double mins[]) {
+      List<S> solutionSet, double[] maxs, double[] mins) {
     double[][] distance = new double[solutionSet.size()][solutionSet.size()];
     for (int i = 0; i < solutionSet.size(); i++) {
       distance[i][i] = 0.0;
@@ -303,34 +249,9 @@ public class SolutionListUtils {
     }
     return distance;
   }
-  /**
-   * Compares two solution lists to determine if both are equals
-   *
-   * @param solutionList A <code>Solution list</code>
-   * @param newSolutionList A <code>Solution list</code>
-   * @return true if both are contains the same solutions, false in other case
-   */
-  public static <S> boolean solutionListsAreEquals(List<S> solutionList, List<S> newSolutionList) {
-    boolean found;
-    for (int i = 0; i < solutionList.size(); i++) {
-
-      int j = 0;
-      found = false;
-      while (j < newSolutionList.size()) {
-        if (solutionList.get(i).equals(newSolutionList.get(j))) {
-          found = true;
-        }
-        j++;
-      }
-      if (!found) {
-        return false;
-      }
-    }
-    return true;
-  }
 
   /**
-   * This methods takes a list of solutions, removes a percentage of its solutions, and it is filled
+   * This method takes a list of solutions, removes a percentage of its solutions, and it is filled
    * with new random generated solutions
    *
    * @param solutionList
@@ -356,7 +277,7 @@ public class SolutionListUtils {
   /**
    * Removes a number of solutions from a list
    *
-   * @param solutionList The list of solutions
+   * @param solutionList              The list of solutions
    * @param numberOfSolutionsToRemove
    */
   public static <S> void removeSolutionsFromList(
@@ -371,8 +292,8 @@ public class SolutionListUtils {
               + ")");
     }
 
-    for (int i = 0; i < numberOfSolutionsToRemove; i++) {
-      solutionList.remove(0);
+    if (numberOfSolutionsToRemove > 0) {
+      solutionList.subList(0, numberOfSolutionsToRemove).clear();
     }
   }
 
@@ -380,9 +301,9 @@ public class SolutionListUtils {
    * Fills a population with new solutions until its size is maxListSize
    *
    * @param solutionList The list of solutions
-   * @param problem The problem being solved
-   * @param maxListSize The target size of the list
-   * @param <S> The type of the solutions to be created
+   * @param problem      The problem being solved
+   * @param maxListSize  The target size of the list
+   * @param <S>          The type of the solutions to be created
    */
   public static <S> void fillPopulationWithNewSolutions(
       List<S> solutionList, Problem<S> problem, int maxListSize) {
@@ -417,12 +338,12 @@ public class SolutionListUtils {
    * 23(5), 904-912, (2019). DOI: https://doi.org/10.1109/TEVC.2018.2883094
    *
    * @param originalSolutionList
-   * @param finalListSize The size of the result list
+   * @param finalListSize        The size of the result list
    * @param <S>
    * @return
    */
   public static <S extends Solution<?>> List<S> distanceBasedSubsetSelection(
-          List<S> originalSolutionList, int finalListSize) {
+      List<S> originalSolutionList, int finalListSize) {
     Check.notNull(originalSolutionList);
     Check.collectionIsNotEmpty(originalSolutionList);
 
@@ -431,10 +352,10 @@ public class SolutionListUtils {
     }
 
     if (originalSolutionList.get(0).objectives().length == 2) {
-      Archive<S> archive = new CrowdingDistanceArchive<>(finalListSize) ;
+      Archive<S> archive = new CrowdingDistanceArchive<>(finalListSize);
       originalSolutionList.forEach(archive::add);
 
-      return archive.getSolutionList() ;
+      return archive.solutions();
     }
 
     for (int i = 0; i < originalSolutionList.size(); i++) {
@@ -448,10 +369,10 @@ public class SolutionListUtils {
     // STEP 2. Find the solution having the best objective value, being the objective randomly
     // selected
     int randomObjective =
-            JMetalRandom.getInstance().nextInt(0, solutions.get(0).objectives().length - 1);
+        JMetalRandom.getInstance().nextInt(0, solutions.get(0).objectives().length - 1);
 
     int bestSolutionIndex =
-            findIndexOfBestSolution(solutions, new ObjectiveComparator<>(randomObjective));
+        findIndexOfBestSolution(solutions, new ObjectiveComparator<>(randomObjective));
 
     //  STEP 3. Add the solution to the current list of selected solutions and remove it from the original list
     List<S> selectedSolutions = new ArrayList<>(finalListSize);
@@ -460,17 +381,19 @@ public class SolutionListUtils {
 
     // STEP 4. Find the solution having the largest distance to the selected solutions
     Distance<S, List<S>> distance =
-            new EuclideanDistanceBetweenSolutionAndASolutionListInObjectiveSpace<>();
+        new EuclideanDistanceBetweenSolutionAndASolutionListInObjectiveSpace<>();
     while (selectedSolutions.size() < finalListSize) {
       for (S solution : solutions) {
         solution.attributes().put(
-                "SUBSET_SELECTION_DISTANCE", distance.compute(solution, selectedSolutions));
+            "SUBSET_SELECTION_DISTANCE", distance.compute(solution, selectedSolutions));
       }
       int largestDistanceSolutionIndex =
-              findIndexOfBestSolution(
-                      solutions,
-                      new DoubleValueAttributeComparator<>(
-                              "SUBSET_SELECTION_DISTANCE", AttributeComparator.Ordering.DESCENDING));
+          findIndexOfBestSolution(
+              solutions,
+              (S s1, S s2) -> Double.compare(
+                  (double) s2.attributes().get("SUBSET_SELECTION_DISTANCE"),
+                  (double) s1.attributes().get("SUBSET_SELECTION_DISTANCE"))
+          );
       selectedSolutions.add(solutions.get(largestDistanceSolutionIndex));
       solutions.remove(largestDistanceSolutionIndex);
     }
@@ -485,15 +408,18 @@ public class SolutionListUtils {
 
   /**
    * Given a list of solutions, returns a matrix with the objective values of all the solutions
+   *
    * @param solutionList
    * @param <S>
    * @return
    */
-  public static <S extends Solution<?>> double[][] getMatrixWithObjectiveValues(List<S> solutionList) {
-    double[][] matrix = new double[solutionList.size()][] ;
+  public static <S extends Solution<?>> double[][] getMatrixWithObjectiveValues(
+      List<S> solutionList) {
+    double[][] matrix = new double[solutionList.size()][];
 
-    IntStream.range(0, solutionList.size()).forEach(i -> matrix[i] = solutionList.get(i).objectives()) ;
+    IntStream.range(0, solutionList.size())
+        .forEach(i -> matrix[i] = solutionList.get(i).objectives());
 
-    return matrix ;
+    return matrix;
   }
 }

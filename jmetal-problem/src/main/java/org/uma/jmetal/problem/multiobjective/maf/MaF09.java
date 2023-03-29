@@ -1,13 +1,13 @@
 package org.uma.jmetal.problem.multiobjective.maf;
 
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.bounds.Bounds;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
-
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class representing problem MaF05
@@ -35,10 +35,9 @@ public class MaF09 extends AbstractDoubleProblem {
    */
   public MaF09(Integer numberOfVariables,
       Integer numberOfObjectives) {
-    setNumberOfVariables(2);
-    setNumberOfObjectives(numberOfObjectives);
-    setNumberOfConstraints(0);
-    setName("MaF09");
+    numberOfObjectives(numberOfObjectives);
+    numberOfConstraints(0);
+    name("MaF09");
     M9 = numberOfObjectives;
 
     //other constants during the whole process once M&D are defined
@@ -124,15 +123,14 @@ public class MaF09 extends AbstractDoubleProblem {
     pindex9 = pind;
     oth_poly_points9 = opoly9;
 
-    List<Double> lower = new ArrayList<>(getNumberOfVariables()), upper = new ArrayList<>(
-        getNumberOfVariables());
+    List<Double> lower = new ArrayList<>(numberOfVariables), upper = new ArrayList<>(
+        numberOfVariables);
 
-    for (int var = 0; var < numberOfVariables; var++) {
+    IntStream.range(0, numberOfVariables).forEach(i -> {
       lower.add(-10000.0);
       upper.add(10000.0);
-    }
-
-    setVariableBounds(lower, upper);
+    });
+    variableBounds(lower, upper);
   }
 
   /**
@@ -158,7 +156,7 @@ public class MaF09 extends AbstractDoubleProblem {
     while (infeasible) {
       //re-generate a random variable
       for (int i = 0; i < numberOfVariables_; i++) {
-        Bounds<Double> bounds = getBoundsForVariables().get(i) ;
+        Bounds<Double> bounds = variableBounds().get(i) ;
         x[i] = generV(bounds.getLowerBound(), bounds.getUpperBound());
         solution.variables().set(i, x[i]);
       }

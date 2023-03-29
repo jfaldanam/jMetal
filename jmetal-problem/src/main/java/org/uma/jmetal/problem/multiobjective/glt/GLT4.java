@@ -1,10 +1,10 @@
 package org.uma.jmetal.problem.multiobjective.glt;
 
-import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
+import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
  * Problem GLT4. Defined in
@@ -30,21 +30,20 @@ public class GLT4 extends AbstractDoubleProblem {
    * @param numberOfVariables
    */
   public GLT4(int numberOfVariables) {
-    setNumberOfVariables(numberOfVariables);
-    setNumberOfObjectives(2);
-    setName("GLT4");
+    numberOfObjectives(2);
+    name("GLT4");
 
-    List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables()) ;
-    List<Double> upperLimit = new ArrayList<>(getNumberOfVariables()) ;
+    List<Double> lowerLimit = new ArrayList<>(numberOfVariables) ;
+    List<Double> upperLimit = new ArrayList<>(numberOfVariables) ;
 
     lowerLimit.add(0.0) ;
     upperLimit.add(1.0) ;
-    for (int i = 1; i < getNumberOfVariables(); i++) {
+    IntStream.range(1, numberOfVariables).forEach(i -> {
       lowerLimit.add(-1.0);
       upperLimit.add(1.0);
-    }
+    });
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   @Override

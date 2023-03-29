@@ -1,5 +1,6 @@
 package org.uma.jmetal.algorithm.multiobjective.wasfga;
 
+import java.util.List;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.selection.SelectionOperator;
@@ -12,8 +13,6 @@ import org.uma.jmetal.util.measure.impl.BasicMeasure;
 import org.uma.jmetal.util.measure.impl.CountingMeasure;
 import org.uma.jmetal.util.measure.impl.DurationMeasure;
 import org.uma.jmetal.util.measure.impl.SimpleMeasureManager;
-
-import java.util.List;
 
 /**
  * Implementation of the preference based algorithm named WASF-GA on jMetal5.0
@@ -91,7 +90,7 @@ public class WASFGAMeasures<S extends Solution<?>> extends WASFGA<S> implements 
 	@Override
 	protected void updateProgress() {
 		this.iterations.increment();
-		solutionListMeasure.push(getResult());
+		solutionListMeasure.push(this.result());
 	}
 	
 	@Override
@@ -122,12 +121,12 @@ public class WASFGAMeasures<S extends Solution<?>> extends WASFGA<S> implements 
 	}
 	
 	@Override
-	public String getName() {
+	public String name() {
 		return "WASFGA";
 	}
 	
 	@Override
-	public String getDescription() {
+	public String description() {
 		return "Weighting Achievement Scalarizing Function Genetic Algorithm. Version using Measures";
 	}
 	

@@ -1,12 +1,11 @@
 package org.uma.jmetal.lab.visualization.html.impl.htmlTable.impl;
 
+import java.util.Arrays;
 import org.apache.commons.math3.stat.inference.WilcoxonSignedRankTest;
 import org.uma.jmetal.lab.visualization.html.impl.htmlTable.HtmlTable;
 import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
-
-import java.util.Arrays;
 /**
  * This class computes the Wilcoxon test for every pair of algorithms.
  *
@@ -90,13 +89,13 @@ public class WilcoxonTestTable extends HtmlTable<WilcoxonTestTable.Difference[]>
       html.append("<div class='horizontal'>");
       for (Difference difference : differences) {
         if (difference == Difference.BETTER) {
-          html.append("<i class='fas fa-arrow-alt-circle-up'></i>");
+          html.append("<a> + </a>");
         }
         if (difference == Difference.WORSE) {
-          html.append("<i class='far fa-arrow-alt-circle-down'></i>");
+          html.append("<a> - </a>");
         }
         if (difference == Difference.NO_DIFFERENCE) {
-          html.append("<i class='fas fa-equals'></i>");
+          html.append("<a> = </a>");
         }
       }
       html.append("</div></td>");

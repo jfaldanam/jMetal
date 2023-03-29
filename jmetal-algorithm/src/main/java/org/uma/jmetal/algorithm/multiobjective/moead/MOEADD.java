@@ -1,5 +1,7 @@
 package org.uma.jmetal.algorithm.multiobjective.moead;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.algorithm.multiobjective.moead.util.MOEADUtils;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
@@ -9,9 +11,6 @@ import org.uma.jmetal.util.point.impl.IdealPoint;
 import org.uma.jmetal.util.point.impl.NadirPoint;
 import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SuppressWarnings("serial")
 public class MOEADD<S extends DoubleSolution> extends AbstractMOEAD<S> {
@@ -43,10 +42,10 @@ public class MOEADD<S extends DoubleSolution> extends AbstractMOEAD<S> {
     population = new ArrayList<>(populationSize);
 
     neighborhood = new int[populationSize][neighborSize];
-    lambda = new double[populationSize][problem.getNumberOfObjectives()];
+    lambda = new double[populationSize][problem.numberOfObjectives()];
 
-    idealPoint = new IdealPoint(problem.getNumberOfObjectives()); // ideal point for Pareto-based population
-    nadirPoint = new NadirPoint(problem.getNumberOfObjectives()); // nadir point for Pareto-based population
+    idealPoint = new IdealPoint(problem.numberOfObjectives()); // ideal point for Pareto-based population
+    nadirPoint = new NadirPoint(problem.numberOfObjectives()); // nadir point for Pareto-based population
 
     rankIdx = new int[populationSize][populationSize];
     subregionIdx = new int[populationSize][populationSize];
@@ -62,7 +61,7 @@ public class MOEADD<S extends DoubleSolution> extends AbstractMOEAD<S> {
     // initialize the distance
     for (int i = 0; i < populationSize; i++) {
       double distance = calculateDistance2(
-          population.get(i), lambda[i], idealPoint.getValues(), nadirPoint.getValues());
+          population.get(i), lambda[i], idealPoint.values(), nadirPoint.values());
       subregionDist[i][i] = distance;
     }
 
@@ -215,7 +214,7 @@ public class MOEADD<S extends DoubleSolution> extends AbstractMOEAD<S> {
   public void updateArchive(S indiv) {
 
     // find the location of 'indiv'
-    setLocation(indiv, idealPoint.getValues(), nadirPoint.getValues());
+    setLocation(indiv, idealPoint.values(), nadirPoint.values());
     int location = (int) indiv.attributes().get("region");
 
     numRanks = nondominated_sorting_add(indiv);
@@ -1275,7 +1274,7 @@ public class MOEADD<S extends DoubleSolution> extends AbstractMOEAD<S> {
     int flag1 = 0;
     int flag2 = 0;
 
-    for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+    for (int i = 0; i < problem.numberOfObjectives(); i++) {
       if (a.objectives()[i] < b.objectives()[i]) {
         flag1 = 1;
       } else {
@@ -1304,22 +1303,22 @@ public class MOEADD<S extends DoubleSolution> extends AbstractMOEAD<S> {
     double scale;
     double distance;
 
-    double[] vecInd = new double[problem.getNumberOfObjectives()];
-    double[] vecProj = new double[problem.getNumberOfObjectives()];
+    double[] vecInd = new double[problem.numberOfObjectives()];
+    double[] vecProj = new double[problem.numberOfObjectives()];
 
     // normalize the weight vector (line segment)
     double nd = norm_vector(lambda);
-    for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+    for (int i = 0; i < problem.numberOfObjectives(); i++) {
       lambda[i] = lambda[i] / nd;
     }
 
     // vecInd has been normalized to the range [0,1]
-    for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+    for (int i = 0; i < problem.numberOfObjectives(); i++) {
       vecInd[i] = (individual.objectives()[i] - z_[i]) / (nz_[i] - z_[i]);
     }
 
     scale = innerproduct(vecInd, lambda);
-    for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+    for (int i = 0; i < problem.numberOfObjectives(); i++) {
       vecProj[i] = vecInd[i] - scale * lambda[i];
     }
 
@@ -1333,15 +1332,15 @@ public class MOEADD<S extends DoubleSolution> extends AbstractMOEAD<S> {
 
     // normalize the weight vector (line segment)
     double nd = norm_vector(lambda);
-    for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+    for (int i = 0; i < problem.numberOfObjectives(); i++) {
       lambda[i] = lambda[i] / nd;
     }
 
-    double[] realA = new double[problem.getNumberOfObjectives()];
-    double[] realB = new double[problem.getNumberOfObjectives()];
+    double[] realA = new double[problem.numberOfObjectives()];
+    double[] realB = new double[problem.numberOfObjectives()];
 
     // difference between current point and reference point
-    for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+    for (int i = 0; i < problem.numberOfObjectives(); i++) {
       realA[i] = (indiv.objectives()[i] - z_[i]);
     }
 
@@ -1349,7 +1348,7 @@ public class MOEADD<S extends DoubleSolution> extends AbstractMOEAD<S> {
     double d1 = Math.abs(innerproduct(realA, lambda));
 
     // distance to the line segment
-    for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+    for (int i = 0; i < problem.numberOfObjectives(); i++) {
       realB[i] = (indiv.objectives()[i] - (z_[i] + d1 * lambda[i]));
     }
 
@@ -1377,7 +1376,7 @@ public class MOEADD<S extends DoubleSolution> extends AbstractMOEAD<S> {
   public double norm_vector(double[] z) {
     double sum = 0;
 
-    for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+    for (int i = 0; i < problem.numberOfObjectives(); i++) {
       sum += z[i] * z[i];
     }
 
@@ -1399,12 +1398,12 @@ public class MOEADD<S extends DoubleSolution> extends AbstractMOEAD<S> {
   }
 
   @Override
-  public String getName() {
+  public String name() {
     return "MOEADD";
   }
 
   @Override
-  public String getDescription() {
+  public String description() {
     return "An Evolutionary Many-Objective Optimization Algorithm Based on Dominance and Decomposition";
   }
 

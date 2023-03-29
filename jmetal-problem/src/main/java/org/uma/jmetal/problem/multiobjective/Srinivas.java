@@ -1,10 +1,10 @@
 package org.uma.jmetal.problem.multiobjective;
 
-import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
+import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /** Class representing problem Srinivas */
 @SuppressWarnings("serial")
@@ -12,20 +12,20 @@ public class Srinivas extends AbstractDoubleProblem {
 
   /** Constructor */
   public Srinivas() {
-    setNumberOfVariables(2);
-    setNumberOfObjectives(2);
-    setNumberOfConstraints(2);
-    setName("Srinivas");
+    int numberOfVariables = 2 ;
+    numberOfObjectives(2);
+    numberOfConstraints(2);
+    name("Srinivas");
 
-    List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables());
-    List<Double> upperLimit = new ArrayList<>(getNumberOfVariables());
+    List<Double> lowerLimit = new ArrayList<>(numberOfVariables);
+    List<Double> upperLimit = new ArrayList<>(numberOfVariables);
 
-    for (int i = 0; i < getNumberOfVariables(); i++) {
+    for (int i = 0; i < numberOfVariables; i++) {
       lowerLimit.add(-20.0);
       upperLimit.add(20.0);
     }
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */
@@ -47,7 +47,7 @@ public class Srinivas extends AbstractDoubleProblem {
 
   /** EvaluateConstraints() method */
   public void evaluateConstraints(DoubleSolution solution) {
-    double[] constraint = new double[this.getNumberOfConstraints()];
+    double[] constraint = new double[this.numberOfConstraints()];
 
     double x1 = solution.variables().get(0);
     double x2 = solution.variables().get(1);
@@ -55,8 +55,7 @@ public class Srinivas extends AbstractDoubleProblem {
     constraint[0] = 1.0 - (x1 * x1 + x2 * x2) / 225.0;
     constraint[1] = (3.0 * x2 - x1) / 10.0 - 1.0;
 
-    for (int i = 0; i < getNumberOfConstraints(); i++) {
-      solution.constraints()[i] = constraint[i];
-    }
+    IntStream.range(0, numberOfConstraints())
+        .forEach(i -> solution.constraints()[i] = constraint[i]);
   }
 }

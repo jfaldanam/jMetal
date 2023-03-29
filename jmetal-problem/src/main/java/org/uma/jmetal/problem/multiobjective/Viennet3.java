@@ -1,10 +1,9 @@
 package org.uma.jmetal.problem.multiobjective;
 
-import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
  * Class representing problem Viennet3
@@ -17,26 +16,26 @@ public class Viennet3 extends AbstractDoubleProblem {
   * Creates a default instance of the Viennet3 problem.
   */
   public Viennet3() {
-    setNumberOfVariables(2);
-    setNumberOfObjectives(3);
-    setNumberOfConstraints(0);
-    setName("Viennet3") ;
+    int numberOfVariables = 2 ;
+    numberOfObjectives(3);
+    numberOfConstraints(0);
+    name("Viennet3") ;
 
-    List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables()) ;
-    List<Double> upperLimit = new ArrayList<>(getNumberOfVariables()) ;
+    List<Double> lowerLimit = new ArrayList<>(numberOfVariables) ;
+    List<Double> upperLimit = new ArrayList<>(numberOfVariables) ;
 
-    for (int i = 0; i < getNumberOfVariables(); i++) {
+    for (int i = 0; i < numberOfVariables; i++) {
       lowerLimit.add(-3.0);
       upperLimit.add(3.0);
     }
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */
   @Override
   public DoubleSolution evaluate(DoubleSolution solution) {
-    int numberOfVariables = getNumberOfVariables() ;
+    int numberOfVariables = numberOfVariables() ;
 
     double[] f = new double[solution.objectives().length];
     double[] x = new double[numberOfVariables] ;

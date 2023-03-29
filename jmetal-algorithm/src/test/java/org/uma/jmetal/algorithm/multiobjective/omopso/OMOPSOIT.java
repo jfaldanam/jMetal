@@ -1,5 +1,8 @@
 package org.uma.jmetal.algorithm.multiobjective.omopso;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
 import org.junit.Test;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.operator.mutation.impl.NonUniformMutation;
@@ -12,10 +15,6 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
-
-import java.util.List;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * Integration tests for algorithm OMOPSO
@@ -30,19 +29,20 @@ public class OMOPSOIT {
       throws Exception {
     DoubleProblem problem = new ZDT1();
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
+    double mutationProbability = 1.0 / problem.numberOfVariables();
 
     algorithm =
         new OMOPSOBuilder(problem, new SequentialSolutionListEvaluator<DoubleSolution>())
             .setMaxIterations(250)
             .setSwarmSize(100)
+            .setEta(0.0075)
             .setUniformMutation(new UniformMutation(mutationProbability, 0.5))
             .setNonUniformMutation(new NonUniformMutation(mutationProbability, 0.5, 250))
             .build();
 
     algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+    List<DoubleSolution> population = algorithm.result();
 
     /*
     Rationale: the default problem is ZDT1, and OMOPSO, configured with standard settings, should
@@ -55,19 +55,20 @@ public class OMOPSOIT {
   public void shouldTheHypervolumeHaveAMininumValue() throws Exception {
     DoubleProblem problem = new ZDT1();
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
+    double mutationProbability = 1.0 / problem.numberOfVariables();
 
     algorithm =
         new OMOPSOBuilder(problem, new SequentialSolutionListEvaluator<DoubleSolution>())
             .setMaxIterations(250)
             .setSwarmSize(100)
+            .setEta(0.0075)
             .setUniformMutation(new UniformMutation(mutationProbability, 0.5))
             .setNonUniformMutation(new NonUniformMutation(mutationProbability, 0.5, 250))
             .build();
 
     algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+    List<DoubleSolution> population = algorithm.result();
 
     QualityIndicator hypervolume =
             new PISAHypervolume(

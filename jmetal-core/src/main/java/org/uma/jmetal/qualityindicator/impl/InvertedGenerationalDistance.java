@@ -1,10 +1,9 @@
 package org.uma.jmetal.qualityindicator.impl;
 
+import java.io.FileNotFoundException;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.errorchecking.Check;
-
-import java.io.FileNotFoundException;
 
 /**
  * This class implements the inverted generational distance metric.
@@ -75,11 +74,11 @@ public class InvertedGenerationalDistance extends QualityIndicator {
     return sum / referenceFront.length;
   }
 
-  @Override public String getName() {
+  @Override public String name() {
     return "IGD" ;
   }
 
-  @Override public String getDescription() {
+  @Override public String description() {
     return "Inverted generational distance quality indicator" ;
   }
 

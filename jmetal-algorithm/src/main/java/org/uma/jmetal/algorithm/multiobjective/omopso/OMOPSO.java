@@ -1,5 +1,8 @@
 package org.uma.jmetal.algorithm.multiobjective.omopso;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import org.uma.jmetal.algorithm.impl.AbstractParticleSwarmOptimization;
 import org.uma.jmetal.operator.mutation.impl.NonUniformMutation;
 import org.uma.jmetal.operator.mutation.impl.UniformMutation;
@@ -8,16 +11,12 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.bounds.Bounds;
-import org.uma.jmetal.util.comparator.DominanceComparator;
-import org.uma.jmetal.util.comparator.EpsilonDominanceComparator;
+import org.uma.jmetal.util.comparator.dominanceComparator.impl.DominanceWithConstraintsComparator;
+import org.uma.jmetal.util.comparator.dominanceComparator.impl.EpsilonDominanceComparator;
 import org.uma.jmetal.util.densityestimator.DensityEstimator;
 import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 /** Class implementing the OMOPSO algorithm */
 @SuppressWarnings("serial")
@@ -43,20 +42,22 @@ public class OMOPSO extends AbstractParticleSwarmOptimization<DoubleSolution, Li
   private final UniformMutation uniformMutation;
   private final NonUniformMutation nonUniformMutation;
 
-  private double eta = 0.0075;
+  private double eta ;
 
   private JMetalRandom randomGenerator;
   private DensityEstimator<DoubleSolution> crowdingDistance;
 
   /** Constructor */
   public OMOPSO(DoubleProblem problem, SolutionListEvaluator<DoubleSolution> evaluator,
-      int swarmSize, int maxIterations, int archiveSize, UniformMutation uniformMutation,
+      int swarmSize, int maxIterations, int archiveSize, double eta, UniformMutation uniformMutation,
       NonUniformMutation nonUniformMutation) {
     this.problem = problem ;
     this.evaluator = evaluator ;
 
     this.swarmSize = swarmSize ;
     this.maxIterations = maxIterations ;
+
+    this.eta = eta ;
 
     this.uniformMutation = uniformMutation ;
     this.nonUniformMutation = nonUniformMutation ;
@@ -67,10 +68,10 @@ public class OMOPSO extends AbstractParticleSwarmOptimization<DoubleSolution, Li
 
     crowdingDistance = new CrowdingDistanceDensityEstimator<>();
 
-    dominanceComparator = new DominanceComparator<>();
-    crowdingDistanceComparator = crowdingDistance.getComparator();
+    dominanceComparator = new DominanceWithConstraintsComparator<>();
+    crowdingDistanceComparator = crowdingDistance.comparator();
 
-    speed = new double[swarmSize][problem.getNumberOfVariables()];
+    speed = new double[swarmSize][problem.numberOfVariables()];
 
     randomGenerator = JMetalRandom.getInstance() ;
   }
@@ -78,12 +79,12 @@ public class OMOPSO extends AbstractParticleSwarmOptimization<DoubleSolution, Li
 
   @Override protected void initProgress() {
     currentIteration = 1;
-    crowdingDistance.compute(leaderArchive.getSolutionList());
+    crowdingDistance.compute(leaderArchive.solutions());
   }
 
   @Override protected void updateProgress() {
     currentIteration += 1;
-    crowdingDistance.compute(leaderArchive.getSolutionList());
+    crowdingDistance.compute(leaderArchive.solutions());
   }
 
   @Override protected boolean isStoppingConditionReached() {
@@ -109,9 +110,9 @@ public class OMOPSO extends AbstractParticleSwarmOptimization<DoubleSolution, Li
     return swarm ;
   }
 
-  @Override public List<DoubleSolution> getResult() {
+  @Override public List<DoubleSolution> result() {
     //return this.leaderArchive.getSolutionList();
-      return this.epsilonArchive.getSolutionList();
+      return this.epsilonArchive.solutions();
   }
 
   @Override
@@ -144,10 +145,10 @@ public class OMOPSO extends AbstractParticleSwarmOptimization<DoubleSolution, Li
       //Select a global localBest for calculate the speed of particle i, bestGlobal
       DoubleSolution one ;
       DoubleSolution two;
-      int pos1 = randomGenerator.nextInt(0, leaderArchive.getSolutionList().size() - 1);
-      int pos2 = randomGenerator.nextInt(0, leaderArchive.getSolutionList().size() - 1);
-      one = leaderArchive.getSolutionList().get(pos1);
-      two = leaderArchive.getSolutionList().get(pos2);
+      int pos1 = randomGenerator.nextInt(0, leaderArchive.solutions().size() - 1);
+      int pos2 = randomGenerator.nextInt(0, leaderArchive.solutions().size() - 1);
+      one = leaderArchive.solutions().get(pos1);
+      two = leaderArchive.solutions().get(pos2);
 
       if (crowdingDistanceComparator.compare(one, two) < 1) {
         bestGlobal = one ;
@@ -179,7 +180,7 @@ public class OMOPSO extends AbstractParticleSwarmOptimization<DoubleSolution, Li
       DoubleSolution particle = swarm.get(i);
       for (int var = 0; var < particle.variables().size(); var++) {
         particle.variables().set(var, particle.variables().get(var) + speed[i][var]);
-        Bounds<Double> bounds = problem.getBoundsForVariables().get(var) ;
+        Bounds<Double> bounds = problem.variableBounds().get(var) ;
         Double lowerBound = bounds.getLowerBound() ;
         Double upperBound = bounds.getUpperBound() ;
         if (particle.variables().get(var) < lowerBound) {
@@ -207,7 +208,7 @@ public class OMOPSO extends AbstractParticleSwarmOptimization<DoubleSolution, Li
 
   @Override protected void initializeVelocity(List<DoubleSolution> swarm) {
     for (int i = 0; i < swarm.size(); i++) {
-      for (int j = 0; j < problem.getNumberOfVariables(); j++) {
+      for (int j = 0; j < problem.numberOfVariables(); j++) {
         speed[i][j] = 0.0;
       }
     }
@@ -240,11 +241,11 @@ public class OMOPSO extends AbstractParticleSwarmOptimization<DoubleSolution, Li
     }
   }
 
-  @Override public String getName() {
+  @Override public String name() {
     return "OMOPSO" ;
   }
 
-  @Override public String getDescription() {
+  @Override public String description() {
     return "Optimized MOPSO" ;
   }
 

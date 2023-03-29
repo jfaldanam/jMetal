@@ -1,5 +1,11 @@
 package org.uma.jmetal.operator.crossover;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.uma.jmetal.operator.crossover.impl.IntegerSBXCrossover;
@@ -8,13 +14,6 @@ import org.uma.jmetal.solution.integersolution.impl.DefaultIntegerSolution;
 import org.uma.jmetal.util.bounds.Bounds;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.pseudorandom.impl.AuditableRandomGenerator;
-
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-
-import static org.junit.Assert.assertTrue;
 
 public class IntegerSBXCrossoverTest {
 	@Ignore
@@ -25,8 +24,8 @@ public class IntegerSBXCrossoverTest {
 
 		List<Bounds<Integer>> bounds = Arrays.asList(Bounds.create(0, 1)) ;
 
-		parents.add(new DefaultIntegerSolution(2, bounds));
-		parents.add(new DefaultIntegerSolution(2, bounds));
+		parents.add(new DefaultIntegerSolution(bounds, 2, 0));
+		parents.add(new DefaultIntegerSolution(bounds, 2, 0));
 
 		// Check configuration leads to use default generator by default
 		final int[] defaultUses = { 0 };

@@ -1,10 +1,10 @@
 package org.uma.jmetal.problem.multiobjective.maf;
 
-import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
+import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
  * Class representing problem MaF05
@@ -29,20 +29,19 @@ public class MaF05 extends AbstractDoubleProblem {
    */
   public MaF05(Integer numberOfVariables,
       Integer numberOfObjectives) {
-    setNumberOfVariables(numberOfVariables);
-    setNumberOfObjectives(numberOfObjectives);
-    setNumberOfConstraints(0);
-    setName("MaF05");
+    numberOfObjectives(numberOfObjectives);
+    numberOfConstraints(0);
+    name("MaF05");
 
-    List<Double> lower = new ArrayList<>(getNumberOfVariables()), upper = new ArrayList<>(
-        getNumberOfVariables());
+    List<Double> lower = new ArrayList<>(numberOfVariables), upper = new ArrayList<>(
+        numberOfVariables);
 
-    for (int var = 0; var < numberOfVariables; var++) {
+    IntStream.range(0, numberOfVariables).forEach(i -> {
       lower.add(0.0);
       upper.add(1.0);
-    }
+    });
 
-    setVariableBounds(lower, upper);
+    variableBounds(lower, upper);
 
     //other constants during the whole process once M&D are defined
     double[] c5 = new double[numberOfObjectives];

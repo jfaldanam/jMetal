@@ -1,36 +1,35 @@
 package org.uma.jmetal.problem.multiobjective;
 
-import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /** Class representing problem Viennet4 */
 @SuppressWarnings("serial")
 public class Viennet4 extends AbstractDoubleProblem {
   /** Constructor. Creates a default instance of the Viennet4 problem. */
   public Viennet4() {
-    setNumberOfVariables(2);
-    setNumberOfObjectives(3);
-    setNumberOfConstraints(3);
-    setName("Viennet4");
+    int numberOfVariables = 2 ;
+    numberOfObjectives(3);
+    numberOfConstraints(3);
+    name("Viennet4");
 
-    List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables());
-    List<Double> upperLimit = new ArrayList<>(getNumberOfVariables());
+    List<Double> lowerLimit = new ArrayList<>(numberOfVariables);
+    List<Double> upperLimit = new ArrayList<>(numberOfVariables);
 
-    for (int i = 0; i < getNumberOfVariables(); i++) {
+    for (int i = 0; i < numberOfVariables; i++) {
       lowerLimit.add(-4.0);
       upperLimit.add(4.0);
     }
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */
   @Override
   public DoubleSolution evaluate(DoubleSolution solution) {
-    int numberOfVariables = getNumberOfVariables();
+    int numberOfVariables = numberOfVariables();
 
     double[] f = new double[solution.objectives().length];
     double[] x = new double[numberOfVariables];
@@ -61,7 +60,7 @@ public class Viennet4 extends AbstractDoubleProblem {
 
   /** EvaluateConstraints() method */
   public void evaluateConstraints(DoubleSolution solution) {
-    double[] constraint = new double[this.getNumberOfConstraints()];
+    double[] constraint = new double[this.numberOfConstraints()];
 
     double x1 = solution.variables().get(0);
     double x2 = solution.variables().get(1);
@@ -70,7 +69,7 @@ public class Viennet4 extends AbstractDoubleProblem {
     constraint[1] = x1 + 1.0;
     constraint[2] = x2 - x1 + 2.0;
 
-    for (int i = 0; i < getNumberOfConstraints(); i++) {
+    for (int i = 0; i < numberOfConstraints(); i++) {
       solution.constraints()[i] = constraint[i];
     }
   }

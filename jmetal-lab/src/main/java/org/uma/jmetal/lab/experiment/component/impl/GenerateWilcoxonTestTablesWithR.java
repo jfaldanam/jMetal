@@ -1,5 +1,9 @@
 package org.uma.jmetal.lab.experiment.component.impl;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.uma.jmetal.lab.experiment.Experiment;
 import org.uma.jmetal.lab.experiment.component.ExperimentComponent;
@@ -7,11 +11,6 @@ import org.uma.jmetal.lab.experiment.util.ExperimentProblem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalLogger;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * This class generates a R script that computes the Wilcoxon Signed Rank Test and generates a Latex script
@@ -50,8 +49,8 @@ public class GenerateWilcoxonTestTablesWithR<Result extends List<? extends Solut
       JMetalLogger.logger.info("GenerateWilcoxonTestTablesWithR. Creating " + rDirectoryName + " directory");
     }
     for (QualityIndicator indicator : experiment.getIndicatorList()) {
-      String rFileName = rDirectoryName + "/" + indicator.getName() + ".Wilcoxon" + ".R";
-      String latexFileName = indicator.getName() + ".Wilcoxon" + ".tex";
+      String rFileName = rDirectoryName + "/" + indicator.name() + ".Wilcoxon" + ".R";
+      String latexFileName = indicator.name() + ".Wilcoxon" + ".tex";
 
       printHeaderLatexCommands(rFileName, latexFileName);
       printTableHeader(indicator, rFileName, latexFileName);
@@ -101,10 +100,10 @@ public class GenerateWilcoxonTestTablesWithR<Result extends List<? extends Solut
     // Write function latexTableHeader
     latexTableCaption = "  write(\"\\\\caption{\", \"" + latexFileName + APPEND_STRING +
         "  write(problem, \"" + latexFileName + APPEND_STRING +
-        "  write(\"." + indicator.getName() + ".}\", \"" + latexFileName + APPEND_STRING;
+        "  write(\"." + indicator.name() + ".}\", \"" + latexFileName + APPEND_STRING;
     latexTableLabel = "  write(\"\\\\label{Table:\", \"" + latexFileName + APPEND_STRING +
         "  write(problem, \"" + latexFileName + "\", append=TRUE)" + "\n" +
-        "  write(\"." + indicator.getName() + ".}\", \"" + latexFileName + APPEND_STRING;
+        "  write(\"." + indicator.name() + ".}\", \"" + latexFileName + APPEND_STRING;
 
     // Generate function latexTableHeader()
     String output = "latexTableHeader <- function(problem, tabularString, latexTableFirstLine) {" + "\n" +
@@ -251,7 +250,7 @@ public class GenerateWilcoxonTestTablesWithR<Result extends List<? extends Solut
         algorithmList + "\n" +
         tabularString + "\n" +
         tableFirstLine + "\n" +
-        "indicator<-\"" + indicator.getName() + "\"";
+        "indicator<-\"" + indicator.name() + "\"";
     os.write(output + "\n");
 
     output = "\n # Step 1.  Writes the latex header" + "\n" +

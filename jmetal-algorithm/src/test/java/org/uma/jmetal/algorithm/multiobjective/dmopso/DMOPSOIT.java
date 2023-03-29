@@ -1,5 +1,8 @@
 package org.uma.jmetal.algorithm.multiobjective.dmopso;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
 import org.junit.Test;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
@@ -9,10 +12,6 @@ import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.VectorUtils;
-
-import java.util.List;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * Integration tests for algorithm DMOPSO
@@ -50,7 +49,7 @@ public class DMOPSOIT {
 
     algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+    List<DoubleSolution> population = algorithm.result();
 
     /*
     Rationale: the default problem is ZDT1, and dMOPSO, configured with standard settings, should
@@ -86,7 +85,7 @@ public class DMOPSOIT {
 
     algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+    List<DoubleSolution> population = algorithm.result();
 
     QualityIndicator hypervolume =
             new PISAHypervolume(

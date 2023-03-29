@@ -3,8 +3,8 @@ package org.uma.jmetal.operator.mutation.impl;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.solution.util.repairsolution.RepairDoubleSolution;
-import org.uma.jmetal.solution.util.repairsolution.impl.RepairDoubleSolutionWithBoundValue;
+import org.uma.jmetal.solution.doublesolution.repairsolution.RepairDoubleSolution;
+import org.uma.jmetal.solution.doublesolution.repairsolution.impl.RepairDoubleSolutionWithBoundValue;
 import org.uma.jmetal.util.bounds.Bounds;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
@@ -39,14 +39,9 @@ public class PolynomialMutation implements MutationOperator<DoubleSolution> {
   }
 
   /** Constructor */
-  public PolynomialMutation(DoubleProblem problem, double distributionIndex) {
-    this(1.0 / problem.getNumberOfVariables(), distributionIndex);
-  }
-
-  /** Constructor */
   public PolynomialMutation(
       DoubleProblem problem, double distributionIndex, RandomGenerator<Double> randomGenerator) {
-    this(1.0 / problem.getNumberOfVariables(), distributionIndex);
+    this(1.0 / problem.numberOfVariables(), distributionIndex);
     this.randomGenerator = randomGenerator;
   }
 
@@ -93,7 +88,7 @@ public class PolynomialMutation implements MutationOperator<DoubleSolution> {
 
   /* Getters */
   @Override
-  public double getMutationProbability() {
+  public double mutationProbability() {
     return mutationProbability;
   }
 
@@ -116,79 +111,29 @@ public class PolynomialMutation implements MutationOperator<DoubleSolution> {
     Check.notNull(solution);
 
     doMutation(solution);
-    /*
-    double[] x = new double[solution.getNumberOfVariables()] ;
-    double[] lb = new double[solution.getNumberOfVariables()] ;
-    double[] ub = new double[solution.getNumberOfVariables()] ;
 
-    for (int i = 0; i < x.length; i++) {
-      x[i] = solution.getVariable(i) ;
-      lb[i] = solution.getLowerBound(i) ;
-      ub[i] = solution.getUpperBound(i) ;
-    }
-
-    execute(x, lb, ub) ;
-
-    for (int i = 0; i < x.length; i++) {
-      solution.setVariable(i, x[i]);
-    }
-    */
     return solution;
-  }
-
-  public double[] execute(double[] x, double[] lowerBound, double[] upperBound) {
-    double rnd, delta1, delta2, mutPow, deltaq;
-    double y, yl, yu, val, xy;
-
-    for (int i = 0; i < x.length; i++) {
-      if (randomGenerator.getRandomValue() <= mutationProbability) {
-        y = x[i];
-        yl = lowerBound[i];
-        yu = upperBound[i];
-        if (yl == yu) {
-          y = yl;
-        } else {
-          delta1 = (y - yl) / (yu - yl);
-          delta2 = (yu - y) / (yu - yl);
-          rnd = randomGenerator.getRandomValue();
-          mutPow = 1.0 / (distributionIndex + 1.0);
-          if (rnd <= 0.5) {
-            xy = 1.0 - delta1;
-            val = 2.0 * rnd + (1.0 - 2.0 * rnd) * (Math.pow(xy, distributionIndex + 1.0));
-            deltaq = Math.pow(val, mutPow) - 1.0;
-          } else {
-            xy = 1.0 - delta2;
-            val = 2.0 * (1.0 - rnd) + 2.0 * (rnd - 0.5) * (Math.pow(xy, distributionIndex + 1.0));
-            deltaq = 1.0 - Math.pow(val, mutPow);
-          }
-          y = y + deltaq * (yu - yl);
-          y = solutionRepair.repairSolutionVariableValue(y, yl, yu);
-        }
-        x[i] = y ;
-      }
-    }
-
-    return x ;
   }
 
   /** Perform the mutation operation */
   private void doMutation(DoubleSolution solution) {
-    double rnd, delta1, delta2, mutPow, deltaq;
-    double y, yl, yu, val, xy;
 
     for (int i = 0; i < solution.variables().size(); i++) {
       if (randomGenerator.getRandomValue() <= mutationProbability) {
-        y = solution.variables().get(i);
+        double y = solution.variables().get(i);
         Bounds<Double> bounds = solution.getBounds(i);
-        yl = bounds.getLowerBound();
-        yu = bounds.getUpperBound();
+        double yl = bounds.getLowerBound();
+        double yu = bounds.getUpperBound();
         if (yl == yu) {
           y = yl;
         } else {
-          delta1 = (y - yl) / (yu - yl);
-          delta2 = (yu - y) / (yu - yl);
-          rnd = randomGenerator.getRandomValue();
-          mutPow = 1.0 / (distributionIndex + 1.0);
+          double delta1 = (y - yl) / (yu - yl);
+          double delta2 = (yu - y) / (yu - yl);
+          double rnd = randomGenerator.getRandomValue();
+          double mutPow = 1.0 / (distributionIndex + 1.0);
+          double deltaq;
+          double val;
+          double xy;
           if (rnd <= 0.5) {
             xy = 1.0 - delta1;
             val = 2.0 * rnd + (1.0 - 2.0 * rnd) * (Math.pow(xy, distributionIndex + 1.0));

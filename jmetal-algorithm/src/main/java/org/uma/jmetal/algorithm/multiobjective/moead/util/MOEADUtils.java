@@ -1,14 +1,13 @@
 package org.uma.jmetal.algorithm.multiobjective.moead.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.distance.Distance;
 import org.uma.jmetal.util.distance.impl.EuclideanDistanceBetweenSolutionAndASolutionListInObjectiveSpace;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.point.impl.IdealPoint;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /** Utilities methods to used by MOEA/D */
 public class MOEADUtils {
@@ -100,7 +99,7 @@ public class MOEADUtils {
   }
 
   /**
-   * This methods select a subset of evenly spread solutions from a solution list. The
+   * This method selects a subset of evenly spread solutions from a solution list. The
    * implementation is based on the method described in the MOEA/D-DRA paper.
    *
    * @param solutionList
@@ -235,8 +234,8 @@ public class MOEADUtils {
 
     double maxFun = -1.0e+30;
 
-    for (int n = 0; n < idealPoint.getDimension(); n++) {
-      double diff = Math.abs(currentBest.objectives()[n] - idealPoint.getValue(n));
+    for (int n = 0; n < idealPoint.dimension(); n++) {
+      double diff = Math.abs(currentBest.objectives()[n] - idealPoint.value(n));
 
       double functionValue;
       if (lambda[n] == 0) {

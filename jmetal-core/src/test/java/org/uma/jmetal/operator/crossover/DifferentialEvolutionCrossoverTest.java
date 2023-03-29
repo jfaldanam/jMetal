@@ -1,10 +1,10 @@
 package org.uma.jmetal.operator.crossover;
 
-import org.junit.Test;
-import org.uma.jmetal.operator.crossover.impl.DifferentialEvolutionCrossover;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import org.junit.Test;
+import org.uma.jmetal.operator.crossover.impl.DifferentialEvolutionCrossover;
 
 public class DifferentialEvolutionCrossoverTest {
   private double EPSILON = 0.0000000001;
@@ -38,13 +38,13 @@ public class DifferentialEvolutionCrossoverTest {
   @Test
   public void shouldGetCrossoverProbabilityReturnOne() {
     DifferentialEvolutionCrossover crossover = new DifferentialEvolutionCrossover();
-    assertEquals(1.0, crossover.getCrossoverProbability(), EPSILON);
+    assertEquals(1.0, crossover.crossoverProbability(), EPSILON);
   }
 
   @Test
   public void shouldGetNumberOfGeneratedChildrenReturnOne() {
     DifferentialEvolutionCrossover crossover = new DifferentialEvolutionCrossover();
-    assertEquals(1.0, crossover.getNumberOfGeneratedChildren(), EPSILON);
+    assertEquals(1.0, crossover.numberOfGeneratedChildren(), EPSILON);
   }
 
   @Test

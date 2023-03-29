@@ -1,30 +1,47 @@
 package org.uma.jmetal.lab.experiment.studies;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import org.uma.jmetal.algorithm.multiobjective.smpso.SMPSOBuilder;
 import org.uma.jmetal.algorithm.multiobjective.spea2.SPEA2Builder;
 import org.uma.jmetal.lab.experiment.Experiment;
 import org.uma.jmetal.lab.experiment.ExperimentBuilder;
-import org.uma.jmetal.lab.experiment.component.impl.*;
+import org.uma.jmetal.lab.experiment.component.impl.ComputeQualityIndicators;
+import org.uma.jmetal.lab.experiment.component.impl.ExecuteAlgorithms;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateBoxplotsWithR;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateFriedmanTestTables;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateLatexTablesWithStatistics;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateWilcoxonTestTablesWithR;
 import org.uma.jmetal.lab.experiment.util.ExperimentAlgorithm;
 import org.uma.jmetal.lab.experiment.util.ExperimentProblem;
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.multiobjective.wfg.*;
-import org.uma.jmetal.qualityindicator.impl.*;
+import org.uma.jmetal.problem.multiobjective.wfg.WFG1;
+import org.uma.jmetal.problem.multiobjective.wfg.WFG2;
+import org.uma.jmetal.problem.multiobjective.wfg.WFG3;
+import org.uma.jmetal.problem.multiobjective.wfg.WFG4;
+import org.uma.jmetal.problem.multiobjective.wfg.WFG5;
+import org.uma.jmetal.problem.multiobjective.wfg.WFG6;
+import org.uma.jmetal.problem.multiobjective.wfg.WFG7;
+import org.uma.jmetal.problem.multiobjective.wfg.WFG8;
+import org.uma.jmetal.problem.multiobjective.wfg.WFG9;
+import org.uma.jmetal.qualityindicator.impl.Epsilon;
+import org.uma.jmetal.qualityindicator.impl.GenerationalDistance;
+import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistance;
+import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
+import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
+import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Example of experimental study based on solving the problems (configured with 3 objectives) with the algorithms
@@ -56,15 +73,15 @@ public class WFGStudy {
     String experimentBaseDirectory = args[0];
 
     List<ExperimentProblem<DoubleSolution>> problemList = new ArrayList<>();
-    problemList.add(new ExperimentProblem<>(new WFG1()).setReferenceFront("WFG1.2D.pf"));
-    problemList.add(new ExperimentProblem<>(new WFG2()).setReferenceFront("WFG2.2D.pf"));
-    problemList.add(new ExperimentProblem<>(new WFG3()).setReferenceFront("WFG3.2D.pf"));
-    problemList.add(new ExperimentProblem<>(new WFG4()).setReferenceFront("WFG4.2D.pf"));
-    problemList.add(new ExperimentProblem<>(new WFG5()).setReferenceFront("WFG5.2D.pf"));
-    problemList.add(new ExperimentProblem<>(new WFG6()).setReferenceFront("WFG6.2D.pf"));
-    problemList.add(new ExperimentProblem<>(new WFG7()).setReferenceFront("WFG7.2D.pf"));
-    problemList.add(new ExperimentProblem<>(new WFG8()).setReferenceFront("WFG8.2D.pf"));
-    problemList.add(new ExperimentProblem<>(new WFG9()).setReferenceFront("WFG9.2D.pf"));
+    problemList.add(new ExperimentProblem<>(new WFG1()).setReferenceFront("WFG1.2D.csv"));
+    problemList.add(new ExperimentProblem<>(new WFG2()).setReferenceFront("WFG2.2D.csv"));
+    problemList.add(new ExperimentProblem<>(new WFG3()).setReferenceFront("WFG3.2D.csv"));
+    problemList.add(new ExperimentProblem<>(new WFG4()).setReferenceFront("WFG4.2D.csv"));
+    problemList.add(new ExperimentProblem<>(new WFG5()).setReferenceFront("WFG5.2D.csv"));
+    problemList.add(new ExperimentProblem<>(new WFG6()).setReferenceFront("WFG6.2D.csv"));
+    problemList.add(new ExperimentProblem<>(new WFG7()).setReferenceFront("WFG7.2D.csv"));
+    problemList.add(new ExperimentProblem<>(new WFG8()).setReferenceFront("WFG8.2D.csv"));
+    problemList.add(new ExperimentProblem<>(new WFG9()).setReferenceFront("WFG9.2D.csv"));
 
     List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithmList =
             configureAlgorithmList(problemList);
@@ -107,7 +124,7 @@ public class WFGStudy {
     for (int run = 0; run < INDEPENDENT_RUNS; run++) {
 
       for (int i = 0; i < problemList.size(); i++) {
-        double mutationProbability = 1.0 / problemList.get(i).getProblem().getNumberOfVariables();
+        double mutationProbability = 1.0 / problemList.get(i).getProblem().numberOfVariables();
         double mutationDistributionIndex = 20.0;
         Algorithm<List<DoubleSolution>> algorithm = new SMPSOBuilder(
                 (DoubleProblem) problemList.get(i).getProblem(),
@@ -124,7 +141,7 @@ public class WFGStudy {
         Algorithm<List<DoubleSolution>> algorithm = new NSGAIIBuilder<DoubleSolution>(
                 problemList.get(i).getProblem(),
                 new SBXCrossover(1.0, 20.0),
-                new PolynomialMutation(1.0 / problemList.get(i).getProblem().getNumberOfVariables(),
+                new PolynomialMutation(1.0 / problemList.get(i).getProblem().numberOfVariables(),
                         20.0),
                 100)
                 .build();
@@ -132,10 +149,11 @@ public class WFGStudy {
       }
 
       for (int i = 0; i < problemList.size(); i++) {
+
         Algorithm<List<DoubleSolution>> algorithm = new SPEA2Builder<DoubleSolution>(
                 problemList.get(i).getProblem(),
                 new SBXCrossover(1.0, 10.0),
-                new PolynomialMutation(1.0 / problemList.get(i).getProblem().getNumberOfVariables(),
+                new PolynomialMutation(1.0 / problemList.get(i).getProblem().numberOfVariables(),
                         20.0))
                 .build();
         algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i), run));

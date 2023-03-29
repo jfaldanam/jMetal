@@ -13,13 +13,12 @@
 
 package org.uma.jmetal.util.archivewithreferencepoint.impl;
 
+import java.util.Comparator;
+import java.util.List;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archivewithreferencepoint.ArchiveWithReferencePoint;
 import org.uma.jmetal.util.densityestimator.DensityEstimator;
 import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
-
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * Class representing a {@link ArchiveWithReferencePoint} archive using a crowding distance based density estimator
@@ -30,19 +29,18 @@ public class CrowdingDistanceArchiveWithReferencePoint<S extends Solution<?>> ex
   private final DensityEstimator<S> densityEstimator ;
 
   public CrowdingDistanceArchiveWithReferencePoint(int maxSize, List<Double> refPointDM) {
-    super(maxSize, refPointDM, new CrowdingDistanceDensityEstimator<S>().getComparator());
+    super(maxSize, refPointDM, new CrowdingDistanceDensityEstimator<S>().comparator());
 
     densityEstimator = new CrowdingDistanceDensityEstimator<>() ;
   }
 
   @Override
-  public Comparator<S> getComparator() {
+  public Comparator<S> comparator() {
     return comparator;
   }
 
   @Override
   public void computeDensityEstimator() {
-    densityEstimator.compute(getSolutionList());
+    densityEstimator.compute(solutions());
   }
-
 }

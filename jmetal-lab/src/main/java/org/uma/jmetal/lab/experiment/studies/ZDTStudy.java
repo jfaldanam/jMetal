@@ -1,5 +1,8 @@
 package org.uma.jmetal.lab.experiment.studies;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.moead.AbstractMOEAD;
 import org.uma.jmetal.algorithm.multiobjective.moead.MOEADBuilder;
@@ -7,7 +10,13 @@ import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import org.uma.jmetal.algorithm.multiobjective.smpso.SMPSOBuilder;
 import org.uma.jmetal.lab.experiment.Experiment;
 import org.uma.jmetal.lab.experiment.ExperimentBuilder;
-import org.uma.jmetal.lab.experiment.component.impl.*;
+import org.uma.jmetal.lab.experiment.component.impl.ComputeQualityIndicators;
+import org.uma.jmetal.lab.experiment.component.impl.ExecuteAlgorithms;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateBoxplotsWithR;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateFriedmanHolmTestTables;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateHtmlPages;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateLatexTablesWithStatistics;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateWilcoxonTestTablesWithR;
 import org.uma.jmetal.lab.experiment.util.ExperimentAlgorithm;
 import org.uma.jmetal.lab.experiment.util.ExperimentProblem;
 import org.uma.jmetal.lab.visualization.StudyVisualizer;
@@ -16,17 +25,22 @@ import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.multiobjective.zdt.*;
-import org.uma.jmetal.qualityindicator.impl.*;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT2;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT6;
+import org.uma.jmetal.qualityindicator.impl.Epsilon;
+import org.uma.jmetal.qualityindicator.impl.GenerationalDistance;
+import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistance;
+import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
+import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
+import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Example of experimental study based on solving the ZDT problems with the algorithms NSGAII,
@@ -108,47 +122,59 @@ public class ZDTStudy {
     List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithms = new ArrayList<>();
     for (int run = 0; run < INDEPENDENT_RUNS; run++) {
       for (var experimentProblem : problemList) {
-        double mutationProbability = 1.0 / experimentProblem.getProblem().getNumberOfVariables();
-        double mutationDistributionIndex = 20.0;
-        Algorithm<List<DoubleSolution>> algorithm = new SMPSOBuilder(
-                (DoubleProblem) experimentProblem.getProblem(),
-                new CrowdingDistanceArchive<DoubleSolution>(100))
-                .setMutation(new PolynomialMutation(mutationProbability, mutationDistributionIndex))
-                .setMaxIterations(250)
-                .setSwarmSize(100)
-                .setSolutionListEvaluator(new SequentialSolutionListEvaluator<>())
-                .build();
-        algorithms.add(new ExperimentAlgorithm<>(algorithm, experimentProblem, run));
-      }
-
-      for (var experimentProblem : problemList) {
-        Algorithm<List<DoubleSolution>> algorithm = new NSGAIIBuilder<DoubleSolution>(
-                experimentProblem.getProblem(),
-                new SBXCrossover(1.0, 20.0),
-                new PolynomialMutation(1.0 / experimentProblem.getProblem().getNumberOfVariables(),
-                        20.0),
-                100)
-                .build();
-        algorithms.add(new ExperimentAlgorithm<>(algorithm, experimentProblem, run));
-      }
-
-      for (var experimentProblem : problemList) {
-        Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(experimentProblem.getProblem(), MOEADBuilder.Variant.MOEAD)
-                .setCrossover(new DifferentialEvolutionCrossover(1.0, 0.5, DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN))
-                .setMutation(new PolynomialMutation(1.0 / experimentProblem.getProblem().getNumberOfVariables(),
-                        20.0))
-                .setMaxEvaluations(25000)
-                .setPopulationSize(100)
-                .setResultPopulationSize(100)
-                .setNeighborhoodSelectionProbability(0.9)
-                .setMaximumNumberOfReplacedSolutions(2)
-                .setNeighborSize(20)
-                .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
-                .build();
-
-        algorithms.add(new ExperimentAlgorithm<>(algorithm, experimentProblem, run));
+        smpso(algorithms, run, experimentProblem);
+        nsgaii(algorithms, run, experimentProblem);
+        moead(algorithms, run, experimentProblem);
       }
     }
     return algorithms;
+  }
+
+  private static void moead(
+      List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithms, int run,
+      ExperimentProblem<DoubleSolution> experimentProblem) {
+    Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(experimentProblem.getProblem(), MOEADBuilder.Variant.MOEAD)
+            .setCrossover(new DifferentialEvolutionCrossover(1.0, 0.5, DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN))
+            .setMutation(new PolynomialMutation(1.0 / experimentProblem.getProblem().numberOfVariables(),
+                    20.0))
+            .setMaxEvaluations(25000)
+            .setPopulationSize(100)
+            .setResultPopulationSize(100)
+            .setNeighborhoodSelectionProbability(0.9)
+            .setMaximumNumberOfReplacedSolutions(2)
+            .setNeighborSize(20)
+            .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
+            .build();
+
+    algorithms.add(new ExperimentAlgorithm<>(algorithm, experimentProblem, run));
+  }
+
+  private static void nsgaii(
+      List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithms, int run,
+      ExperimentProblem<DoubleSolution> experimentProblem) {
+    Algorithm<List<DoubleSolution>> algorithm = new NSGAIIBuilder<DoubleSolution>(
+            experimentProblem.getProblem(),
+            new SBXCrossover(1.0, 20.0),
+            new PolynomialMutation(1.0 / experimentProblem.getProblem().numberOfVariables(),
+                    20.0),
+            100)
+            .build();
+    algorithms.add(new ExperimentAlgorithm<>(algorithm, experimentProblem, run));
+  }
+
+  private static void smpso(
+      List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithms, int run,
+      ExperimentProblem<DoubleSolution> experimentProblem) {
+    double mutationProbability = 1.0 / experimentProblem.getProblem().numberOfVariables();
+    double mutationDistributionIndex = 20.0;
+    Algorithm<List<DoubleSolution>> algorithm = new SMPSOBuilder(
+            (DoubleProblem) experimentProblem.getProblem(),
+            new CrowdingDistanceArchive<DoubleSolution>(100))
+            .setMutation(new PolynomialMutation(mutationProbability, mutationDistributionIndex))
+            .setMaxIterations(250)
+            .setSwarmSize(100)
+            .setSolutionListEvaluator(new SequentialSolutionListEvaluator<>())
+            .build();
+    algorithms.add(new ExperimentAlgorithm<>(algorithm, experimentProblem, run));
   }
 }

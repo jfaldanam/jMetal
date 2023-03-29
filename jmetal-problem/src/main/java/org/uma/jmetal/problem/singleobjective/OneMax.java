@@ -1,13 +1,12 @@
 package org.uma.jmetal.problem.singleobjective;
 
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.List;
 import org.uma.jmetal.problem.binaryproblem.impl.AbstractBinaryProblem;
 import org.uma.jmetal.solution.binarysolution.BinarySolution;
 import org.uma.jmetal.solution.binarysolution.impl.DefaultBinarySolution;
 import org.uma.jmetal.util.errorchecking.Check;
-
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.List;
 
 /**
  * Class representing problem OneMax. The problem consist of maximizing the number of '1's in a
@@ -24,27 +23,41 @@ public class OneMax extends AbstractBinaryProblem {
 
   /** Constructor */
   public OneMax(Integer numberOfBits) {
-    setNumberOfVariables(1);
-    setNumberOfObjectives(1);
-    setName("OneMax");
-
     bits = numberOfBits;
   }
 
   @Override
-  public int getBitsFromVariable(int index) {
+  public int numberOfVariables() {
+    return 1 ;
+  }
+  @Override
+  public int numberOfObjectives() {
+    return 1 ;
+  }
+  @Override
+  public int numberOfConstraints() {
+    return 0 ;
+  }
+
+  @Override
+  public String name() {
+    return "OneMax" ;
+  }
+
+  @Override
+  public int bitsFromVariable(int index) {
     Check.that(index == 0, "Problem OneMax has only a variable. Index =" + index) ;
     return bits;
   }
 
   @Override
-  public List<Integer> getListOfBitsPerVariable() {
+  public List<Integer> listOfBitsPerVariable() {
     return Arrays.asList(bits);
   }
 
   @Override
   public BinarySolution createSolution() {
-    return new DefaultBinarySolution(getListOfBitsPerVariable(), getNumberOfObjectives());
+    return new DefaultBinarySolution(listOfBitsPerVariable(), numberOfObjectives());
   }
 
   /** Evaluate() method */

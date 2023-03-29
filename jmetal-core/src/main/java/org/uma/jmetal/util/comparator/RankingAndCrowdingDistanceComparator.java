@@ -1,12 +1,11 @@
 package org.uma.jmetal.util.comparator;
 
+import java.io.Serializable;
+import java.util.Comparator;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
 import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
-
-import java.io.Serializable;
-import java.util.Comparator;
 
 /**
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
@@ -23,7 +22,7 @@ public class RankingAndCrowdingDistanceComparator<S extends Solution<?>>
     rankComparator = Comparator.comparing(ranking::getRank);
     CrowdingDistanceDensityEstimator<S> crowdingDistanceDensityEstimator =
         new CrowdingDistanceDensityEstimator<>();
-    crowdingDistanceComparator = crowdingDistanceDensityEstimator.getComparator();
+    crowdingDistanceComparator = crowdingDistanceDensityEstimator.comparator();
   }
 
   public RankingAndCrowdingDistanceComparator() {

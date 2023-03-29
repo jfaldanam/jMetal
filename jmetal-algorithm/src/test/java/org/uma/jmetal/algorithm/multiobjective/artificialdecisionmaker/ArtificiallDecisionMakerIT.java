@@ -1,9 +1,12 @@
 package org.uma.jmetal.algorithm.multiobjective.artificialdecisionmaker;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.uma.jmetal.algorithm.Algorithm;
-import org.uma.jmetal.algorithm.InteractiveAlgorithm;
 import org.uma.jmetal.algorithm.multiobjective.wasfga.WASFGA;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
@@ -14,17 +17,13 @@ import org.uma.jmetal.operator.selection.impl.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.artificialdecisionmaker.InteractiveAlgorithm;
 import org.uma.jmetal.util.artificialdecisionmaker.impl.ArtificialDecisionMakerDecisionTree;
 import org.uma.jmetal.util.artificialdecisionmaker.impl.ArtificiallDecisionMakerBuilder;
 import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 import org.uma.jmetal.util.point.impl.IdealPoint;
 import org.uma.jmetal.util.point.impl.NadirPoint;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertTrue;
 
 public class ArtificiallDecisionMakerIT {
   Algorithm<List<DoubleSolution>> algorithm;
@@ -49,21 +48,21 @@ public class ArtificiallDecisionMakerIT {
     double crossoverDistributionIndex = 20.0;
     crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
+    double mutationProbability = 1.0 / problem.numberOfVariables();
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
     selection = new BinaryTournamentSelection<DoubleSolution>(
         new RankingAndCrowdingDistanceComparator<DoubleSolution>());
 
-    IdealPoint idealPoint = new IdealPoint(problem.getNumberOfObjectives());
+    IdealPoint idealPoint = new IdealPoint(problem.numberOfObjectives());
     idealPoint.update(problem.createSolution().objectives());
-    NadirPoint nadirPoint = new NadirPoint(problem.getNumberOfObjectives());
+    NadirPoint nadirPoint = new NadirPoint(problem.numberOfObjectives());
     nadirPoint.update(problem.createSolution().objectives());
     double considerationProbability = 0.1;
     List<Double> rankingCoeficient = new ArrayList<>();
-    for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
-      rankingCoeficient.add(1.0 / problem.getNumberOfObjectives());
+    for (int i = 0; i < problem.numberOfObjectives(); i++) {
+      rankingCoeficient.add(1.0 / problem.numberOfObjectives());
     }
 
     for (int cont = 0; cont < numberIterations; cont++) {
@@ -71,7 +70,7 @@ public class ArtificiallDecisionMakerIT {
 
       double epsilon = 0.01;
       List<Double> asp = new ArrayList<>();
-      for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+      for (int i = 0; i < problem.numberOfObjectives(); i++) {
         asp.add(0.0);//initialize asp to ideal
         referencePoint.add(0.0);//initialization
       }

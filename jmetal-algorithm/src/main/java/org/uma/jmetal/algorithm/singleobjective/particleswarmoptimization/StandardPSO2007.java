@@ -1,5 +1,8 @@
 package org.uma.jmetal.algorithm.singleobjective.particleswarmoptimization;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import org.uma.jmetal.algorithm.impl.AbstractParticleSwarmOptimization;
 import org.uma.jmetal.operator.Operator;
 import org.uma.jmetal.operator.selection.impl.BestSolutionSelection;
@@ -11,10 +14,6 @@ import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.neighborhood.impl.AdaptiveRandomNeighborhood;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.solutionattribute.impl.GenericSolutionAttribute;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * Class implementing a Standard PSO 2007 algorithm.
@@ -72,7 +71,7 @@ public class StandardPSO2007 extends AbstractParticleSwarmOptimization<DoubleSol
 
     localBest = new DoubleSolution[swarmSize];
     neighborhoodBest = new DoubleSolution[swarmSize];
-    speed = new double[swarmSize][problem.getNumberOfVariables()];
+    speed = new double[swarmSize][problem.numberOfVariables()];
 
     positionInSwarm = new GenericSolutionAttribute<DoubleSolution, Integer>();
 
@@ -148,7 +147,7 @@ public class StandardPSO2007 extends AbstractParticleSwarmOptimization<DoubleSol
   public void initializeVelocity(List<DoubleSolution> swarm) {
     for (int i = 0; i < swarm.size(); i++) {
       DoubleSolution particle = swarm.get(i);
-      for (int j = 0; j < problem.getNumberOfVariables(); j++) {
+      for (int j = 0; j < problem.numberOfVariables(); j++) {
         Bounds<Double> bounds = particle.getBounds(j) ;
         speed[i][j] =
                 (randomGenerator.nextDouble(bounds.getLowerBound(), bounds.getUpperBound())
@@ -191,7 +190,7 @@ public class StandardPSO2007 extends AbstractParticleSwarmOptimization<DoubleSol
       for (int var = 0; var < particle.variables().size(); var++) {
         particle.variables().set(var, particle.variables().get(var) + speed[i][var]);
 
-        Bounds<Double> bounds = problem.getBoundsForVariables().get(var) ;
+        Bounds<Double> bounds = problem.variableBounds().get(var) ;
         Double lowerBound = bounds.getLowerBound() ;
         Double upperBound = bounds.getUpperBound() ;
         if (particle.variables().get(var) < lowerBound) {
@@ -247,7 +246,7 @@ public class StandardPSO2007 extends AbstractParticleSwarmOptimization<DoubleSol
   }
 
   @Override
-  public DoubleSolution getResult() {
+  public DoubleSolution result() {
     return bestFoundParticle;
   }
 
@@ -274,11 +273,11 @@ public class StandardPSO2007 extends AbstractParticleSwarmOptimization<DoubleSol
     return localBest ;
   }
 
-  @Override public String getName() {
+  @Override public String name() {
     return "SPSO07" ;
   }
 
-  @Override public String getDescription() {
+  @Override public String description() {
     return "Standard PSO 2007" ;
   }
 }

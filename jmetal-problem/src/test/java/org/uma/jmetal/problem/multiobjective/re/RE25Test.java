@@ -1,10 +1,10 @@
 package org.uma.jmetal.problem.multiobjective.re;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RE25Test {
 
@@ -12,10 +12,10 @@ class RE25Test {
   public void shouldConstructorCreateAProblemWithTheRightProperties() {
     DoubleProblem problem = new RE25();
 
-    assertEquals(3, problem.getNumberOfVariables());
-    assertEquals(2, problem.getNumberOfObjectives());
-    assertEquals(0, problem.getNumberOfConstraints());
-    assertEquals("RE25", problem.getName());
+    assertEquals(3, problem.numberOfVariables());
+    assertEquals(2, problem.numberOfObjectives());
+    assertEquals(0, problem.numberOfConstraints());
+    assertEquals("RE25", problem.name());
   }
 
   @Test

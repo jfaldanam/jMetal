@@ -1,17 +1,16 @@
 package org.uma.jmetal.operator.selection.impl;
 
-import org.uma.jmetal.operator.selection.SelectionOperator;
-import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.util.comparator.DominanceComparator;
-import org.uma.jmetal.util.densityestimator.DensityEstimator;
-import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
-import org.uma.jmetal.util.errorchecking.JMetalException;
-import org.uma.jmetal.util.ranking.Ranking;
-import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import org.uma.jmetal.operator.selection.SelectionOperator;
+import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.comparator.dominanceComparator.impl.DominanceWithConstraintsComparator;
+import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
+import org.uma.jmetal.util.errorchecking.Check;
+import org.uma.jmetal.util.errorchecking.JMetalException;
+import org.uma.jmetal.util.ranking.Ranking;
+import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
 
 /**
  * This class implements a selection for selecting a number of solutions from
@@ -35,26 +34,22 @@ public class RankingAndCrowdingSelection<S extends Solution<?>>
 
   /** Constructor */
   public RankingAndCrowdingSelection(int solutionsToSelect) {
-    this(solutionsToSelect, new DominanceComparator<S>()) ;
+    this(solutionsToSelect, new DominanceWithConstraintsComparator<S>()) ;
   }
 
   /* Getter */
-  public int getNumberOfSolutionsToSelect() {
+  public int numberOfSolutionsToSelect() {
     return solutionsToSelect;
   }
 
   /** Execute() method */
   public List<S> execute(List<S> solutionList) throws JMetalException {
-    if (null == solutionList) {
-      throw new JMetalException("The solution list is null");
-    } else if (solutionList.isEmpty()) {
-        throw new JMetalException("The solution list is empty") ;
-    }  else if (solutionList.size() < solutionsToSelect) {
-      throw new JMetalException("The population size ("+solutionList.size()+") is smaller than" +
-              "the solutions to selected ("+solutionsToSelect+")")  ;
-    }
+    Check.notNull(solutionList);
+    Check.collectionIsNotEmpty(solutionList);
+    Check.that(solutionList.size() > solutionsToSelect, "The population size ("+solutionList.size()+") is smaller than" +
+        "the solutions to selected ("+solutionsToSelect+")");
 
-    Ranking<S> ranking = new FastNonDominatedSortRanking<S>(dominanceComparator);
+    Ranking<S> ranking = new FastNonDominatedSortRanking<>(dominanceComparator);
     ranking.compute(solutionList) ;
 
     return crowdingDistanceSelection(ranking);
@@ -93,7 +88,7 @@ public class RankingAndCrowdingSelection<S extends Solution<?>>
   protected void addLastRankedSolutionsToPopulation(Ranking<S> ranking, int rank, List<S>population) {
     List<S> currentRankedFront = ranking.getSubFront(rank) ;
 
-    currentRankedFront.sort(new CrowdingDistanceDensityEstimator<>().getComparator());
+    currentRankedFront.sort(new CrowdingDistanceDensityEstimator<>().comparator());
 
     int i = 0 ;
     while (population.size() < solutionsToSelect) {

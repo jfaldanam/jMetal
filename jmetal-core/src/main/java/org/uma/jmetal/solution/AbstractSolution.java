@@ -1,11 +1,10 @@
 package org.uma.jmetal.solution;
 
-import org.uma.jmetal.util.errorchecking.JMetalException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 /**
  * Abstract class representing a generic solution
@@ -14,9 +13,9 @@ import java.util.Map;
  */
 @SuppressWarnings("serial")
 public abstract class AbstractSolution<T> implements Solution<T> {
-  private double[] objectives;
-  private List<T> variables;
-  private double[] constraints;
+  private final double[] objectives;
+  private final List<T> variables;
+  private final double[] constraints;
   protected Map<Object, Object> attributes;
 
   @Override
@@ -50,28 +49,22 @@ public abstract class AbstractSolution<T> implements Solution<T> {
     attributes = new HashMap<>();
 
     variables = new ArrayList<>(numberOfVariables);
-    for (int i = 0; i < numberOfVariables; i++) {
-      variables.add(i, null);
-    }
+    IntStream.range(0, numberOfVariables).forEach(i -> variables.add(i, null));
 
     objectives = new double[numberOfObjectives];
-    for (int i = 0; i < numberOfObjectives; i++) {
-      objectives[i] = 0.0;
-    }
+    IntStream.range(0, numberOfObjectives).forEach(i -> objectives[i] = 0.0);
 
     constraints = new double[numberOfConstraints];
-    for (int i = 0; i < numberOfConstraints; i++) {
-      constraints[i] = 0.0;
-    }
+    IntStream.range(0, numberOfConstraints).forEach(i -> constraints[i] = 0.0);
 
-    attributes = new HashMap<Object, Object>();
+    attributes = new HashMap<>();
   }
 
   @Override
   public String toString() {
     StringBuilder result = new StringBuilder("Variables: ");
-    for (T var : variables) {
-      result.append(var).append(" ");
+    for (T variable : variables) {
+      result.append(variable).append(" ");
     }
     result.append("Objectives: ");
     for (Double obj : objectives) {
@@ -88,12 +81,14 @@ public abstract class AbstractSolution<T> implements Solution<T> {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (o == null) {
-      throw new JMetalException("The solution to compare is null");
-    }
+  public boolean equals(Object object) {
+    if (object == null)
+      return false;
 
-    Solution<T> solution = (Solution<T>) o;
+    if (this.getClass() != object.getClass())
+      return false;
+
+    Solution<T> solution = (Solution<T>) object;
 
     return this.variables().equals(solution.variables());
   }

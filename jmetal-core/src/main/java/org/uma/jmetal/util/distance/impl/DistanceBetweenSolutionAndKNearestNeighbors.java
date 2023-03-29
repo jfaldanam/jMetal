@@ -1,12 +1,11 @@
 package org.uma.jmetal.util.distance.impl;
 
-import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.distance.Distance;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.distance.Distance;
 
 /**
  * Class for calculating the Euclidean distance between two {@link DoubleSolution} objects in solution space.
@@ -22,10 +21,6 @@ public class DistanceBetweenSolutionAndKNearestNeighbors<S extends Solution<?>>
   public DistanceBetweenSolutionAndKNearestNeighbors(int k, Distance<S, S> distance) {
     this.k = k ;
     this.distance = distance ;
-  }
-
-  public DistanceBetweenSolutionAndKNearestNeighbors(int k) {
-    this(k, new EuclideanDistanceBetweenSolutionsInObjectiveSpace<>()) ;
   }
 
   /**
@@ -45,11 +40,6 @@ public class DistanceBetweenSolutionAndKNearestNeighbors<S extends Solution<?>>
     if (limit == 0) {
       result = 0.0 ;
     } else {
-      //double sum = 0.0;
-      //for (int i = 0; i < limit; i++) {
-      //  sum += listOfDistances.get(i);
-      //}
-      //result = sum/limit ;
       result = listOfDistances.get(limit-1) ;
     }
     return result;

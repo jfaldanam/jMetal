@@ -1,15 +1,14 @@
 package org.uma.jmetal.util.legacy.front.util;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.uma.jmetal.solution.pointsolution.PointSolution;
 import org.uma.jmetal.util.distance.Distance;
 import org.uma.jmetal.util.distance.impl.EuclideanDistanceBetweenVectors;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.legacy.front.Front;
 import org.uma.jmetal.util.legacy.front.impl.ArrayFront;
 import org.uma.jmetal.util.point.Point;
-import org.uma.jmetal.util.point.PointSolution;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A Front is a  list of points. This class includes utilities to work with {@link Front} objects.
@@ -31,7 +30,7 @@ public class FrontUtils {
       throw new EmptyFrontException();
     }
 
-    int numberOfObjectives = front.getPoint(0).getDimension();
+    int numberOfObjectives = front.getPoint(0).dimension();
 
     double[] maximumValue = new double[numberOfObjectives];
     for (int i = 0; i < numberOfObjectives; i++) {
@@ -40,8 +39,8 @@ public class FrontUtils {
 
     for (int i = 0; i < front.getNumberOfPoints(); i++) {
       for (int j = 0; j < numberOfObjectives; j++) {
-        if (front.getPoint(i).getValue(j) > maximumValue[j]) {
-          maximumValue[j] = front.getPoint(i).getValue(j);
+        if (front.getPoint(i).value(j) > maximumValue[j]) {
+          maximumValue[j] = front.getPoint(i).value(j);
         }
       }
     }
@@ -62,7 +61,7 @@ public class FrontUtils {
       throw new EmptyFrontException();
     }
 
-    int numberOfObjectives = front.getPoint(0).getDimension();
+    int numberOfObjectives = front.getPoint(0).dimension();
 
     double[] minimumValue = new double[numberOfObjectives];
     for (int i = 0; i < numberOfObjectives; i++) {
@@ -71,8 +70,8 @@ public class FrontUtils {
 
     for (int i = 0; i < front.getNumberOfPoints(); i++) {
       for (int j = 0; j < numberOfObjectives; j++) {
-        if (front.getPoint(i).getValue(j) < minimumValue[j]) {
-          minimumValue[j] = front.getPoint(i).getValue(j);
+        if (front.getPoint(i).value(j) < minimumValue[j]) {
+          minimumValue[j] = front.getPoint(i).value(j);
         }
       }
     }
@@ -112,7 +111,7 @@ public class FrontUtils {
     double minDistance = Double.MAX_VALUE;
 
     for (int i = 0; i < front.getNumberOfPoints(); i++) {
-      double aux = distance.compute(point.getValues(), front.getPoint(i).getValues());
+      double aux = distance.compute(point.values(), front.getPoint(i).values());
       if ((aux < minDistance) && (aux > 0.0)) {
         minDistance = aux;
       }
@@ -151,10 +150,10 @@ public class FrontUtils {
       throw new JMetalException("The point is null");
     }
 
-    double minDistance = distance.compute(point.getValues(), front.getPoint(0).getValues());
+    double minDistance = distance.compute(point.values(), front.getPoint(0).values());
 
     for (int i = 1; i < front.getNumberOfPoints(); i++) {
-      double aux = distance.compute(point.getValues(), front.getPoint(i).getValues());
+      double aux = distance.compute(point.values(), front.getPoint(i).values());
       if (aux < minDistance) {
         minDistance = aux;
       }
@@ -177,18 +176,18 @@ public class FrontUtils {
       throw new EmptyFrontException();
     }
 
-    int numberOfDimensions = front.getPoint(0).getDimension();
+    int numberOfDimensions = front.getPoint(0).dimension();
     Front invertedFront = new ArrayFront(front.getNumberOfPoints(), numberOfDimensions);
 
     for (int i = 0; i < front.getNumberOfPoints(); i++) {
       for (int j = 0; j < numberOfDimensions; j++) {
-        if (front.getPoint(i).getValue(j) <= 1.0
-                && front.getPoint(i).getValue(j) >= 0.0) {
-          invertedFront.getPoint(i).setValue(j, 1.0 - front.getPoint(i).getValue(j));
-        } else if (front.getPoint(i).getValue(j) > 1.0) {
-          invertedFront.getPoint(i).setValue(j, 0.0);
-        } else if (front.getPoint(i).getValue(j) < 0.0) {
-          invertedFront.getPoint(i).setValue(j, 1.0);
+        if (front.getPoint(i).value(j) <= 1.0
+                && front.getPoint(i).value(j) >= 0.0) {
+          invertedFront.getPoint(i).value(j, 1.0 - front.getPoint(i).value(j));
+        } else if (front.getPoint(i).value(j) > 1.0) {
+          invertedFront.getPoint(i).value(j, 0.0);
+        } else if (front.getPoint(i).value(j) < 0.0) {
+          invertedFront.getPoint(i).value(j, 1.0);
         }
       }
     }
@@ -209,48 +208,14 @@ public class FrontUtils {
     double[][] arrayFront = new double[front.getNumberOfPoints()][];
 
     for (int i = 0; i < front.getNumberOfPoints(); i++) {
-      arrayFront[i] = new double[front.getPoint(i).getDimension()];
-      for (int j = 0; j < front.getPoint(i).getDimension(); j++) {
-        arrayFront[i][j] = front.getPoint(i).getValue(j);
+      arrayFront[i] = new double[front.getPoint(i).dimension()];
+      for (int j = 0; j < front.getPoint(i).dimension(); j++) {
+        arrayFront[i][j] = front.getPoint(i).value(j);
       }
     }
 
     return arrayFront;
   }
-
-  /**
-   * Given a front, converts it to a Solution set of PointSolutions
-   *
-   * @param front
-   * @return A front as a List<FrontSolution>
-   */
-  /*
-  public static List<PointSolution> convertFrontToSolutionList(Front front) {
-    if (front == null) {
-      throw new JMetalException("The front is null");
-    }
-
-    int numberOfObjectives ;
-    int solutionSetSize = front.getNumberOfPoints() ;
-    if (front.getNumberOfPoints() == 0) {
-      numberOfObjectives = 0 ;
-    } else {
-      numberOfObjectives = front.getPoint(0).getDimension();
-    }
-    List<PointSolution> solutionSet = new ArrayList<>(solutionSetSize) ;
-
-    for (int i = 0; i < front.getNumberOfPoints(); i++) {
-      PointSolution solution = new PointSolution(numberOfObjectives);
-      for (int j = 0 ; j < numberOfObjectives; j++) {
-        solution.setObjective(j, front.getPoint(i).getValue(j));
-      }
-
-      solutionSet.add(solution) ;
-    }
-
-    return solutionSet ;
-  }
-*/
 
   /**
    * Given a front, converts it to a Solution set of PointSolutions
@@ -269,14 +234,14 @@ public class FrontUtils {
     if (front.getNumberOfPoints() == 0) {
       numberOfObjectives = 0;
     } else {
-      numberOfObjectives = front.getPoint(0).getDimension();
+      numberOfObjectives = front.getPoint(0).dimension();
     }
     List<PointSolution> solutionSet = new ArrayList<>(solutionSetSize);
 
     for (int i = 0; i < front.getNumberOfPoints(); i++) {
       PointSolution solution = new PointSolution(numberOfObjectives);
       for (int j = 0; j < numberOfObjectives; j++) {
-        solution.objectives()[j] = front.getPoint(i).getValue(j);
+        solution.objectives()[j] = front.getPoint(i).value(j);
       }
 
       solutionSet.add(solution);

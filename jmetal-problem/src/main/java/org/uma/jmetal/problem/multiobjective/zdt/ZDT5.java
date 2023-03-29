@@ -13,18 +13,17 @@
 
 package org.uma.jmetal.problem.multiobjective.zdt;
 
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.List;
 import org.uma.jmetal.problem.binaryproblem.impl.AbstractBinaryProblem;
 import org.uma.jmetal.solution.binarysolution.BinarySolution;
 import org.uma.jmetal.util.errorchecking.Check;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.List;
-
 /** Class representing problem ZDT5 */
-@SuppressWarnings("serial")
 public class ZDT5 extends AbstractBinaryProblem {
   private List<Integer> bitsPerVariable;
+  private int numberOfVariables ;
 
   /** Creates a default instance of problem ZDT5 (11 decision variables) */
   public ZDT5() {
@@ -37,26 +36,43 @@ public class ZDT5 extends AbstractBinaryProblem {
    * @param numberOfVariables Number of variables.
    */
   public ZDT5(Integer numberOfVariables) {
-    setNumberOfVariables(numberOfVariables);
-    setNumberOfObjectives(2);
-    setName("ZDT5");
+    this.numberOfVariables = numberOfVariables ;
+
 
     bitsPerVariable = new ArrayList<>(numberOfVariables);
 
     bitsPerVariable.add(30);
-    for (int var = 1; var < numberOfVariables; var++) {
+    for (int i = 1; i < numberOfVariables; i++) {
       bitsPerVariable.add(5);
     }
   }
 
   @Override
-  public List<Integer> getListOfBitsPerVariable() {
+  public int numberOfVariables() {
+    return numberOfVariables ;
+  }
+  @Override
+  public int numberOfObjectives() {
+    return 2 ;
+  }
+  @Override
+  public int numberOfConstraints() {
+    return 0 ;
+  }
+
+  @Override
+  public String name() {
+    return "ZDT5" ;
+  }
+
+  @Override
+  public List<Integer> listOfBitsPerVariable() {
     return bitsPerVariable;
   }
 
   @Override
-  public int getBitsFromVariable(int index) {
-    Check.valueIsInRange(index, 0, this.getNumberOfVariables());
+  public int bitsFromVariable(int index) {
+    Check.valueIsInRange(index, 0, this.numberOfVariables());
 
     return bitsPerVariable.get(index);
   }

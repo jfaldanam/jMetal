@@ -1,5 +1,8 @@
 package org.uma.jmetal.algorithm.multiobjective.pesa2;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
 import org.junit.Test;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
@@ -15,11 +18,6 @@ import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.VectorUtils;
 
-import java.util.List;
-
-import static org.junit.Assert.assertTrue;
-import static org.uma.jmetal.util.AbstractAlgorithmRunner.printFinalSolutionSet;
-
 public class PESA2IT {
   Algorithm<List<DoubleSolution>> algorithm;
 
@@ -34,7 +32,7 @@ public class PESA2IT {
     double crossoverDistributionIndex = 20.0;
     crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
+    double mutationProbability = 1.0 / problem.numberOfVariables();
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
@@ -42,7 +40,7 @@ public class PESA2IT {
 
     algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+    List<DoubleSolution> population = algorithm.result();
 
     /*
     Rationale: the default problem is Kursawe, and usually PESA2, configured with standard
@@ -62,7 +60,7 @@ public class PESA2IT {
     double crossoverDistributionIndex = 20.0;
     crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
+    double mutationProbability = 1.0 / problem.numberOfVariables();
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
@@ -70,11 +68,9 @@ public class PESA2IT {
 
     algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult() ;
+    List<DoubleSolution> population = algorithm.result() ;
 
     String referenceFrontFileName = "../resources/referenceFrontsCSV/ConstrEx.csv" ;
-
-    printFinalSolutionSet(population);
 
     double[][] referenceFront = VectorUtils.readVectors(referenceFrontFileName, ",") ;
     QualityIndicator hypervolume = new PISAHypervolume(referenceFront);

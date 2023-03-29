@@ -1,9 +1,8 @@
 package org.uma.jmetal.problem.multiobjective.cre;
 
+import java.util.List;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
-import java.util.List;
 
 /**
  * Class representing problem CRE25. Source: Ryoji Tanabe and Hisao Ishibuchi, An easy-to-use
@@ -17,15 +16,14 @@ public class CRE25 extends AbstractDoubleProblem {
 
   /** Constructor */
   public CRE25() {
-    setNumberOfVariables(4);
-    setNumberOfObjectives(2);
-    setNumberOfConstraints(1);
-    setName("CRE25");
+    numberOfObjectives(2);
+    numberOfConstraints(1);
+    name("CRE25");
 
     List<Double> lowerLimit = List.of(12.0, 12.0, 12.0, 12.0);
     List<Double> upperLimit = List.of(60.0, 60.0, 60.0, 60.0);
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */

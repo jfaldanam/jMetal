@@ -1,5 +1,8 @@
 package org.uma.jmetal.algorithm.multiobjective.moead;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.uma.jmetal.algorithm.Algorithm;
@@ -11,10 +14,6 @@ import org.uma.jmetal.problem.multiobjective.lz09.LZ09F3;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.legacy.qualityindicator.QualityIndicator;
 import org.uma.jmetal.util.legacy.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
-
-import java.util.List;
-
-import static org.junit.Assert.assertTrue;
 
 public class MOEADDRAIT {
 
@@ -29,7 +28,7 @@ public class MOEADDRAIT {
     CrossoverOperator<DoubleSolution> crossover = new DifferentialEvolutionCrossover(cr, f,
             DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
+    double mutationProbability = 1.0 / problem.numberOfVariables();
     double mutationDistributionIndex = 20.0;
     MutationOperator<DoubleSolution> mutation = new PolynomialMutation(mutationProbability,
         mutationDistributionIndex);
@@ -48,7 +47,7 @@ public class MOEADDRAIT {
         .build();
 
     algorithm.run() ;
-    List<DoubleSolution> population = algorithm.getResult();
+    List<DoubleSolution> population = algorithm.result();
 
     assertTrue(population.size() == 100);
   }
@@ -63,7 +62,7 @@ public class MOEADDRAIT {
     CrossoverOperator<DoubleSolution> crossover = new DifferentialEvolutionCrossover(cr, f,
             DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
+    double mutationProbability = 1.0 / problem.numberOfVariables();
     double mutationDistributionIndex = 20.0;
     MutationOperator<DoubleSolution> mutation = new PolynomialMutation(mutationProbability,
         mutationDistributionIndex);
@@ -84,7 +83,7 @@ public class MOEADDRAIT {
 
     algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+    List<DoubleSolution> population = algorithm.result();
 
     QualityIndicator<List<DoubleSolution>, Double> hypervolume =
         new PISAHypervolume<>("../resources/referenceFrontsCSV/LZ09_F3.csv");

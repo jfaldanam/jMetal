@@ -1,44 +1,59 @@
 package org.uma.jmetal.problem.doubleproblem.impl;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.uma.jmetal.problem.AbstractGenericProblem;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.solution.doublesolution.impl.DefaultDoubleSolution;
 import org.uma.jmetal.util.bounds.Bounds;
 import org.uma.jmetal.util.errorchecking.Check;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-@SuppressWarnings("serial")
-public abstract class AbstractDoubleProblem extends AbstractGenericProblem<DoubleSolution>
-    implements DoubleProblem {
-
+/**
+ * Abstract class to be extended by implementations of interface {@link DoubleProblem>}, which must
+ * implement the {@link #evaluate} method.
+ *
+ *
+ * @author Antonio J. Nebro (ajnebro@uma.es)
+ */
+public abstract class AbstractDoubleProblem implements DoubleProblem {
   protected List<Bounds<Double>> bounds;
+  protected int numberOfObjectives ;
+  protected int numberOfConstraints;
+  protected String name ;
 
-  /**
-   * @deprecated Use {@link #getBoundsForVariables()} instead.
-   */
-  @Deprecated
-  public List<Pair<Double, Double>> getVariableBounds() {
-    return bounds.stream().map(Bounds<Double>::toPair).collect(Collectors.toList());
+  @Override
+  public int numberOfVariables() {
+    return bounds.size() ;
   }
 
   @Override
-  @Deprecated
-  public Double getUpperBound(int index) {
-    return getBoundsForVariables().get(index).getUpperBound();
+  public int numberOfObjectives() {
+    return numberOfObjectives ;
   }
 
   @Override
-  @Deprecated
-  public Double getLowerBound(int index) {
-    return getBoundsForVariables().get(index).getLowerBound();
+  public int numberOfConstraints() {
+    return numberOfConstraints ;
   }
 
-  public void setVariableBounds(List<Double> lowerBounds, List<Double> upperBounds) {
+  public void numberOfObjectives(int numberOfObjectives) {
+    this.numberOfObjectives = numberOfObjectives ;
+  }
+
+  public void numberOfConstraints(int numberOfConstraints) {
+    this.numberOfConstraints = numberOfConstraints ;
+  }
+
+  @Override
+  public String name() {
+    return name;
+  }
+  public void name(String name) {
+    this.name = name;
+  }
+
+  public void variableBounds(List<Double> lowerBounds, List<Double> upperBounds) {
     Check.notNull(lowerBounds);
     Check.notNull(upperBounds);
     Check.that(
@@ -50,20 +65,12 @@ public abstract class AbstractDoubleProblem extends AbstractGenericProblem<Doubl
             .mapToObj(i -> Bounds.create(lowerBounds.get(i), upperBounds.get(i)))
             .collect(Collectors.toList());
   }
-
   @Override
   public DoubleSolution createSolution() {
-    return new DefaultDoubleSolution(getNumberOfObjectives(), getNumberOfConstraints(), bounds);
+    return new DefaultDoubleSolution(bounds, numberOfObjectives(), numberOfConstraints());
   }
-
   @Override
-  @Deprecated
-  public List<Pair<Double, Double>> getBounds() {
-    return getVariableBounds();
-  }
-  
-  @Override
-  public List<Bounds<Double>> getBoundsForVariables() {
+  public List<Bounds<Double>> variableBounds() {
     return bounds;
   }
 }

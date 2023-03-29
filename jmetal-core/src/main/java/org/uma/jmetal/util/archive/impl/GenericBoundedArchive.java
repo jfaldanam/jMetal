@@ -1,17 +1,15 @@
 package org.uma.jmetal.util.archive.impl;
 
+import java.util.Comparator;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.densityestimator.DensityEstimator;
-
-import java.util.Comparator;
 
 /**
  * This class implements a generic bound archive.
  *
  * @author Antonio J. Nebro
  */
-@SuppressWarnings("serial")
 public class GenericBoundedArchive<S extends Solution<?>> extends AbstractBoundedArchive<S> {
   private Comparator<S> comparator;
   private DensityEstimator<S> densityEstimator ;
@@ -19,25 +17,25 @@ public class GenericBoundedArchive<S extends Solution<?>> extends AbstractBounde
   public GenericBoundedArchive(int maxSize, DensityEstimator<S> densityEstimator) {
     super(maxSize);
     this.densityEstimator = densityEstimator ;
-    comparator = densityEstimator.getComparator() ;
+    comparator = densityEstimator.comparator() ;
   }
 
   @Override
   public void prune() {
-    if (getSolutionList().size() > getMaxSize()) {
+    if (solutions().size() > maximumSize()) {
       computeDensityEstimator();
-      S worst = new SolutionListUtils().findWorstSolution(getSolutionList(), comparator) ;
-      getSolutionList().remove(worst);
+      S worst = new SolutionListUtils().findWorstSolution(solutions(), comparator) ;
+      solutions().remove(worst);
     }
   }
 
   @Override
-  public Comparator<S> getComparator() {
+  public Comparator<S> comparator() {
     return comparator ;
   }
 
   @Override
   public void computeDensityEstimator() {
-    densityEstimator.compute(getSolutionList());
+    densityEstimator.compute(solutions());
   }
 }

@@ -1,49 +1,57 @@
 package org.uma.jmetal.problem.integerproblem.impl;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.uma.jmetal.problem.AbstractGenericProblem;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.uma.jmetal.problem.integerproblem.IntegerProblem;
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
 import org.uma.jmetal.solution.integersolution.impl.DefaultIntegerSolution;
 import org.uma.jmetal.util.bounds.Bounds;
 import org.uma.jmetal.util.errorchecking.Check;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-@SuppressWarnings("serial")
-public abstract class AbstractIntegerProblem extends AbstractGenericProblem<IntegerSolution>
-  implements IntegerProblem {
-
+/**
+ * Abstract class to be extended by implementations of interface {@link IntegerProblem >}
+ *
+ * @author Antonio J. Nebro (ajnebro@uma.es)
+ */
+public abstract class AbstractIntegerProblem implements IntegerProblem{
   protected List<Bounds<Integer>> bounds;
-
-  /**
-   * @deprecated USe {@link #getBoundsForVariables()} instead.
-   */
-  @Deprecated
-  public List<Pair<Integer, Integer>> getVariableBounds() {
-    return bounds.stream().map(Bounds<Integer>::toPair).collect(Collectors.toList());
-  }
-
+  protected int numberOfObjectives ;
+  protected int numberOfConstraints;
+  protected String name ;
   @Override
-  @Deprecated
-  public Integer getUpperBound(int index) {
-    return getBoundsForVariables().get(index).getUpperBound();
+  public int numberOfVariables() {
+    return bounds.size() ;
   }
-
   @Override
-  @Deprecated
-  public Integer getLowerBound(int index) {
-    return getBoundsForVariables().get(index).getLowerBound();
+  public int numberOfObjectives() {
+    return numberOfObjectives ;
   }
 
-  public void setVariableBounds(List<Integer> lowerBounds, List<Integer> upperBounds) {
+  public void numberOfObjectives(int numberOfObjectives) {
+    this.numberOfObjectives = numberOfObjectives ;
+  }
+  public void numberOfConstraints(int numberOfConstraints) {
+    this.numberOfConstraints = numberOfConstraints ;
+  }
+  @Override
+  public String name() {
+    return name;
+  }
+  public void name(String name) {
+    this.name = name;
+  }
+  @Override
+  public int numberOfConstraints() {
+    return numberOfConstraints ;
+  }
+
+  public void variableBounds(List<Integer> lowerBounds, List<Integer> upperBounds) {
     Check.notNull(lowerBounds);
     Check.notNull(upperBounds);
     Check.that(
-            lowerBounds.size() == upperBounds.size(),
-            "The size of the lower bound list is not equal to the size of the upper bound list");
+        lowerBounds.size() == upperBounds.size(),
+        "The size of the lower bound list is not equal to the size of the upper bound list");
 
     bounds =
         IntStream.range(0, lowerBounds.size())
@@ -53,17 +61,11 @@ public abstract class AbstractIntegerProblem extends AbstractGenericProblem<Inte
 
   @Override
   public IntegerSolution createSolution() {
-    return new DefaultIntegerSolution(getNumberOfObjectives(), getBoundsForVariables());
+    return new DefaultIntegerSolution(variableBounds(), numberOfObjectives(), numberOfConstraints());
   }
 
   @Override
-  @Deprecated
-  public List<Pair<Integer, Integer>> getBounds() {
-    return getVariableBounds() ;
-  }
-  
-  @Override
-  public List<Bounds<Integer>> getBoundsForVariables() {
+  public List<Bounds<Integer>> variableBounds() {
     return bounds;
   }
 }

@@ -1,10 +1,10 @@
 package org.uma.jmetal.problem.singleobjective;
 
-import org.uma.jmetal.problem.integerproblem.impl.AbstractIntegerProblem;
-import org.uma.jmetal.solution.integersolution.IntegerSolution;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
+import org.uma.jmetal.problem.integerproblem.impl.AbstractIntegerProblem;
+import org.uma.jmetal.solution.integersolution.IntegerSolution;
 
 /**
  * Created by Antonio J. Nebro on 03/07/14.
@@ -22,19 +22,18 @@ public class NIntegerMin extends AbstractIntegerProblem {
   /** Constructor */
   public NIntegerMin(int numberOfVariables, int n, int lowerBound, int upperBound)  {
     valueN = n ;
-    setNumberOfVariables(numberOfVariables);
-    setNumberOfObjectives(1);
-    setName("NIntegerMin");
+    numberOfObjectives(1);
+    name("NIntegerMin");
 
-    List<Integer> lowerLimit = new ArrayList<>(getNumberOfVariables()) ;
-    List<Integer> upperLimit = new ArrayList<>(getNumberOfVariables()) ;
+    List<Integer> lowerLimit = new ArrayList<>(numberOfVariables) ;
+    List<Integer> upperLimit = new ArrayList<>(numberOfVariables) ;
 
-    for (int i = 0; i < getNumberOfVariables(); i++) {
+    IntStream.range(0, numberOfVariables).forEach(i -> {
       lowerLimit.add(lowerBound);
       upperLimit.add(upperBound);
-    }
+    });
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */

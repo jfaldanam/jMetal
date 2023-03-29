@@ -1,13 +1,13 @@
 package org.uma.jmetal.qualityindicator.impl.hypervolume.impl;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.uma.jmetal.util.VectorUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Arrays;
+import org.junit.Assert;
+import org.junit.Test;
+import org.uma.jmetal.util.VectorUtils;
 
 public class PISAHypervolumeTest {
   private final double EPSILON = 0.00000001;
@@ -16,13 +16,13 @@ public class PISAHypervolumeTest {
   public void shouldConstructorWithReferencePointCreateAValidInstance() {
     PISAHypervolume hypervolume = new PISAHypervolume(new double[] {1.0, 1.0});
 
-    double[][] referenceFront = hypervolume.getReferenceFront();
+    double[][] referenceFront = hypervolume.referenceFront();
     assertEquals(2, referenceFront.length);
     assertEquals(2, referenceFront[0].length);
-    assertEquals(1.0, hypervolume.getReferenceFront()[0][0], EPSILON);
-    assertEquals(0.0, hypervolume.getReferenceFront()[0][1], EPSILON);
-    assertEquals(0.0, hypervolume.getReferenceFront()[1][0], EPSILON);
-    assertEquals(1.0, hypervolume.getReferenceFront()[1][1], EPSILON);
+    assertEquals(1.0, hypervolume.referenceFront()[0][0], EPSILON);
+    assertEquals(0.0, hypervolume.referenceFront()[0][1], EPSILON);
+    assertEquals(0.0, hypervolume.referenceFront()[1][0], EPSILON);
+    assertEquals(1.0, hypervolume.referenceFront()[1][1], EPSILON);
   }
 
   /**
@@ -68,7 +68,7 @@ public class PISAHypervolumeTest {
      */
     @Test
     public void shouldEvaluateWorkProperlyCase3()  {
-        double[][] referenceFront = new double[][] {{1.0, 0.1}, {0.0, 1.0}};
+        double[][] referenceFront = {{1.0, 0.1}, {0.0, 1.0}};
 
         double[][] front = new double[][] {{1.0, 0.0},{0.0, 1.0}} ;
 

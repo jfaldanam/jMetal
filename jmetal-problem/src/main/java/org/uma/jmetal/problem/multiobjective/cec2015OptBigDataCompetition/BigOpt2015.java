@@ -1,8 +1,6 @@
 package org.uma.jmetal.problem.multiobjective.cec2015OptBigDataCompetition;
 
-import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.errorchecking.JMetalException;
+import static java.lang.Double.parseDouble;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,8 +9,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import static java.lang.Double.parseDouble;
+import java.util.stream.IntStream;
+import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /** Created by ajnebro on 14/1/15. */
 @SuppressWarnings("serial")
@@ -34,20 +34,20 @@ public class BigOpt2015 extends AbstractDoubleProblem {
 
     scaling = false;
 
-    setNumberOfVariables(dTypeG * 256);
-    setNumberOfObjectives(2);
-    setNumberOfConstraints(0);
-    setName("BigOpt2015");
+    int numberOfVariables = dTypeG * 256;
+    numberOfObjectives(2);
+    numberOfConstraints(0);
+    name("BigOpt2015");
 
-    List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables());
-    List<Double> upperLimit = new ArrayList<>(getNumberOfVariables());
+    List<Double> lowerLimit = new ArrayList<>(numberOfVariables);
+    List<Double> upperLimit = new ArrayList<>(numberOfVariables);
 
-    for (int i = 0; i < getNumberOfVariables(); i++) {
+    IntStream.range(0, numberOfVariables).forEach(i -> {
       lowerLimit.add(-8.0);
       upperLimit.add(8.0);
-    }
+    });
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */

@@ -1,11 +1,5 @@
 package org.uma.jmetal.util.measure.impl;
 
-import org.uma.jmetal.util.errorchecking.JMetalException;
-import org.uma.jmetal.util.measure.Measure;
-import org.uma.jmetal.util.measure.MeasureListener;
-import org.uma.jmetal.util.measure.PullMeasure;
-import org.uma.jmetal.util.measure.PushMeasure;
-
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -13,6 +7,11 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import org.uma.jmetal.util.errorchecking.JMetalException;
+import org.uma.jmetal.util.measure.Measure;
+import org.uma.jmetal.util.measure.MeasureListener;
+import org.uma.jmetal.util.measure.PullMeasure;
+import org.uma.jmetal.util.measure.PushMeasure;
 
 /**
  * The {@link MeasureFactory} provides some useful methods to build specific
@@ -56,13 +55,13 @@ public class MeasureFactory {
 		return new PullMeasure<Value>() {
 
 			@Override
-			public String getName() {
-				return push.getName();
+			public String name() {
+				return push.name();
 			}
 
 			@Override
-			public String getDescription() {
-				return push.getDescription();
+			public String description() {
+				return push.description();
 			}
 
 			@SuppressWarnings("unchecked")
@@ -103,8 +102,8 @@ public class MeasureFactory {
 	 */
 	public <Value> PushMeasure<Value> createPushFromPull(
 			PullMeasure<Value> pull, final long period) {
-		SimplePushMeasure<Value> push = new SimplePushMeasure<>(pull.getName(),
-				pull.getDescription());
+		SimplePushMeasure<Value> push = new SimplePushMeasure<>(pull.name(),
+				pull.description());
 		final WeakReference<PullMeasure<Value>> weakPull = new WeakReference<PullMeasure<Value>>(
 				pull);
 		final WeakReference<SimplePushMeasure<Value>> weakPush = new WeakReference<SimplePushMeasure<Value>>(

@@ -1,5 +1,8 @@
 package org.uma.jmetal.algorithm.multiobjective.mocell;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.uma.jmetal.algorithm.Algorithm;
@@ -16,10 +19,6 @@ import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
 
-import java.util.List;
-
-import static org.junit.Assert.assertTrue;
-
 public class MOCellIT {
   Algorithm<List<DoubleSolution>> algorithm;
   DoubleProblem problem;
@@ -34,7 +33,7 @@ public class MOCellIT {
     double crossoverDistributionIndex = 20.0;
     crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
+    double mutationProbability = 1.0 / problem.numberOfVariables();
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
   }
@@ -49,7 +48,7 @@ public class MOCellIT {
 
     algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+    List<DoubleSolution> population = algorithm.result();
 
     /*
     Rationale: the default problem is ZDT4, and MOCell, configured with standard settings, should
@@ -67,7 +66,7 @@ public class MOCellIT {
 
     algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+    List<DoubleSolution> population = algorithm.result();
 
     QualityIndicator hypervolume =
             new PISAHypervolume(

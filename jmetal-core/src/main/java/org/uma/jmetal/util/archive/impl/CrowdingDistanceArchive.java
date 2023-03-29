@@ -1,11 +1,12 @@
 package org.uma.jmetal.util.archive.impl;
 
+import java.util.Comparator;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.SolutionListUtils;
+import org.uma.jmetal.util.comparator.dominanceComparator.DominanceComparator;
+import org.uma.jmetal.util.comparator.dominanceComparator.impl.DefaultDominanceComparator;
 import org.uma.jmetal.util.densityestimator.DensityEstimator;
 import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
-
-import java.util.Comparator;
 
 /**
  * Created by Antonio J. Nebro on 24/09/14.
@@ -16,28 +17,32 @@ public class CrowdingDistanceArchive<S extends Solution<?>> extends AbstractBoun
   private Comparator<S> crowdingDistanceComparator;
   private DensityEstimator<S> crowdingDistance ;
 
+  public CrowdingDistanceArchive(int maxSize, DominanceComparator<S> dominanceComparator) {
+    super(maxSize, dominanceComparator);
+    crowdingDistance = new CrowdingDistanceDensityEstimator<>();
+    crowdingDistanceComparator = Comparator.comparing(crowdingDistance::value).reversed() ;
+  }
+
   public CrowdingDistanceArchive(int maxSize) {
-    super(maxSize);
-    crowdingDistance = new CrowdingDistanceDensityEstimator<S>();
-    crowdingDistanceComparator = Comparator.comparing(crowdingDistance::getValue).reversed() ;
+    this(maxSize, new DefaultDominanceComparator<>()) ;
   }
 
   @Override
   public void prune() {
-    if (getSolutionList().size() > getMaxSize()) {
+    if (solutions().size() > maximumSize()) {
       computeDensityEstimator();
-      S worst = new SolutionListUtils().findWorstSolution(getSolutionList(), crowdingDistanceComparator) ;
-      getSolutionList().remove(worst);
+      S worst = new SolutionListUtils().findWorstSolution(solutions(), crowdingDistanceComparator) ;
+      solutions().remove(worst);
     }
   }
 
   @Override
-  public Comparator<S> getComparator() {
+  public Comparator<S> comparator() {
     return crowdingDistanceComparator ;
   }
 
   @Override
   public void computeDensityEstimator() {
-    crowdingDistance.compute(getSolutionList());
+    crowdingDistance.compute(solutions());
   }
 }

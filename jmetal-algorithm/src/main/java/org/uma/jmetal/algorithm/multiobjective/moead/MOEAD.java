@@ -1,14 +1,13 @@
 package org.uma.jmetal.algorithm.multiobjective.moead;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.algorithm.multiobjective.moead.util.MOEADUtils;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.crossover.impl.DifferentialEvolutionCrossover;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class implementing the MOEA/D-DE algorithm described in :
@@ -84,11 +83,11 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
     }
   }
 
-  @Override public String getName() {
+  @Override public String name() {
     return "MOEAD" ;
   }
 
-  @Override public String getDescription() {
+  @Override public String description() {
     return "Multi-Objective Evolutionary Algorithm based on Decomposition" ;
   }
 }

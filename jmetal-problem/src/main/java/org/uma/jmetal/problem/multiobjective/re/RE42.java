@@ -1,10 +1,9 @@
 package org.uma.jmetal.problem.multiobjective.re;
 
-import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
 import java.util.Arrays;
 import java.util.List;
+import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
  * Class representing problem RE42. Source: Ryoji Tanabe and Hisao Ishibuchi, An easy-to-use
@@ -19,22 +18,21 @@ public class RE42 extends AbstractDoubleProblem {
 
   /** Constructor */
   public RE42() {
-    setNumberOfVariables(6);
-    setNumberOfObjectives(4);
-    setNumberOfConstraints(0);
-    setName("RE42");
+    numberOfObjectives(4);
+    numberOfConstraints(0);
+    name("RE42");
 
     List<Double> lowerLimit = List.of(150.0, 20.0, 13.0, 10.0, 14.0, 0.63);
     List<Double> upperLimit = List.of(274.32, 32.31, 25.0, 11.71, 18.0, 0.75);
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */
   @Override
   public DoubleSolution evaluate(DoubleSolution solution) {
-    double [] x = new double[getNumberOfVariables()];
-    for (int i = 0; i < getNumberOfVariables(); i++)
+    double [] x = new double[numberOfVariables()];
+    for (int i = 0; i < numberOfVariables(); i++)
       x[i] = solution.variables().get(i);
 
     double x_L = x[0];
@@ -94,7 +92,7 @@ public class RE42 extends AbstractDoubleProblem {
     constraintFuncs[2] = -(x_L / x_T) + 19.0;
     constraintFuncs[3] = 0.45 * Math.pow(DWT, 0.31) - x_T;
     constraintFuncs[4] = 0.7 * x_D + 0.7 - x_T;
-    constraintFuncs[5] = 50000.0 - DWT;
+    constraintFuncs[5] = 500000.0 - DWT;
     constraintFuncs[6] = DWT - 3000.0;
     constraintFuncs[7] = 0.32 - Fn;
 

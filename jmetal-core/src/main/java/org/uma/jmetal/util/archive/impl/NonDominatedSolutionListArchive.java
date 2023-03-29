@@ -1,14 +1,13 @@
 package org.uma.jmetal.util.archive.impl;
 
-import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.util.archive.Archive;
-import org.uma.jmetal.util.comparator.DominanceComparator;
-import org.uma.jmetal.util.comparator.EqualSolutionsComparator;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.archive.Archive;
+import org.uma.jmetal.util.comparator.EqualSolutionsComparator;
+import org.uma.jmetal.util.comparator.dominanceComparator.impl.DominanceWithConstraintsComparator;
 
 /**
  * This class implements an archive containing non-dominated solutions
@@ -18,6 +17,7 @@ import java.util.List;
  */
 @SuppressWarnings("serial")
 public class NonDominatedSolutionListArchive<S extends Solution<?>> implements Archive<S> {
+
   private List<S> solutionList;
   private Comparator<S> dominanceComparator;
   private Comparator<S> equalSolutions = new EqualSolutionsComparator<S>();
@@ -26,13 +26,13 @@ public class NonDominatedSolutionListArchive<S extends Solution<?>> implements A
    * Constructor
    */
   public NonDominatedSolutionListArchive() {
-    this(new DominanceComparator<S>());
+    this(new DominanceWithConstraintsComparator<S>());
   }
 
   /**
    * Constructor
    */
-  public NonDominatedSolutionListArchive(DominanceComparator<S> comparator) {
+  public NonDominatedSolutionListArchive(Comparator<S> comparator) {
     dominanceComparator = comparator;
 
     solutionList = new ArrayList<>();
@@ -48,55 +48,57 @@ public class NonDominatedSolutionListArchive<S extends Solution<?>> implements A
    */
   @Override
   public boolean add(S solution) {
-    boolean solutionInserted = false ;
-    if (solutionList.size() == 0) {
-      solutionList.add(solution) ;
-      solutionInserted = true ;
+    boolean isSolutionInserted = false;
+    if (solutionList.isEmpty()) {
+      solutionList.add(solution);
+      isSolutionInserted = true;
     } else {
-      Iterator<S> iterator = solutionList.iterator();
-      boolean isDominated = false;
-      
-      boolean isContained = false;
-      while (((!isDominated) && (!isContained)) && (iterator.hasNext())) {
-        S listIndividual = iterator.next();
-        int flag = dominanceComparator.compare(solution, listIndividual);
-        if (flag == -1) {
-          iterator.remove();
-        }  else if (flag == 1) {
-          isDominated = true; // dominated by one in the list
-        } else if (flag == 0) {
-          int equalflag = equalSolutions.compare(solution, listIndividual);
-          if (equalflag == 0) // solutions are equals
-            isContained = true;
-        }
-      }
-      
-      if (!isDominated && !isContained) {
-    	  solutionList.add(solution);
-    	  solutionInserted = true;
-      }
-      
-      return solutionInserted;
+      isSolutionInserted = insertSolutionIfNonDominatedAndIsNotInTheArchive(solution,
+          isSolutionInserted);
     }
 
-    return solutionInserted ;
+    return isSolutionInserted;
+  }
+
+  private boolean insertSolutionIfNonDominatedAndIsNotInTheArchive(S solution,
+      boolean solutionInserted) {
+    boolean isDominated = false;
+    boolean isContained = false;
+    Iterator<S> iterator = solutionList.iterator();
+    while (((!isDominated) && (!isContained)) && (iterator.hasNext())) {
+      S listIndividual = iterator.next();
+      int flag = dominanceComparator.compare(solution, listIndividual);
+      if (flag == -1) {
+        iterator.remove();
+      } else if (flag == 1) {
+        isDominated = true; // dominated by one in the list
+      } else if (equalSolutions.compare(solution, listIndividual) == 0) {// solutions are equals
+        isContained = true;
+      }
+    }
+
+    if (!isDominated && !isContained) {
+      solutionList.add(solution);
+      solutionInserted = true;
+    }
+    return solutionInserted;
   }
 
   public Archive<S> join(Archive<S> archive) {
-    return this.addAll(archive.getSolutionList());
+    return this.addAll(archive.solutions());
   }
 
   public Archive<S> addAll(List<S> list) {
     for (S solution : list) {
-      this.add(solution) ;
+      this.add(solution);
     }
 
-    return this ;
+    return this;
   }
 
 
   @Override
-  public List<S> getSolutionList() {
+  public List<S> solutions() {
     return solutionList;
   }
 

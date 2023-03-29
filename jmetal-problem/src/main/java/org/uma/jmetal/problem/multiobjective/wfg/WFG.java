@@ -1,10 +1,9 @@
 package org.uma.jmetal.problem.multiobjective.wfg;
 
-import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 
 /**
  * Implements a reference abstract class for all wfg org.uma.test problem
@@ -43,19 +42,19 @@ public abstract class WFG extends AbstractDoubleProblem {
     this.l = l;
     this.m = M;
 
-    setNumberOfVariables(this.k + this.l);
-    setNumberOfObjectives(this.m);
-    setNumberOfConstraints(0);
+    int numberOfVariables = this.k + this.l ;
+    numberOfObjectives(this.m);
+    numberOfConstraints(0);
 
-    List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables()) ;
-    List<Double> upperLimit = new ArrayList<>(getNumberOfVariables()) ;
+    List<Double> lowerLimit = new ArrayList<>(numberOfVariables) ;
+    List<Double> upperLimit = new ArrayList<>(numberOfVariables) ;
 
-    for (int i = 0; i < getNumberOfVariables(); i++) {
+    for (int i = 0; i < numberOfVariables; i++) {
       lowerLimit.add(0.0);
       upperLimit.add(2.0*(i+1));
     }
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /**

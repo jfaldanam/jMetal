@@ -4,12 +4,12 @@
 
     <groupId>org.uma.jmetal</groupId>
     <artifactId>jmetal</artifactId>
-    <version>5.11-SNAPSHOT</version>
+    <version>6.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Java framework for multi-objective optimization with metaheuristics</description>
-    <url>http://jmetal.sourceforge.net</url>
+    <url>https://github.com/jMetal/jMetal</url>
 
     <licenses>
         <license>
@@ -32,7 +32,7 @@
         <connection>scm:git://git@github.com:jMetal/jMetal.git</connection>
         <developerConnection>scm:git:https://github.com/jMetal/jMetal.git</developerConnection>
         <url>https://github.com/jMetal/jMetal.git</url>
-        <tag>jmetal-5.11</tag>
+        <tag>jmetal-6</tag>
     </scm>
 
     <distributionManagement>
@@ -54,16 +54,18 @@
         <module>jmetal-core</module>
         <module>jmetal-algorithm</module>
         <module>jmetal-lab</module>
-        <module>jmetal-example</module>
+        <module>jmetal-auto</module>
         <module>jmetal-problem</module>
-        <module>jmetal-experimental</module>
         <module>jmetal-parallel</module>
+        <module>jmetal-component</module>
     </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <doclint>none</doclint>
         <junit.version>4.13.1</junit.version>
+        <maven.compiler.source>14</maven.compiler.source>
+        <maven.compiler.target>14</maven.compiler.target>
     </properties>
 
     <build>
@@ -132,16 +134,9 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.7.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-descriptor</id>
-                        <goals>
-                            <goal>attach-descriptor</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <version>2.1.1</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -167,7 +162,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.5</version>
+                <version>0.8.8</version>
                 <executions>
                     <execution>
                         <goals>
@@ -186,7 +181,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.22.0</version>
+                <version>3.0.0-M5</version>
                 <executions>
                     <execution>
                         <id>integration-test</id>
@@ -210,7 +205,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.4.1</version>
                 <reportSets>
                     <reportSet>
                         <id>aggregate</id>
@@ -244,37 +239,42 @@
             <dependency>
                 <groupId>org.uma.jmetal</groupId>
                 <artifactId>jmetal-core</artifactId>
-                <version>5.11-SNAPSHOT</version>
+                <version>6.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.uma.jmetal</groupId>
                 <artifactId>jmetal-example</artifactId>
-                <version>5.11-SNAPSHOT</version>
+                <version>5.12-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.uma.jmetal</groupId>
                 <artifactId>jmetal-problem</artifactId>
-                <version>5.11-SNAPSHOT</version>
+                <version>6.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.uma.jmetal</groupId>
                 <artifactId>jmetal-algorithm</artifactId>
-                <version>5.11-SNAPSHOT</version>
+                <version>6.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.uma.jmetal</groupId>
                 <artifactId>jmetal-lab</artifactId>
-                <version>5.11-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>org.uma.jmetal</groupId>
-                <artifactId>jmetal-experimental</artifactId>
-                <version>5.11-SNAPSHOT</version>
+                <version>6.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.uma.jmetal</groupId>
                 <artifactId>jmetal-parallel</artifactId>
-                <version>5.11-SNAPSHOT</version>
+                <version>6.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.uma.jmetal</groupId>
+                <artifactId>jmetal-component</artifactId>
+                <version>6.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.uma.jmetal</groupId>
+                <artifactId>jmetal-auto</artifactId>
+                <version>6.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
@@ -315,6 +315,12 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>3.9</version>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>3.23.1</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -1,16 +1,17 @@
 package org.uma.jmetal.util.neighborhood.impl;
 
-import org.junit.Test;
-import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
-
-import static org.junit.Assert.*;
+import org.junit.Test;
+import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
+import org.uma.jmetal.problem.doubleproblem.impl.FakeDoubleProblem;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 public class WeightVectorNeighborhoodTest {
   private static final double EPSILON = 0.000000000001;
@@ -59,7 +60,7 @@ public class WeightVectorNeighborhoodTest {
         new WeightVectorNeighborhood<>(populationSize, neighborSize);
 
     List<DoubleSolution> solutionList = new ArrayList<>(populationSize);
-    DoubleProblem problem = new MockedDoubleProblem(2, 2);
+    DoubleProblem problem = new FakeDoubleProblem(2, 2, 0);
     IntStream.range(0, populationSize).forEach(i -> solutionList.add(problem.createSolution()));
 
     List<DoubleSolution> neighbors;
@@ -74,28 +75,5 @@ public class WeightVectorNeighborhoodTest {
     assertEquals(neighborSize, neighbors.size());
     assertSame(solutionList.get(69), neighbors.get(0));
     assertSame(solutionList.get(79), neighbors.get(19));
-  }
-
-  @SuppressWarnings("serial")
-  private static class MockedDoubleProblem extends AbstractDoubleProblem {
-    public MockedDoubleProblem(int numberOfVariables, int numberOfObjectives) {
-      setNumberOfVariables(numberOfVariables);
-      setNumberOfObjectives(numberOfObjectives);
-      setNumberOfConstraints(0);
-
-      List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables());
-      List<Double> upperLimit = new ArrayList<>(getNumberOfVariables());
-
-      for (int i = 0; i < getNumberOfVariables(); i++) {
-        lowerLimit.add(0.0);
-        upperLimit.add(1.0);
-      }
-
-      setVariableBounds(lowerLimit, upperLimit);
-    }
-
-    public DoubleSolution evaluate(DoubleSolution solution) {
-      return solution;
-    }
   }
 }

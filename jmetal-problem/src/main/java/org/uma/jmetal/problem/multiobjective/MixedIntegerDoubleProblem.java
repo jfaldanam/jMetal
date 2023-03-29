@@ -1,16 +1,15 @@
 package org.uma.jmetal.problem.multiobjective;
 
-import org.uma.jmetal.problem.AbstractGenericProblem;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.compositesolution.CompositeSolution;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.solution.doublesolution.impl.DefaultDoubleSolution;
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
 import org.uma.jmetal.solution.integersolution.impl.DefaultIntegerSolution;
 import org.uma.jmetal.util.bounds.Bounds;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Bi-objective problem for testing class {@link CompositeSolution )}. This problem requires an encoding where a
@@ -21,7 +20,7 @@ import java.util.List;
  * Objective 2: minimizing the sum of the distances of every variable to value M
  */
 @SuppressWarnings("serial")
-public class MixedIntegerDoubleProblem extends AbstractGenericProblem<CompositeSolution> {
+public class MixedIntegerDoubleProblem implements Problem<CompositeSolution> {
   private int valueN;
   private int valueM;
   private List<Bounds<Integer>> integerBounds;
@@ -41,9 +40,6 @@ public class MixedIntegerDoubleProblem extends AbstractGenericProblem<CompositeS
       int upperBound) {
     valueN = n;
     valueM = m;
-    setNumberOfVariables(2);
-    setNumberOfObjectives(2);
-    setName("MixedIntegerDoubleProblem");
 
     integerBounds = new ArrayList<>(numberOfIntegerVariables);
     doubleBounds = new ArrayList<>(numberOfDoubleVariables);
@@ -57,6 +53,26 @@ public class MixedIntegerDoubleProblem extends AbstractGenericProblem<CompositeS
     }
   }
 
+  @Override
+  public int numberOfVariables() {
+    return 2 ;
+  }
+
+  @Override
+  public int numberOfObjectives() {
+    return 2 ;
+  }
+
+  @Override
+  public int numberOfConstraints() {
+    return 0;
+  }
+
+  @Override
+  public String name() {
+    return "MixedIntegerDoubleProblem";
+  }
+
   /** Evaluate() method */
   @Override
   public CompositeSolution evaluate(CompositeSolution solution) {
@@ -67,15 +83,15 @@ public class MixedIntegerDoubleProblem extends AbstractGenericProblem<CompositeS
     approximationToM = 0;
 
     List<Integer> integerVariables = ((IntegerSolution) solution.variables().get(0)).variables();
-    for (int i = 0; i < integerVariables.size(); i++) {
-      approximationToN += Math.abs(valueN - integerVariables.get(i));
-      approximationToM += Math.abs(valueM - integerVariables.get(i));
+    for (Integer integerVariable : integerVariables) {
+      approximationToN += Math.abs(valueN - integerVariable);
+      approximationToM += Math.abs(valueM - integerVariable);
     }
 
     List<Double> doubleVariables = ((DoubleSolution) solution.variables().get(1)).variables();
-    for (int i = 0; i < doubleVariables.size(); i++) {
-      approximationToN += Math.abs(valueN - doubleVariables.get(i));
-      approximationToM += Math.abs(valueM - doubleVariables.get(i));
+    for (Double doubleVariable : doubleVariables) {
+      approximationToN += Math.abs(valueN - doubleVariable);
+      approximationToM += Math.abs(valueM - doubleVariable);
     }
 
     solution.objectives()[0] = approximationToN ;
@@ -86,8 +102,8 @@ public class MixedIntegerDoubleProblem extends AbstractGenericProblem<CompositeS
 
   @Override
   public CompositeSolution createSolution() {
-    IntegerSolution integerSolution = new DefaultIntegerSolution(getNumberOfObjectives(), getNumberOfConstraints(), integerBounds) ;
-    DoubleSolution doubleSolution = new DefaultDoubleSolution(getNumberOfObjectives(), getNumberOfConstraints(), doubleBounds) ;
+    IntegerSolution integerSolution = new DefaultIntegerSolution(integerBounds, numberOfObjectives(), numberOfConstraints()) ;
+    DoubleSolution doubleSolution = new DefaultDoubleSolution(doubleBounds, numberOfObjectives(), numberOfConstraints()) ;
     return new CompositeSolution(Arrays.asList(integerSolution, doubleSolution));
   }
 }

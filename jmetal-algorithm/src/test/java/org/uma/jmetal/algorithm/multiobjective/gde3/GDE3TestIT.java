@@ -1,5 +1,8 @@
 package org.uma.jmetal.algorithm.multiobjective.gde3;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
 import org.junit.Test;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
@@ -10,10 +13,6 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
-
-import java.util.List;
-
-import static org.junit.Assert.assertTrue;
 
 /** Created by ajnebro on 3/11/15. */
 public class GDE3TestIT {
@@ -28,7 +27,7 @@ public class GDE3TestIT {
 
     algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+    List<DoubleSolution> population = algorithm.result();
 
     /*
     Rationale: the default problem is ZDT4, and GDE3, configured with standard settings, should
@@ -46,7 +45,7 @@ public class GDE3TestIT {
 
     algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+    List<DoubleSolution> population = algorithm.result();
 
     QualityIndicator hypervolume =
             new PISAHypervolume(

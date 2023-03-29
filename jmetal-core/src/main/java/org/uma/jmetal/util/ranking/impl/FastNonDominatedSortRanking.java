@@ -1,12 +1,14 @@
 package org.uma.jmetal.util.ranking.impl;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.util.comparator.ConstraintViolationComparator;
-import org.uma.jmetal.util.comparator.DominanceComparator;
+import org.uma.jmetal.util.comparator.dominanceComparator.impl.DefaultDominanceComparator;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.ranking.Ranking;
-
-import java.util.*;
 
 /**
  * This class implements a solution list ranking based on dominance ranking. Given a collection of
@@ -18,22 +20,27 @@ import java.util.*;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class FastNonDominatedSortRanking<S extends Solution<?>> implements Ranking<S> {
+
   private String attributeId = getClass().getName();
   private Comparator<S> dominanceComparator;
-  private static final Comparator<Solution<?>> CONSTRAINT_VIOLATION_COMPARATOR =
-      new ConstraintViolationComparator<Solution<?>>();
 
   private List<ArrayList<S>> rankedSubPopulations;
 
-  /** Constructor */
+  /**
+   * Constructor
+   */
   public FastNonDominatedSortRanking(Comparator<S> comparator) {
     this.dominanceComparator = comparator;
     rankedSubPopulations = new ArrayList<>();
   }
 
-  /** Constructor */
+  /**
+   * Constructor
+   */
   public FastNonDominatedSortRanking() {
-    this(new DominanceComparator<>());
+    //this(new DominanceWithConstraintsComparator<>(
+    //    new OverallConstraintViolationDegreeComparator<>()));
+    this(new DefaultDominanceComparator<>());
   }
 
   @Override
@@ -67,11 +74,8 @@ public class FastNonDominatedSortRanking<S extends Solution<?>> implements Ranki
     for (int p = 0; p < (population.size() - 1); p++) {
       // For all q individuals , calculate if p dominates q or vice versa
       for (int q = p + 1; q < population.size(); q++) {
-        flagDominate =
-            CONSTRAINT_VIOLATION_COMPARATOR.compare(solutionList.get(p), solutionList.get(q));
-        if (flagDominate == 0) {
-          flagDominate = dominanceComparator.compare(solutionList.get(p), solutionList.get(q));
-        }
+        flagDominate = dominanceComparator.compare(solutionList.get(p), solutionList.get(q));
+
         if (flagDominate == -1) {
           iDominate.get(p).add(q);
           dominateMe[q]++;
@@ -92,7 +96,7 @@ public class FastNonDominatedSortRanking<S extends Solution<?>> implements Ranki
     // Obtain the rest of fronts
     int i = 0;
     Iterator<Integer> it1, it2; // Iterators
-    while (front.get(i).size() != 0) {
+    while (!front.get(i).isEmpty()) {
       i++;
       it1 = front.get(i - 1).iterator();
       while (it1.hasNext()) {
@@ -111,7 +115,7 @@ public class FastNonDominatedSortRanking<S extends Solution<?>> implements Ranki
     rankedSubPopulations = new ArrayList<>();
     // 0,1,2,....,i-1 are fronts, then i fronts
     for (int j = 0; j < i; j++) {
-      rankedSubPopulations.add(j, new ArrayList<S>(front.get(j).size()));
+      rankedSubPopulations.add(j, new ArrayList<>(front.get(j).size()));
       it1 = front.get(j).iterator();
       while (it1.hasNext()) {
         rankedSubPopulations.get(j).add(solutionList.get(it1.next()));

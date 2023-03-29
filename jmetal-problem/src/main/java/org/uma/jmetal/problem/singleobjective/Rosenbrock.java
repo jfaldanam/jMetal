@@ -1,12 +1,11 @@
 package org.uma.jmetal.problem.singleobjective;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@SuppressWarnings("serial")
 public class Rosenbrock extends AbstractDoubleProblem {
 
   /**
@@ -16,32 +15,28 @@ public class Rosenbrock extends AbstractDoubleProblem {
    * @param numberOfVariables Number of variables of the problem
    */
   public Rosenbrock(Integer numberOfVariables) {
-    setNumberOfVariables(numberOfVariables);
-    setNumberOfObjectives(1);
-    setNumberOfConstraints(0) ;
-    setName("Rosenbrock");
+    numberOfObjectives(1);
+    numberOfConstraints(0) ;
+    name("Rosenbrock");
 
-    List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables()) ;
-    List<Double> upperLimit = new ArrayList<>(getNumberOfVariables()) ;
+    List<Double> lowerLimit = new ArrayList<>(numberOfVariables) ;
+    List<Double> upperLimit = new ArrayList<>(numberOfVariables) ;
 
-    for (int i = 0; i < getNumberOfVariables(); i++) {
+    for (int i = 0; i < numberOfVariables; i++) {
       lowerLimit.add(-5.12);
       upperLimit.add(5.12);
     }
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */
   @Override
   public DoubleSolution evaluate(DoubleSolution solution) {
-    int numberOfVariables = getNumberOfVariables() ;
+    int numberOfVariables = numberOfVariables() ;
 
-    double[] x = new double[numberOfVariables] ;
-
-    for (int i = 0; i < numberOfVariables; i++) {
-      x[i] = solution.variables().get(i) ;
-    }
+    double[] x = IntStream.range(0, numberOfVariables).mapToDouble(i -> solution.variables().get(i))
+        .toArray();
 
     double sum = 0.0;
 

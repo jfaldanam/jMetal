@@ -1,12 +1,14 @@
 package org.uma.jmetal.util.measure.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.uma.jmetal.util.measure.MeasureListener;
 import org.uma.jmetal.util.measure.MeasureManager;
 import org.uma.jmetal.util.measure.PushMeasure;
-
-import static org.junit.Assert.*;
 
 public class ListenerTimeMeasureTest {
 
@@ -207,8 +209,8 @@ public class ListenerTimeMeasureTest {
 			PushMeasure<Object> original = new SimplePushMeasure<>(name,
 					description);
 			PushMeasure<Object> wrapper = measure.wrapMeasure(original);
-			assertEquals(name, wrapper.getName());
-			assertEquals(description, wrapper.getDescription());
+			assertEquals(name, wrapper.name());
+			assertEquals(description, wrapper.description());
 		}
 
 		{
@@ -217,8 +219,8 @@ public class ListenerTimeMeasureTest {
 			PushMeasure<Object> original = new SimplePushMeasure<>(name,
 					description);
 			PushMeasure<Object> wrapper = measure.wrapMeasure(original);
-			assertEquals(name, wrapper.getName());
-			assertEquals(description, wrapper.getDescription());
+			assertEquals(name, wrapper.name());
+			assertEquals(description, wrapper.description());
 		}
 
 		{
@@ -227,8 +229,8 @@ public class ListenerTimeMeasureTest {
 			PushMeasure<Object> original = new SimplePushMeasure<>(name,
 					description);
 			PushMeasure<Object> wrapper = measure.wrapMeasure(original);
-			assertEquals(name, wrapper.getName());
-			assertEquals(description, wrapper.getDescription());
+			assertEquals(name, wrapper.name());
+			assertEquals(description, wrapper.description());
 		}
 	}
 

@@ -1,5 +1,8 @@
 package org.uma.jmetal.algorithm.multiobjective.nsgaiii;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 import org.uma.jmetal.algorithm.impl.AbstractGeneticAlgorithm;
 import org.uma.jmetal.algorithm.multiobjective.nsgaiii.util.EnvironmentalSelection;
 import org.uma.jmetal.algorithm.multiobjective.nsgaiii.util.ReferencePoint;
@@ -9,10 +12,6 @@ import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 
 /**
  * Created by ajnebro on 30/10/14.
@@ -45,7 +44,7 @@ public class NSGAIII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, 
     /// NSGAIII
     numberOfDivisions = builder.getNumberOfDivisions() ;
 
-    (new ReferencePoint<S>()).generateReferencePoints(referencePoints,getProblem().getNumberOfObjectives() , numberOfDivisions);
+    (new ReferencePoint<S>()).generateReferencePoints(referencePoints,getProblem().numberOfObjectives() , numberOfDivisions);
 
     int populationSize = referencePoints.size();
     while (populationSize%4>0) {
@@ -148,7 +147,7 @@ public class NSGAIII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, 
     // A copy of the reference list should be used as parameter of the environmental selection
     EnvironmentalSelection<S> selection =
             new EnvironmentalSelection<>(fronts,getMaxPopulationSize() - pop.size(),getReferencePointsCopy(),
-                    getProblem().getNumberOfObjectives());
+                    getProblem().numberOfObjectives());
     
     var choosen = selection.execute(last);
     pop.addAll(choosen);
@@ -157,7 +156,7 @@ public class NSGAIII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, 
   }
 
   @Override
-  public List<S> getResult() {
+  public List<S> result() {
     return getNonDominatedSolutions(getPopulation()) ;
   }
 
@@ -172,11 +171,11 @@ public class NSGAIII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, 
     return SolutionListUtils.getNonDominatedSolutions(solutionList) ;
   }
 
-  @Override public String getName() {
+  @Override public String name() {
     return "NSGAIII" ;
   }
 
-  @Override public String getDescription() {
+  @Override public String description() {
     return "Nondominated Sorting Genetic Algorithm version III" ;
   }
 

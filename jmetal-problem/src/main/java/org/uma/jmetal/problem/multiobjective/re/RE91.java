@@ -1,10 +1,9 @@
 package org.uma.jmetal.problem.multiobjective.re;
 
-import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
 import java.util.List;
 import java.util.Random;
+import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
  * Class representing problem RE61. Source: Ryoji Tanabe and Hisao Ishibuchi, An easy-to-use
@@ -18,22 +17,21 @@ public class RE91 extends AbstractDoubleProblem {
 
   /** Constructor */
   public RE91() {
-    setNumberOfVariables(7);
-    setNumberOfObjectives(9);
-    setNumberOfConstraints(0);
-    setName("RE91");
+    numberOfObjectives(9);
+    numberOfConstraints(0);
+    name("RE91");
 
     List<Double> lowerLimit = List.of(0.5, 0.45, 0.5, 0.5, 0.875, 0.4, 0.4);
     List<Double> upperLimit = List.of(1.5, 1.35, 1.5, 1.5, 2.265, 1.2, 1.2);
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */
   @Override
   public DoubleSolution evaluate(DoubleSolution solution) {
     double[] x = new double[11];
-    for (int i = 0; i < getNumberOfVariables(); i++) {
+    for (int i = 0; i < numberOfVariables(); i++) {
       x[i] = solution.variables().get(i);
     }
 

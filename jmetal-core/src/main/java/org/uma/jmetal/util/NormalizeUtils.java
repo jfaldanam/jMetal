@@ -1,9 +1,8 @@
 package org.uma.jmetal.util;
 
-import org.uma.jmetal.util.errorchecking.Check;
-
 import java.util.Arrays;
 import java.util.stream.IntStream;
+import org.uma.jmetal.util.errorchecking.Check;
 
 /**
  * Class responsible for normalizing values
@@ -38,7 +37,7 @@ public class NormalizeUtils {
    */
   public static double normalize(
           double value, double minRangeValue, double maxRangeValue, double min, double max) {
-    Check.that(max != min, "Max minus min should not be zero");
+    Check.that(max != min, "" + max + " minus " + min + " should not be zero");
 
     return minRangeValue + (((value - min) * (maxRangeValue - minRangeValue)) / (max - min));
   }

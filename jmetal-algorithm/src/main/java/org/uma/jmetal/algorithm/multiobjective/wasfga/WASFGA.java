@@ -1,6 +1,7 @@
 package org.uma.jmetal.algorithm.multiobjective.wasfga;
 
-import org.uma.jmetal.algorithm.InteractiveAlgorithm;
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.algorithm.multiobjective.mombi.AbstractMOMBI;
 import org.uma.jmetal.algorithm.multiobjective.mombi.util.ASFWASFGA;
 import org.uma.jmetal.algorithm.multiobjective.mombi.util.AbstractUtilityFunctionsSet;
@@ -12,13 +13,11 @@ import org.uma.jmetal.operator.selection.SelectionOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.SolutionListUtils;
+import org.uma.jmetal.util.artificialdecisionmaker.InteractiveAlgorithm;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.fileinput.VectorFileUtils;
 import org.uma.jmetal.util.ranking.Ranking;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Implementation of the preference based algorithm named WASF-GA on jMetal5.0
@@ -99,12 +98,12 @@ public class WASFGA<S extends Solution<?>> extends AbstractMOMBI<S> implements
 		//If a file with weight vectors is not given as parameter, weights are calculated or read from the resources file of jMetal
 		if ("".equals(this.weightVectorsFileName)) {
 			//For two biobjective problems weights are computed
-			if (problem.getNumberOfObjectives() == 2) {
+			if (problem.numberOfObjectives() == 2) {
 				weights = WeightVectors.initializeUniformlyInTwoDimensions(epsilon, getMaxPopulationSize());
 			}
 			//For more than two objectives, weights are read from the resources file of jMetal
 			else {
-				String dataFileName = "W" + problem.getNumberOfObjectives() + "D_" + getMaxPopulationSize() + ".dat";
+				String dataFileName = "W" + problem.numberOfObjectives() + "D_" + getMaxPopulationSize() + ".dat";
 				weights = VectorFileUtils.readVectors(dataFileName);
 			}
 		} else { //If a file with weight vectors is given as parameter, weights are read from that file
@@ -115,7 +114,7 @@ public class WASFGA<S extends Solution<?>> extends AbstractMOMBI<S> implements
 
 		//We validate that the weight vectors are valid:
 		//The number of components of each weight is similar to the number of objectives of the problem being solved.
-		if (!WeightVectors.validate(weights, problem.getNumberOfObjectives()))
+		if (!WeightVectors.validate(weights, problem.numberOfObjectives()))
 		{
 			throw new JMetalException("Weight vectors are invalid. Check that weight vectors have as many components" +
 					" as objectives the problem being solved has.") ;
@@ -191,7 +190,7 @@ public class WASFGA<S extends Solution<?>> extends AbstractMOMBI<S> implements
 		return (population.size()+ranking.getSubFront(index).size() < this.getPopulationSize());
 	}
 
-	@Override public List<S> getResult() {
+	@Override public List<S> result() {
 		return getNonDominatedSolutions(getPopulation());
 	}
 
@@ -199,11 +198,11 @@ public class WASFGA<S extends Solution<?>> extends AbstractMOMBI<S> implements
 		return SolutionListUtils.getNonDominatedSolutions(solutionList);
 	}
 
-	@Override public String getName() {
+	@Override public String name() {
 		return "WASFGA" ;
 	}
 
-	@Override public String getDescription() {
+	@Override public String description() {
 		return "Weighting Achievement Scalarizing Function Genetic Algorithm" ;
 	}
 }

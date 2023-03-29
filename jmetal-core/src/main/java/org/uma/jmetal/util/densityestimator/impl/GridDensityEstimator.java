@@ -1,15 +1,14 @@
 package org.uma.jmetal.util.densityestimator.impl;
 
+import java.util.Comparator;
+import java.util.List;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.AdaptiveGrid;
 import org.uma.jmetal.util.densityestimator.DensityEstimator;
 import org.uma.jmetal.util.errorchecking.Check;
 
-import java.util.Comparator;
-import java.util.List;
-
 /**
- * This class implements the a density estimator based on the adaptive grid scheme used in the PAES algorithm.
+ * This class implements the density estimator based on the adaptive grid scheme used in the PAES algorithm.
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
@@ -47,7 +46,7 @@ public class GridDensityEstimator<S extends Solution<?>> implements DensityEstim
   }
 
   @Override
-  public Double getValue(S solution) {
+  public Double value(S solution) {
     Check.notNull(solution);
 
     int result = 0 ;
@@ -58,7 +57,7 @@ public class GridDensityEstimator<S extends Solution<?>> implements DensityEstim
   }
 
   @Override
-  public Comparator<S> getComparator() {
-    return Comparator.comparing(this::getValue) ;
+  public Comparator<S> comparator() {
+    return Comparator.comparing(this::value) ;
   }
 }

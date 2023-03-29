@@ -1,5 +1,9 @@
 package org.uma.jmetal.algorithm.multiobjective.moead;
 
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.util.List;
 import org.junit.Test;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
@@ -15,11 +19,6 @@ import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
-import java.io.IOException;
-import java.util.List;
-
-import static org.junit.Assert.assertTrue;
-
 public class MOEADIT {
 
   Algorithm<List<DoubleSolution>> algorithm;
@@ -33,7 +32,7 @@ public class MOEADIT {
     CrossoverOperator<DoubleSolution> crossover = new DifferentialEvolutionCrossover(cr, f,
             DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
+    double mutationProbability = 1.0 / problem.numberOfVariables();
     double mutationDistributionIndex = 20.0;
     MutationOperator<DoubleSolution> mutation = new PolynomialMutation(mutationProbability,
         mutationDistributionIndex);
@@ -53,7 +52,7 @@ public class MOEADIT {
         .build();
 
     algorithm.run() ;
-    List<DoubleSolution> population = algorithm.getResult();
+    List<DoubleSolution> population = algorithm.result();
 
     assertTrue(population.size() == 100);
   }
@@ -67,7 +66,7 @@ public class MOEADIT {
     CrossoverOperator<DoubleSolution> crossover = new DifferentialEvolutionCrossover(cr, f,
             DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
+    double mutationProbability = 1.0 / problem.numberOfVariables();
     double mutationDistributionIndex = 20.0;
     MutationOperator<DoubleSolution> mutation = new PolynomialMutation(mutationProbability,
         mutationDistributionIndex);
@@ -86,7 +85,7 @@ public class MOEADIT {
 
     algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+    List<DoubleSolution> population = algorithm.result();
 
     QualityIndicator hypervolume =
             new org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume(
@@ -111,7 +110,7 @@ public class MOEADIT {
     CrossoverOperator<DoubleSolution> crossover = new DifferentialEvolutionCrossover(cr, f,
             DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables();
+    double mutationProbability = 1.0 / problem.numberOfVariables();
     double mutationDistributionIndex = 20.0;
     MutationOperator<DoubleSolution> mutation = new PolynomialMutation(mutationProbability,
             mutationDistributionIndex);
@@ -131,7 +130,7 @@ public class MOEADIT {
 
     algorithm.run();
 
-    List<DoubleSolution> population = algorithm.getResult();
+    List<DoubleSolution> population = algorithm.result();
 
     QualityIndicator hypervolume =
             new PISAHypervolume(

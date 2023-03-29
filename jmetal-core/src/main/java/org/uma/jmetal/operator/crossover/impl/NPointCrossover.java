@@ -1,14 +1,12 @@
 package org.uma.jmetal.operator.crossover.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang3.ArrayUtils;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.errorchecking.Check;
-import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /** Created by FlapKap on 23-03-2017. */
 @SuppressWarnings("serial")
@@ -18,8 +16,8 @@ public class NPointCrossover<T> implements CrossoverOperator<Solution<T>> {
   private final int crossovers;
 
   public NPointCrossover(double probability, int crossovers) {
-    if (probability < 0.0) throw new JMetalException("Probability can't be negative");
-    if (crossovers < 1) throw new JMetalException("Number of crossovers is less than one");
+    Check.probabilityIsValid(probability);
+    Check.that(crossovers >=  1, "Number of crossovers is less than one");
     this.probability = probability;
     this.crossovers = crossovers;
   }
@@ -30,16 +28,16 @@ public class NPointCrossover<T> implements CrossoverOperator<Solution<T>> {
   }
 
   @Override
-  public double getCrossoverProbability() {
+  public double crossoverProbability() {
     return probability;
   }
 
   @Override
   public List<Solution<T>> execute(List<Solution<T>> s) {
     Check.that(
-        getNumberOfRequiredParents() == s.size(),
+        numberOfRequiredParents() == s.size(),
         "Point Crossover requires + "
-            + getNumberOfRequiredParents()
+            + numberOfRequiredParents()
             + " parents, but got "
             + s.size());
 
@@ -86,12 +84,12 @@ public class NPointCrossover<T> implements CrossoverOperator<Solution<T>> {
   }
 
   @Override
-  public int getNumberOfRequiredParents() {
+  public int numberOfRequiredParents() {
     return 2;
   }
 
   @Override
-  public int getNumberOfGeneratedChildren() {
+  public int numberOfGeneratedChildren() {
     return 2;
   }
 }

@@ -1,20 +1,20 @@
 package org.uma.jmetal.problem.multiobjective.cre;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CRE21Test {
   @Test
   public void shouldConstructorCreateAProblemWithTheRightProperties() {
     DoubleProblem problem = new CRE21();
 
-    assertEquals(3, problem.getNumberOfVariables());
-    assertEquals(2, problem.getNumberOfObjectives());
-    assertEquals(3, problem.getNumberOfConstraints());
-    assertEquals("CRE21", problem.getName());
+    assertEquals(3, problem.numberOfVariables());
+    assertEquals(2, problem.numberOfObjectives());
+    assertEquals(3, problem.numberOfConstraints());
+    assertEquals("CRE21", problem.name());
   }
 
   @Test

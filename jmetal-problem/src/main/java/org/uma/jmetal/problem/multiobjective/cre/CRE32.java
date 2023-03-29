@@ -1,9 +1,8 @@
 package org.uma.jmetal.problem.multiobjective.cre;
 
+import java.util.List;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
-import java.util.List;
 
 /**
  * Class representing problem CRE32. Source: Ryoji Tanabe and Hisao Ishibuchi, An easy-to-use
@@ -17,15 +16,14 @@ public class CRE32 extends AbstractDoubleProblem {
 
   /** Constructor */
   public CRE32() {
-    setNumberOfVariables(6);
-    setNumberOfObjectives(3);
-    setNumberOfConstraints(9);
-    setName("CRE32");
+    numberOfObjectives(3);
+    numberOfConstraints(9);
+    name("CRE32");
 
     List<Double> lowerLimit = List.of(150.0, 20.0, 13.0, 10.0, 14.0, 0.63);
     List<Double> upperLimit = List.of(274.32, 32.31, 25.0, 11.71, 18.0, 0.75);
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */
@@ -89,7 +87,7 @@ public class CRE32 extends AbstractDoubleProblem {
 
   /** EvaluateConstraints() method */
   public void evaluateConstraints(DoubleSolution solution, double DWT, double Fn) {
-    double[] constraint = new double[this.getNumberOfConstraints()];
+    double[] constraint = new double[this.numberOfConstraints()];
 
     double x_L = solution.variables().get(0);
     double x_B = solution.variables().get(1);
@@ -103,7 +101,7 @@ public class CRE32 extends AbstractDoubleProblem {
     constraint[2] =  -(x_L / x_T) + 19.0;
     constraint[3] = 0.45 * Math.pow(DWT, 0.31) - x_T;
     constraint[4] = 0.7 * x_D + 0.7 - x_T;
-    constraint[5] = 50000.0 - DWT;
+    constraint[5] = 500000.0 - DWT;
     constraint[6] = DWT - 3000.0;
     constraint[7] = 0.32 - Fn;
 
@@ -112,7 +110,7 @@ public class CRE32 extends AbstractDoubleProblem {
     double KG = 1.0 + 0.52 * x_D;
     constraint[8] = (KB + BMT - KG) - (0.07 * x_B);
 
-    for (int i = 0; i < getNumberOfConstraints(); i++) {
+    for (int i = 0; i < numberOfConstraints(); i++) {
       if (constraint[i] < 0.0) {
         constraint[i] = -constraint[i];
       } else {
@@ -120,7 +118,7 @@ public class CRE32 extends AbstractDoubleProblem {
       }
     }
 
-    for (int i = 0; i < getNumberOfConstraints(); i++) {
+    for (int i = 0; i < numberOfConstraints(); i++) {
       solution.constraints()[i] = constraint[i];
     }
   }

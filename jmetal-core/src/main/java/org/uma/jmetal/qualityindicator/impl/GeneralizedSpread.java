@@ -1,14 +1,13 @@
 package org.uma.jmetal.qualityindicator.impl;
 
+import java.io.FileNotFoundException;
+import java.util.Arrays;
+import java.util.Comparator;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.comparator.LexicographicalVectorComparator;
 import org.uma.jmetal.util.distance.impl.EuclideanDistanceBetweenVectors;
 import org.uma.jmetal.util.errorchecking.Check;
-
-import java.io.FileNotFoundException;
-import java.util.Arrays;
-import java.util.Comparator;
 
 /**
  * This class implements the generalized spread metric for two or more dimensions.
@@ -104,11 +103,11 @@ public class GeneralizedSpread extends QualityIndicator {
     }
   }
 
-  @Override public String getDescription() {
+  @Override public String description() {
     return "Generalized Spread quality indicator" ;
   }
 
-  @Override public String getName() {
+  @Override public String name() {
     return "GSPREAD" ;
   }
 

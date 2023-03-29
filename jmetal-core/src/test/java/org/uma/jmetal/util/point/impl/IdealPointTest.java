@@ -1,13 +1,13 @@
 package org.uma.jmetal.util.point.impl;
 
-import org.junit.Test;
-import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.doubleproblem.impl.DummyDoubleProblem;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.point.Point;
-
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
+import org.uma.jmetal.problem.doubleproblem.impl.FakeDoubleProblem;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.point.Point;
 
 /**
  * Created by ajnebro on 12/2/16.
@@ -24,10 +24,10 @@ public class IdealPointTest {
 
     referencePoint = new IdealPoint(numberOfObjectives) ;
 
-    assertEquals(numberOfObjectives, referencePoint.getDimension()) ;
+    assertEquals(numberOfObjectives, referencePoint.dimension()) ;
 
     for (int i = 0 ; i < numberOfObjectives; i++) {
-      assertEquals(DEFAULT_INITIAL_VALUE, referencePoint.getValue(i), EPSILON) ;
+      assertEquals(DEFAULT_INITIAL_VALUE, referencePoint.value(i), EPSILON) ;
     }
   }
 
@@ -37,15 +37,15 @@ public class IdealPointTest {
 
     referencePoint = new IdealPoint(numberOfObjectives) ;
 
-    DoubleProblem problem = new DummyDoubleProblem(3, 2, 0) ;
+    DoubleProblem problem = new FakeDoubleProblem(3, 2, 0) ;
     DoubleSolution solution = problem.createSolution() ;
     solution.objectives()[0] = 1.0 ;
     solution.objectives()[1] = 2.0 ;
 
     referencePoint.update(solution.objectives());
 
-    assertEquals(1.0, referencePoint.getValue(0), EPSILON) ;
-    assertEquals(2.0, referencePoint.getValue(1), EPSILON) ;
+    assertEquals(1.0, referencePoint.value(0), EPSILON) ;
+    assertEquals(2.0, referencePoint.value(1), EPSILON) ;
     assertArrayEquals(new double[]{1.0, 2.0}, solution.objectives(), EPSILON);
   }
 
@@ -55,7 +55,7 @@ public class IdealPointTest {
 
     referencePoint = new IdealPoint(numberOfObjectives) ;
 
-    DoubleProblem problem = new DummyDoubleProblem(3, 2, 0) ;
+    DoubleProblem problem = new FakeDoubleProblem(3, 2, 0) ;
     DoubleSolution solution1 = problem.createSolution() ;
     solution1.objectives()[0] = 0.0 ;
     solution1.objectives()[1] = 1.0 ;
@@ -67,8 +67,8 @@ public class IdealPointTest {
     referencePoint.update(solution1.objectives());
     referencePoint.update(solution2.objectives());
 
-    assertEquals(0.0, referencePoint.getValue(0), EPSILON) ;
-    assertEquals(0.0, referencePoint.getValue(1), EPSILON) ;
+    assertEquals(0.0, referencePoint.value(0), EPSILON) ;
+    assertEquals(0.0, referencePoint.value(1), EPSILON) ;
   }
 
   @Test
@@ -77,7 +77,7 @@ public class IdealPointTest {
 
     referencePoint = new IdealPoint(numberOfObjectives) ;
 
-    DoubleProblem problem = new DummyDoubleProblem(3, 3, 0) ;
+    DoubleProblem problem = new FakeDoubleProblem(3, 3, 0) ;
     DoubleSolution solution1 = problem.createSolution() ;
     solution1.objectives()[0] = 3.0 ;
     solution1.objectives()[1] = 1.0 ;
@@ -97,9 +97,9 @@ public class IdealPointTest {
     referencePoint.update(solution2.objectives());
     referencePoint.update(solution3.objectives());
 
-    assertEquals(0.2, referencePoint.getValue(0), EPSILON) ;
-    assertEquals(1.0, referencePoint.getValue(1), EPSILON) ;
-    assertEquals(1.5, referencePoint.getValue(2), EPSILON) ;
+    assertEquals(0.2, referencePoint.value(0), EPSILON) ;
+    assertEquals(1.0, referencePoint.value(1), EPSILON) ;
+    assertEquals(1.5, referencePoint.value(2), EPSILON) ;
   }
 
   @Test
@@ -107,8 +107,8 @@ public class IdealPointTest {
     Point point = new ArrayPoint(new double[]{2, 3, 3}) ;
 
     point.set(new double[]{5, 6, 7}) ;
-    assertEquals(5, point.getValue(0), EPSILON);
-    assertEquals(6, point.getValue(1), EPSILON);
-    assertEquals(7, point.getValue(2), EPSILON);
+    assertEquals(5, point.value(0), EPSILON);
+    assertEquals(6, point.value(1), EPSILON);
+    assertEquals(7, point.value(2), EPSILON);
   }
 }

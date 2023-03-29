@@ -1,12 +1,11 @@
 package org.uma.jmetal.operator.mutation.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.compositesolution.CompositeSolution;
 import org.uma.jmetal.util.errorchecking.Check;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class allows to apply a list of crossover operator on the solutions belonging to a list of
@@ -26,17 +25,17 @@ public class CompositeMutation implements MutationOperator<CompositeSolution> {
     Check.collectionIsNotEmpty(operators);
 
     this.operators = new ArrayList<>();
-    for (int i = 0; i < operators.size(); i++) {
+    for (Object operator : operators) {
       Check.that(
-          operators.get(i) instanceof MutationOperator,
+          operator instanceof MutationOperator,
           "The operator list does not contain an object implementing class CrossoverOperator");
-      this.operators.add((MutationOperator<Solution<?>>) operators.get(i));
+      this.operators.add((MutationOperator<Solution<?>>) operator);
     }
   }
 
   /* Getters */
   @Override
-  public double getMutationProbability() {
+  public double mutationProbability() {
     return mutationProbability;
   }
 

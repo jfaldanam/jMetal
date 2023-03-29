@@ -1,5 +1,9 @@
 package org.uma.jmetal.algorithm.multiobjective.abyss;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import javax.management.JMException;
 import org.uma.jmetal.algorithm.impl.AbstractScatterSearch;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.localsearch.LocalSearchOperator;
@@ -10,17 +14,12 @@ import org.uma.jmetal.util.SolutionUtils;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
 import org.uma.jmetal.util.bounds.Bounds;
-import org.uma.jmetal.util.comparator.DominanceComparator;
 import org.uma.jmetal.util.comparator.EqualSolutionsComparator;
+import org.uma.jmetal.util.comparator.dominanceComparator.impl.DominanceWithConstraintsComparator;
 import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
 import org.uma.jmetal.util.densityestimator.impl.StrenghtRawFitnessDensityEstimator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.solutionattribute.impl.DistanceToSolutionListAttribute;
-
-import javax.management.JMException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * This class implements the AbYSS algorithm, a multiobjective scatter search metaheuristics,
@@ -60,7 +59,6 @@ public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolu
   protected int[] sumOfReverseFrequencyValues;
   protected int[][] frequency;
   protected int[][] reverseFrequency;
-
   protected StrenghtRawFitnessDensityEstimator<DoubleSolution> densityEstimator ;
   protected Comparator<DoubleSolution> fitnessComparator; //TODO: invert this dependency
   protected DistanceToSolutionListAttribute distanceToSolutionListAttribute;
@@ -92,18 +90,18 @@ public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolu
 
     randomGenerator = JMetalRandom.getInstance() ;
 
-    sumOfFrequencyValues       = new int[problem.getNumberOfVariables()] ;
-    sumOfReverseFrequencyValues = new int[problem.getNumberOfVariables()] ;
-    frequency       = new int[numberOfSubRanges][problem.getNumberOfVariables()] ;
-    reverseFrequency = new int[numberOfSubRanges][problem.getNumberOfVariables()] ;
+    sumOfFrequencyValues       = new int[problem.numberOfVariables()] ;
+    sumOfReverseFrequencyValues = new int[problem.numberOfVariables()] ;
+    frequency       = new int[numberOfSubRanges][problem.numberOfVariables()] ;
+    reverseFrequency = new int[numberOfSubRanges][problem.numberOfVariables()] ;
 
     densityEstimator = new StrenghtRawFitnessDensityEstimator<>(1) ;
-    fitnessComparator = densityEstimator.getComparator();
+    fitnessComparator = densityEstimator.comparator();
     distanceToSolutionListAttribute = new DistanceToSolutionListAttribute();
 
-    crowdingDistanceComparator = new CrowdingDistanceDensityEstimator<DoubleSolution>().getComparator() ;
+    crowdingDistanceComparator = new CrowdingDistanceDensityEstimator<DoubleSolution>().comparator() ;
 
-    dominanceComparator = new DominanceComparator<>();
+    dominanceComparator = new DominanceWithConstraintsComparator<>();
     equalComparator = new EqualSolutionsComparator<>();
 
     evaluations = 0 ;
@@ -115,13 +113,13 @@ public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolu
 
   @Override public DoubleSolution improvement(DoubleSolution solution) {
     DoubleSolution improvedSolution = localSearch.execute(solution) ;
-    evaluations += localSearch.getNumberOfEvaluations() ;
+    evaluations += localSearch.numberOfEvaluations() ;
 
     return improvedSolution ;
   }
 
-  @Override public List<DoubleSolution> getResult() {
-    return archive.getSolutionList();
+  @Override public List<DoubleSolution> result() {
+    return archive.solutions();
   }
 
   @Override public DoubleSolution diversificationGeneration() {
@@ -130,7 +128,7 @@ public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolu
     double value;
     int range;
 
-    for (int i = 0; i < problem.getNumberOfVariables(); i++) {
+    for (int i = 0; i < problem.numberOfVariables(); i++) {
       sumOfReverseFrequencyValues[i] = 0;
       for (int j = 0; j < numberOfSubRanges; j++) {
         reverseFrequency[j][i] = sumOfFrequencyValues[i] - frequency[j][i];
@@ -151,7 +149,7 @@ public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolu
       frequency[range][i]++;
       sumOfFrequencyValues[i]++;
 
-      Bounds<Double> bounds = ((DoubleProblem)problem).getBoundsForVariables().get(i) ;
+      Bounds<Double> bounds = ((DoubleProblem)problem).variableBounds().get(i) ;
       Double lowerBound = bounds.getLowerBound() ;
       Double upperBound = bounds.getUpperBound() ;
       double low = lowerBound + range * (upperBound - lowerBound) / numberOfSubRanges ;
@@ -453,18 +451,18 @@ public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolu
     crowdingArchive = (CrowdingDistanceArchive<DoubleSolution>)archive ;
     crowdingArchive.computeDensityEstimator();
 
-    crowdingArchive.getSolutionList().sort(crowdingDistanceComparator);
+    crowdingArchive.solutions().sort(crowdingDistanceComparator);
 
     int insert = getPopulationSize() / 2;
 
-    if (insert > crowdingArchive.getSolutionList().size())
-      insert = crowdingArchive.getSolutionList().size();
+    if (insert > crowdingArchive.solutions().size())
+      insert = crowdingArchive.solutions().size();
 
     if (insert > (getPopulationSize() - getPopulation().size()))
       insert = getPopulationSize() - getPopulation().size();
 
     for (int i = 0; i < insert; i++) {
-      DoubleSolution solution = (DoubleSolution) crowdingArchive.getSolutionList().get(i).copy();
+      DoubleSolution solution = (DoubleSolution) crowdingArchive.solutions().get(i).copy();
       solution.attributes().put(SOLUTION_IS_MARKED, false);
       getPopulation().add(solution);
     }
@@ -483,11 +481,11 @@ public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolu
     }
   }
 
-  @Override public String getName() {
+  @Override public String name() {
     return "AbYSS" ;
   }
 
-  @Override public String getDescription() {
+  @Override public String description() {
     return "Archived based hYbrid Scatter Search Algorithm" ;
   }
 }

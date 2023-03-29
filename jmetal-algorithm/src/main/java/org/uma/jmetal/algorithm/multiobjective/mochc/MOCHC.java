@@ -1,35 +1,33 @@
 package org.uma.jmetal.algorithm.multiobjective.mochc;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import org.uma.jmetal.algorithm.impl.AbstractEvolutionaryAlgorithm;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.selection.SelectionOperator;
 import org.uma.jmetal.problem.binaryproblem.BinaryProblem;
 import org.uma.jmetal.solution.binarysolution.BinarySolution;
-import org.uma.jmetal.util.SolutionListUtils;
+import org.uma.jmetal.util.ListUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.binarySet.BinarySet;
 import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
 /**
- * This class executes the MOCHC algorithm described in:
- * A.J. Nebro, E. Alba, G. Molina, F. Chicano, F. Luna, J.J. Durillo
- * "Optimal antenna placement using a new multi-objective chc algorithm".
- * GECCO '07: Proceedings of the 9th annual conference on Genetic and
- * evolutionary computation. London, England. July 2007.
+ * This class executes the MOCHC algorithm described in: A.J. Nebro, E. Alba, G. Molina, F. Chicano,
+ * F. Luna, J.J. Durillo "Optimal antenna placement using a new multi-objective chc algorithm".
+ * GECCO '07: Proceedings of the 9th annual conference on Genetic and evolutionary computation.
+ * London, England. July 2007.
  */
 @SuppressWarnings("serial")
 public class MOCHC extends AbstractEvolutionaryAlgorithm<BinarySolution, List<BinarySolution>> {
-  private BinaryProblem problem;
 
+  private BinaryProblem problem;
   private int maxEvaluations;
-  private int maxPopulationSize ;
+  private int maxPopulationSize;
   private int convergenceValue;
   private double preservedPopulation;
   private double initialConvergenceCount;
@@ -43,7 +41,7 @@ public class MOCHC extends AbstractEvolutionaryAlgorithm<BinarySolution, List<Bi
   private Comparator<BinarySolution> comparator;
 
   private SolutionListEvaluator<BinarySolution> evaluator;
-  private int lastOffspringPopulationSize ;
+  private int lastOffspringPopulationSize;
 
   /**
    * Constructor
@@ -52,7 +50,8 @@ public class MOCHC extends AbstractEvolutionaryAlgorithm<BinarySolution, List<Bi
       double preservedPopulation, double initialConvergenceCount,
       CrossoverOperator<BinarySolution> crossoverOperator,
       MutationOperator<BinarySolution> cataclysmicMutation,
-      SelectionOperator<List<BinarySolution>, List<BinarySolution>> newGenerationSelection, SelectionOperator<List<BinarySolution>, BinarySolution> parentSelection,
+      SelectionOperator<List<BinarySolution>, List<BinarySolution>> newGenerationSelection,
+      SelectionOperator<List<BinarySolution>, BinarySolution> parentSelection,
       SolutionListEvaluator<BinarySolution> evaluator) {
     super();
     this.problem = problem;
@@ -67,34 +66,39 @@ public class MOCHC extends AbstractEvolutionaryAlgorithm<BinarySolution, List<Bi
     this.parentSelection = parentSelection;
     this.evaluator = evaluator;
 
-    for (int i = 0; i < problem.getNumberOfVariables(); i++) {
-      size += problem.getBitsFromVariable(i);
+    for (int i = 0; i < problem.numberOfVariables(); i++) {
+      size += problem.bitsFromVariable(i);
     }
     minimumDistance = (int) Math.floor(this.initialConvergenceCount * size);
 
-    comparator = new CrowdingDistanceDensityEstimator<BinarySolution>().getComparator() ;
+    comparator = new CrowdingDistanceDensityEstimator<BinarySolution>().comparator();
   }
-  
+
   public void setMaxPopulationSize(int maxPopulationSize) {
-    this.maxPopulationSize = maxPopulationSize ;
+    this.maxPopulationSize = maxPopulationSize;
   }
+
   public int getMaxPopulationSize() {
-    return maxPopulationSize ;
+    return maxPopulationSize;
   }
 
-  @Override protected void initProgress() {
-    evaluations = getMaxPopulationSize() ;
+  @Override
+  protected void initProgress() {
+    evaluations = getMaxPopulationSize();
   }
 
-  @Override protected void updateProgress() {
-    evaluations += lastOffspringPopulationSize ;
+  @Override
+  protected void updateProgress() {
+    evaluations += lastOffspringPopulationSize;
   }
 
-  @Override protected boolean isStoppingConditionReached() {
+  @Override
+  protected boolean isStoppingConditionReached() {
     return evaluations >= maxEvaluations;
   }
 
-  @Override protected List<BinarySolution> createInitialPopulation() {
+  @Override
+  protected List<BinarySolution> createInitialPopulation() {
     List<BinarySolution> population = new ArrayList<>(getMaxPopulationSize());
     for (int i = 0; i < getMaxPopulationSize(); i++) {
       BinarySolution newIndividual = problem.createSolution();
@@ -103,15 +107,17 @@ public class MOCHC extends AbstractEvolutionaryAlgorithm<BinarySolution, List<Bi
     return population;
   }
 
-  @Override protected List<BinarySolution> evaluatePopulation(List<BinarySolution> population) {
+  @Override
+  protected List<BinarySolution> evaluatePopulation(List<BinarySolution> population) {
     population = evaluator.evaluate(population, problem);
 
     return population;
   }
 
-  @Override protected List<BinarySolution> selection(List<BinarySolution> population) {
+  @Override
+  protected List<BinarySolution> selection(List<BinarySolution> population) {
     List<BinarySolution> matingPopulation = new ArrayList<>(population.size());
-    for (int i = 0; i < population.size(); i ++) {
+    for (int i = 0; i < population.size(); i++) {
       BinarySolution solution = parentSelection.execute(population);
       matingPopulation.add(solution);
     }
@@ -119,7 +125,8 @@ public class MOCHC extends AbstractEvolutionaryAlgorithm<BinarySolution, List<Bi
     return matingPopulation;
   }
 
-  @Override protected List<BinarySolution> reproduction(List<BinarySolution> matingPopulation) {
+  @Override
+  protected List<BinarySolution> reproduction(List<BinarySolution> matingPopulation) {
     List<BinarySolution> offspringPopulation = new ArrayList<>();
 
     for (int i = 0; i < matingPopulation.size(); i += 2) {
@@ -134,11 +141,12 @@ public class MOCHC extends AbstractEvolutionaryAlgorithm<BinarySolution, List<Bi
       }
     }
 
-    lastOffspringPopulationSize = offspringPopulation.size() ;
+    lastOffspringPopulationSize = offspringPopulation.size();
     return offspringPopulation;
   }
 
-  @Override protected List<BinarySolution> replacement(List<BinarySolution> population,
+  @Override
+  protected List<BinarySolution> replacement(List<BinarySolution> population,
       List<BinarySolution> offspringPopulation) {
     List<BinarySolution> union = new ArrayList<>();
     union.addAll(population);
@@ -146,12 +154,12 @@ public class MOCHC extends AbstractEvolutionaryAlgorithm<BinarySolution, List<Bi
 
     List<BinarySolution> newPopulation = newGenerationSelection.execute(union);
 
-    if (SolutionListUtils.solutionListsAreEquals(population, newPopulation)) {
+    if (ListUtils.listAreEquals(population, newPopulation)) {
       minimumDistance--;
     }
 
     if (minimumDistance <= -convergenceValue) {
-     // minimumDistance = (int) (1.0 / size * (1 - 1.0 / size) * size);
+      // minimumDistance = (int) (1.0 / size * (1 - 1.0 / size) * size);
       minimumDistance = (int) (0.35 * (1 - 0.35) * size);
 
       int preserve = (int) Math.floor(preservedPopulation * population.size());
@@ -171,13 +179,14 @@ public class MOCHC extends AbstractEvolutionaryAlgorithm<BinarySolution, List<Bi
     return newPopulation;
   }
 
-  @Override public List<BinarySolution> getResult() {
-    NonDominatedSolutionListArchive<BinarySolution> archive = new NonDominatedSolutionListArchive<>() ;
+  @Override
+  public List<BinarySolution> result() {
+    NonDominatedSolutionListArchive<BinarySolution> archive = new NonDominatedSolutionListArchive<>();
     for (BinarySolution solution : getPopulation()) {
-      archive.add(solution) ;
+      archive.add(solution);
     }
 
-    return archive.getSolutionList();
+    return archive.solutions();
   }
 
   /**
@@ -190,7 +199,7 @@ public class MOCHC extends AbstractEvolutionaryAlgorithm<BinarySolution, List<Bi
 
   private int hammingDistance(BinarySolution solutionOne, BinarySolution solutionTwo) {
     int distance = 0;
-    for (int i = 0; i < problem.getNumberOfVariables(); i++) {
+    for (int i = 0; i < problem.numberOfVariables(); i++) {
       distance += hammingDistance(solutionOne.variables().get(i), solutionTwo.variables().get(i));
     }
 
@@ -200,7 +209,7 @@ public class MOCHC extends AbstractEvolutionaryAlgorithm<BinarySolution, List<Bi
   private int hammingDistance(BinarySet bitSet1, BinarySet bitSet2) {
     if (bitSet1.getBinarySetLength() != bitSet2.getBinarySetLength()) {
       throw new JMetalException("The bitsets have different length: "
-          + bitSet1.getBinarySetLength() +", " + bitSet2.getBinarySetLength()) ;
+          + bitSet1.getBinarySetLength() + ", " + bitSet2.getBinarySetLength());
     }
     int distance = 0;
     int i = 0;
@@ -215,12 +224,12 @@ public class MOCHC extends AbstractEvolutionaryAlgorithm<BinarySolution, List<Bi
   }
 
   @Override
-  public String getName() {
+  public String name() {
     return "MOCHC";
   }
 
   @Override
-  public String getDescription() {
+  public String description() {
     return "Multiobjective CHC algorithm";
   }
 }

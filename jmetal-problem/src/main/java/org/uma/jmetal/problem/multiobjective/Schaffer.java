@@ -1,10 +1,9 @@
 package org.uma.jmetal.problem.multiobjective;
 
-import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /** Class representing problem Schaffer */
 public class Schaffer extends AbstractDoubleProblem {
@@ -12,19 +11,19 @@ public class Schaffer extends AbstractDoubleProblem {
 
   /** Constructor. Creates a default instance of problem Schaffer */
   public Schaffer() {
-    setNumberOfVariables(1);
-    setNumberOfObjectives(2);
-    setName("Schaffer");
+    int numberOfVariables = 1;
+    numberOfObjectives(2);
+    name("Schaffer");
 
-    List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables());
-    List<Double> upperLimit = new ArrayList<>(getNumberOfVariables());
+    List<Double> lowerLimit = new ArrayList<>(numberOfVariables);
+    List<Double> upperLimit = new ArrayList<>(numberOfVariables);
 
-    for (int i = 0; i < getNumberOfVariables(); i++) {
+    for (int i = 0; i < numberOfVariables; i++) {
       lowerLimit.add(-100000.0);
       upperLimit.add(100000.0);
     }
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */

@@ -3,6 +3,9 @@ package org.uma.jmetal.algorithm.multiobjective.microfame;
 import generic.Input;
 import generic.Output;
 import generic.Tuple;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import org.uma.jmetal.algorithm.multiobjective.microfame.util.WFGHypervolumeV2;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.SteadyStateNSGAII;
 import org.uma.jmetal.operator.Operator;
@@ -24,10 +27,6 @@ import type1.system.T1_Antecedent;
 import type1.system.T1_Consequent;
 import type1.system.T1_Rule;
 import type1.system.T1_Rulebase;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 /** @author Alejandro Santiago <aurelio.santiago@upalt.edu.mx> Micro-FAME */
 public class MicroFAME<S extends Solution<?>> extends SteadyStateNSGAII<S> {
@@ -62,7 +61,7 @@ public class MicroFAME<S extends Solution<?>> extends SteadyStateNSGAII<S> {
     operators_desirability = new double[operators_num];
     operators_use = new double[operators_num];
     window_size = (int) Math.ceil(3.33333 * operators_num);
-    System.out.println("Window size: " + window_size);
+    //System.out.println("Window size: " + window_size);
     for (int x = 0; x < operators_num; x++) {
       operators_desirability[x] = (1.0);
       operators_use[x] = 0.0;
@@ -136,7 +135,7 @@ public class MicroFAME<S extends Solution<?>> extends SteadyStateNSGAII<S> {
     rulebase.addRule(
         new T1_Rule(new T1_Antecedent[] {lowStagnation, lowOperatoruse}, lowProbability));
     // print out the rules
-    System.out.println("\n" + rulebase);
+    //System.out.println("\n" + rulebase);
   }
 
   @Override
@@ -163,7 +162,7 @@ public class MicroFAME<S extends Solution<?>> extends SteadyStateNSGAII<S> {
   protected List<S> selection(List<S> population) {
     List<S> matingPopulation = new ArrayList<>(3);
     for (int x = 0; x < 3; x++) {
-      matingPopulation.add((S) selectionOperator.execute(archive_hv.getSolutionList()));
+      matingPopulation.add((S) selectionOperator.execute(archive_hv.solutions()));
     }
 
     return matingPopulation;
@@ -284,32 +283,32 @@ public class MicroFAME<S extends Solution<?>> extends SteadyStateNSGAII<S> {
   }
 
   @Override
-  public String getName() {
+  public String name() {
     return "Micro-FAME";
   }
 
   @Override
-  public String getDescription() {
+  public String description() {
     return "Micro-FAME last version";
   }
 
   @Override
   protected List<S> createInitialPopulation() {
-    List<S> population = new ArrayList<>(archive_hv.getMaxSize());
-    for (int i = 0; i < archive_hv.getMaxSize(); i++) {
+    List<S> population = new ArrayList<>(archive_hv.maximumSize());
+    for (int i = 0; i < archive_hv.maximumSize(); i++) {
       S newIndividual = getProblem().createSolution();
       population.add(newIndividual);
     }
     evaluator.evaluate(population, getProblem());
-    for (int i = 0; i < archive_hv.getMaxSize(); i++) {
+    for (int i = 0; i < archive_hv.maximumSize(); i++) {
       archive_hv.add(population.get(i));
     }
     return null;
   }
 
   @Override
-  public List<S> getResult() {
-    return getNonDominatedSolutions(archive_hv.getSolutionList());
+  public List<S> result() {
+    return getNonDominatedSolutions(archive_hv.solutions());
   }
 
   protected List<S> getNonDominatedSolutions(List<S> solutionList) {

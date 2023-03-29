@@ -1,5 +1,7 @@
 package org.uma.jmetal.util.densityestimator.impl;
 
+import java.util.Comparator;
+import java.util.List;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.SolutionListUtils;
@@ -10,9 +12,6 @@ import org.uma.jmetal.util.distance.impl.CosineSimilarityBetweenVectors;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.point.Point;
-
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * This class implements the a density estimator based on the cosine similarity
@@ -31,7 +30,7 @@ public class CosineSimilarityDensityEstimator<S extends Solution<?>> implements 
 
   public CosineSimilarityDensityEstimator(Point referencePoint, boolean normalize) {
     this.referencePoint = referencePoint;
-    distance = new CosineSimilarityBetweenVectors(referencePoint.getValues());
+    distance = new CosineSimilarityBetweenVectors(referencePoint.values());
     this.normalize = normalize;
   }
 
@@ -117,7 +116,7 @@ public class CosineSimilarityDensityEstimator<S extends Solution<?>> implements 
   }
 
   @Override
-  public Double getValue(S solution) {
+  public Double value(S solution) {
     Check.notNull(solution);
 
     Double result = 0.0 ;
@@ -128,7 +127,7 @@ public class CosineSimilarityDensityEstimator<S extends Solution<?>> implements 
   }
 
   @Override
-  public Comparator<S> getComparator() {
-    return Comparator.comparing(this::getValue) ;
+  public Comparator<S> comparator() {
+    return Comparator.comparing(this::value) ;
   }
 }

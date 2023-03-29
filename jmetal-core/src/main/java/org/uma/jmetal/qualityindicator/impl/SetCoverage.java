@@ -1,10 +1,9 @@
 package org.uma.jmetal.qualityindicator.impl;
 
+import java.io.FileNotFoundException;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.errorchecking.Check;
-
-import java.io.FileNotFoundException;
 
 /**
  * Set coverage metric
@@ -73,11 +72,11 @@ public class SetCoverage extends QualityIndicator {
     return result ;
   }
 
-  @Override public String getName() {
+  @Override public String name() {
     return "SC";
   }
 
-  @Override public String getDescription() {
+  @Override public String description() {
     return "Set coverage";
   }
 }

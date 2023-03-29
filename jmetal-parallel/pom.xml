@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.uma.jmetal</groupId>
         <artifactId>jmetal</artifactId>
-        <version>5.11-SNAPSHOT</version>
+        <version>6.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>jmetal-parallel</artifactId>
@@ -32,22 +32,16 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.4</version>
+                <version>3.0.0</version>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>org.uma.jmetal.experimental.auto.irace.AutoNSGAIIirace</mainClass>
-                        </manifest>
-                    </archive>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>make-assembly</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
@@ -57,11 +51,8 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>11</source>
-                    <target>11</target>
-                </configuration>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
             </plugin>
         </plugins>
     </build>
@@ -85,7 +76,7 @@
         </dependency>
         <dependency>
             <groupId>org.uma.jmetal</groupId>
-            <artifactId>jmetal-experimental</artifactId>
+            <artifactId>jmetal-component</artifactId>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

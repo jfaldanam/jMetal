@@ -1,5 +1,12 @@
 package org.uma.jmetal.algorithm.multiobjective.nsgaii;
 
+import static junit.framework.TestCase.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,14 +19,6 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.evaluator.impl.MultiThreadedSolutionListEvaluator;
-
-import java.util.List;
-
-import static junit.framework.TestCase.assertNotNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by Antonio J. Nebro on 25/11/14.
@@ -35,13 +34,13 @@ public class NSGAIIBuilderTest {
   @SuppressWarnings("unchecked")
   @Before public void startup() {
     problem = mock(Problem.class);
-    when(problem.getNumberOfVariables()).thenReturn(NUMBER_OF_VARIABLES_OF_THE_MOCKED_PROBLEM);
+    when(problem.numberOfVariables()).thenReturn(NUMBER_OF_VARIABLES_OF_THE_MOCKED_PROBLEM);
 
     double crossoverProbability = 0.9 ;
     double crossoverDistributionIndex = 20.0 ;
     crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex) ;
 
-    double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
+    double mutationProbability = 1.0 / problem.numberOfVariables() ;
     double mutationDistributionIndex = 20.0 ;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex) ;
 
@@ -68,11 +67,11 @@ public class NSGAIIBuilderTest {
     assertEquals(25000, builder.getMaxIterations());
 
     SBXCrossover crossover = (SBXCrossover) builder.getCrossoverOperator();
-    assertEquals(0.9, crossover.getCrossoverProbability(), EPSILON);
-    assertEquals(20.0, crossover.getDistributionIndex(), EPSILON);
+    assertEquals(0.9, crossover.crossoverProbability(), EPSILON);
+    assertEquals(20.0, crossover.distributionIndex(), EPSILON);
 
     PolynomialMutation mutation = (PolynomialMutation) builder.getMutationOperator();
-    assertEquals(1.0 / NUMBER_OF_VARIABLES_OF_THE_MOCKED_PROBLEM, mutation.getMutationProbability(),
+    assertEquals(1.0 / NUMBER_OF_VARIABLES_OF_THE_MOCKED_PROBLEM, mutation.mutationProbability(),
         EPSILON);
     assertEquals(20.0, mutation.getDistributionIndex(), EPSILON);
   }

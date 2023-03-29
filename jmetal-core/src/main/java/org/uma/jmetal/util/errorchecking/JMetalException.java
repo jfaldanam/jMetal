@@ -1,16 +1,14 @@
 package org.uma.jmetal.util.errorchecking;
 
-import org.uma.jmetal.util.JMetalLogger;
-
 import java.io.Serializable;
 import java.util.logging.Level;
+import org.uma.jmetal.util.JMetalLogger;
 
 /**
  * jMetal exception class
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
-@SuppressWarnings("serial")
 public class JMetalException extends RuntimeException implements Serializable {
   public JMetalException(String message) {
     super(message);

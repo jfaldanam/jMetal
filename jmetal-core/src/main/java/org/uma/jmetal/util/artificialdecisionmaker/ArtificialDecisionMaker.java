@@ -1,11 +1,9 @@
 package org.uma.jmetal.util.artificialdecisionmaker;
 
-import org.uma.jmetal.algorithm.Algorithm;
-import org.uma.jmetal.algorithm.InteractiveAlgorithm;
-import org.uma.jmetal.problem.Problem;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.uma.jmetal.algorithm.Algorithm;
+import org.uma.jmetal.problem.Problem;
 
 @SuppressWarnings("serial")
 public abstract class ArtificialDecisionMaker<S, R> implements Algorithm<R> {
@@ -41,7 +39,7 @@ public abstract class ArtificialDecisionMaker<S, R> implements Algorithm<R> {
     while (!isStoppingConditionReached()) {
       this.algorithm.updatePointOfInterest(interestingPoint);
       this.algorithm.run();
-      front=this.algorithm.getResult();
+      front=this.algorithm.result();
       updateParetoOptimal(front,paretoOptimalSolutions);
       indexOfRelevantObjectiveFunctions=relevantObjectiveFunctions(front);
       interestingPoint = calculateReferencePoints(indexOfRelevantObjectiveFunctions,front,paretoOptimalSolutions);
@@ -50,17 +48,17 @@ public abstract class ArtificialDecisionMaker<S, R> implements Algorithm<R> {
   }
 
   @Override
-  public R getResult() {
-    return this.algorithm.getResult();
+  public R result() {
+    return this.algorithm.result();
   }
 
   @Override
-  public String getName() {
+  public String name() {
     return "ArtificialDecisionMaker";
   }
 
   @Override
-  public String getDescription() {
+  public String description() {
     return "ArtificialDecisionMaker";
   }
 }

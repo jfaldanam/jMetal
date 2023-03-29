@@ -1,10 +1,10 @@
 package org.uma.jmetal.problem.singleobjective;
 
-import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
+import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
  * Class representing a Sphere problem.
@@ -18,19 +18,18 @@ public class Sphere extends AbstractDoubleProblem {
 
   /** Constructor */
   public Sphere(Integer numberOfVariables) {
-    setNumberOfVariables(numberOfVariables);
-    setNumberOfObjectives(1);
-    setName("Sphere");
+    numberOfObjectives(1);
+    name("Sphere");
 
-    List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables()) ;
-    List<Double> upperLimit = new ArrayList<>(getNumberOfVariables()) ;
+    List<Double> lowerLimit = new ArrayList<>() ;
+    List<Double> upperLimit = new ArrayList<>(numberOfVariables) ;
 
-    for (int i = 0; i < getNumberOfVariables(); i++) {
+    IntStream.range(0, numberOfVariables).forEach(i -> {
       lowerLimit.add(-5.12);
       upperLimit.add(5.12);
-    }
+    });
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */
@@ -41,7 +40,7 @@ public class Sphere extends AbstractDoubleProblem {
       sum += v * v;
     }
 
-    solution.objectives()[0] =  sum;
+    solution.objectives()[0] = sum;
 
     return solution ;
   }

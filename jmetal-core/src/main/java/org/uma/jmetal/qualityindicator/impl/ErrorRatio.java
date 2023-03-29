@@ -1,12 +1,11 @@
 package org.uma.jmetal.qualityindicator.impl;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 /**
  * The Error Ratio (ER) quality indicator reports the ratio of solutions in a front of points
@@ -74,24 +73,22 @@ public class ErrorRatio extends QualityIndicator {
     int numberOfObjectives = referenceFront[0].length ;
     double sum = 0;
 
-    for (int i = 0; i < front.length; i++) {
-      double[] currentPoint = front[i];
+    for (double[] currentPoint : front) {
       boolean thePointIsInTheParetoFront = false;
-      for (int j = 0; j < referenceFront.length; j++) {
-        double[] currentParetoFrontPoint = referenceFront[j];
+      for (double[] currentParetoFrontPoint : referenceFront) {
         boolean found = true;
         for (int k = 0; k < numberOfObjectives; k++) {
-          if(currentPoint[k] != currentParetoFrontPoint[k]){
+          if (currentPoint[k] != currentParetoFrontPoint[k]) {
             found = false;
             break;
           }
         }
-        if(found){
+        if (found) {
           thePointIsInTheParetoFront = true;
           break;
         }
       }
-      if(!thePointIsInTheParetoFront){
+      if (!thePointIsInTheParetoFront) {
         sum++;
       }
     }
@@ -99,15 +96,16 @@ public class ErrorRatio extends QualityIndicator {
     return sum / front.length;
   }
 
-  public void setReferenceFront(double[][] referenceFront) {
+  @Override
+  public void referenceFront(double[][] referenceFront) {
     this.referenceFront = referenceFront;
   }
 
-  @Override public String getDescription() {
+  @Override public String description() {
     return "Error ratio" ;
   }
 
-  @Override public String getName() {
+  @Override public String name() {
     return "ER" ;
   }
 

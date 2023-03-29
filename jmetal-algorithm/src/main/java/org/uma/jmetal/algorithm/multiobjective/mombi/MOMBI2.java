@@ -1,16 +1,20 @@
 package org.uma.jmetal.algorithm.multiobjective.mombi;
 
-import org.uma.jmetal.algorithm.multiobjective.mombi.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.uma.jmetal.algorithm.multiobjective.mombi.util.ASFUtilityFunctionSet;
+import org.uma.jmetal.algorithm.multiobjective.mombi.util.AbstractUtilityFunctionsSet;
+import org.uma.jmetal.algorithm.multiobjective.mombi.util.MOMBI2History;
+import org.uma.jmetal.algorithm.multiobjective.mombi.util.Normalizer;
+import org.uma.jmetal.algorithm.multiobjective.mombi.util.R2Ranking;
+import org.uma.jmetal.algorithm.multiobjective.mombi.util.R2RankingNormalized;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.selection.SelectionOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Juan J. Durillo
@@ -50,7 +54,7 @@ public class MOMBI2<S extends Solution<?>> extends MOMBI<S> {
       String pathWeights) {
     super(problem, maxIterations, crossover, mutation, selection, evaluator, pathWeights);
 
-    this.history = new MOMBI2History<>(problem.getNumberOfObjectives());
+    this.history = new MOMBI2History<>(problem.numberOfObjectives());
   }
 
   protected void updateMax(List<S> population) {
@@ -72,7 +76,7 @@ public class MOMBI2<S extends Solution<?>> extends MOMBI<S> {
   public AbstractUtilityFunctionsSet<S> createUtilityFunction(String pathWeights) {
     this.maxs =
         new ArrayList<>(
-            Collections.nCopies(getProblem().getNumberOfObjectives(), Double.NEGATIVE_INFINITY));
+            Collections.nCopies(getProblem().numberOfObjectives(), Double.NEGATIVE_INFINITY));
     this.normalizer = new Normalizer(this.getReferencePoint(), maxs);
     ASFUtilityFunctionSet<S> aux = new ASFUtilityFunctionSet<>(pathWeights);
     aux.setNormalizer(this.normalizer);
@@ -84,7 +88,7 @@ public class MOMBI2<S extends Solution<?>> extends MOMBI<S> {
   public void updateReferencePoint(List<S> population) {
     List<Double> iterationMaxs = new ArrayList<>(maxs.size());
 
-    for (int i = 0; i < this.getProblem().getNumberOfObjectives(); i++) {
+    for (int i = 0; i < this.getProblem().numberOfObjectives(); i++) {
       iterationMaxs.add(Double.NEGATIVE_INFINITY);
     }
 
@@ -104,10 +108,10 @@ public class MOMBI2<S extends Solution<?>> extends MOMBI<S> {
 
     if (maxVariance > alpha) {
       Double maxInNadir = this.getMax(this.maxs);
-      for (int i = 0; i < this.getProblem().getNumberOfObjectives(); i++)
+      for (int i = 0; i < this.getProblem().numberOfObjectives(); i++)
         this.maxs.set(i, maxInNadir);
     } else {
-      for (int i = 0; i < this.getProblem().getNumberOfObjectives(); i++) {
+      for (int i = 0; i < this.getProblem().numberOfObjectives(); i++) {
         if (Math.abs(maxs.get(i) - this.getReferencePoint().get(i)) < this.epsilon) {
           Double maxInMaxs = this.getMax(this.maxs);
           this.maxs.set(i, maxInMaxs);
@@ -141,12 +145,12 @@ public class MOMBI2<S extends Solution<?>> extends MOMBI<S> {
   }
 
   @Override
-  public String getName() {
+  public String name() {
     return "MOMBI";
   }
 
   @Override
-  public String getDescription() {
+  public String description() {
     return "Many-Objective Metaheuristic Based on the R2 Indicator, version 2";
   }
 }

@@ -1,17 +1,21 @@
 package org.uma.jmetal.util.legacy.front.impl;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.legacy.front.Front;
 import org.uma.jmetal.util.point.Point;
 import org.uma.jmetal.util.point.impl.ArrayPoint;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * This class implements the {@link Front} interface by using an array of {@link Point} objects
@@ -47,7 +51,7 @@ public class ArrayFront implements Front {
     for (int i = 0; i < numberOfPoints; i++) {
       Point point = new ArrayPoint(pointDimensions);
       for (int j = 0; j < pointDimensions; j++) {
-        point.setValue(j, solutionList.get(i).objectives()[j]);
+        point.value(j, solutionList.get(i).objectives()[j]);
       }
       points[i] = point;
     }
@@ -61,7 +65,7 @@ public class ArrayFront implements Front {
       throw new JMetalException("The front is empty");
     }
     numberOfPoints = front.getNumberOfPoints();
-    pointDimensions = front.getPoint(0).getDimension();
+    pointDimensions = front.getPoint(0).dimension();
     points = new Point[numberOfPoints];
 
     points = new Point[numberOfPoints];
@@ -79,7 +83,7 @@ public class ArrayFront implements Front {
     for (int i = 0; i < this.numberOfPoints; i++) {
       Point point = new ArrayPoint(pointDimensions);
       for (int j = 0; j < pointDimensions; j++) {
-        point.setValue(j, 0.0);
+        point.value(j, 0.0);
       }
       points[i] = point;
     }
@@ -134,7 +138,7 @@ public class ArrayFront implements Front {
     if (numberOfPoints == 0) {
       pointDimensions = 0;
     } else {
-      pointDimensions = points[0].getDimension();
+      pointDimensions = points[0].dimension();
     }
     for (int i = 0; i < numberOfPoints; i++) {
       points[i] = list.get(i);
@@ -242,7 +246,7 @@ public class ArrayFront implements Front {
   public double[][] getMatrix() {
     double[][] matrix = new double[getNumberOfPoints()][];
     for (int i = 0; i < getNumberOfPoints(); i++) {
-      matrix[i] = points[i].getValues();
+      matrix[i] = points[i].values();
     }
 
     return matrix;

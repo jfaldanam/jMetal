@@ -1,9 +1,8 @@
 package org.uma.jmetal.operator.crossover.impl;
 
+import java.util.List;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.solution.Solution;
-
-import java.util.List;
 
 /**
  * Created by FlapKap on 27-05-2017.
@@ -22,17 +21,17 @@ public class TwoPointCrossover<T> implements CrossoverOperator<Solution<T>> {
   }
 
   @Override
-  public double getCrossoverProbability() {
-    return operator.getCrossoverProbability() ;
+  public double crossoverProbability() {
+    return operator.crossoverProbability() ;
   }
 
   @Override
-  public int getNumberOfRequiredParents() {
-    return operator.getNumberOfRequiredParents();
+  public int numberOfRequiredParents() {
+    return operator.numberOfRequiredParents();
   }
 
   @Override
-  public int getNumberOfGeneratedChildren() {
+  public int numberOfGeneratedChildren() {
     return 2;
   }
 }

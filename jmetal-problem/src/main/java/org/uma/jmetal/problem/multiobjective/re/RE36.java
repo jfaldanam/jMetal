@@ -1,9 +1,8 @@
 package org.uma.jmetal.problem.multiobjective.re;
 
+import java.util.List;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
-import java.util.List;
 
 /**
  * Class representing problem RE36. Source: Ryoji Tanabe and Hisao Ishibuchi, An easy-to-use
@@ -18,15 +17,14 @@ public class RE36 extends AbstractDoubleProblem {
 
   /** Constructor */
   public RE36() {
-    setNumberOfVariables(4);
-    setNumberOfObjectives(3);
-    setNumberOfConstraints(0);
-    setName("RE36");
+    numberOfObjectives(3);
+    numberOfConstraints(0);
+    name("RE36");
 
     List<Double> lowerLimit = List.of(12.0, 12.0, 12.0, 12.0);
     List<Double> upperLimit = List.of(60.0, 60.0, 60.0, 60.0);
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */

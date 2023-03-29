@@ -1,13 +1,12 @@
 package org.uma.jmetal.util.measure.impl;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.WeakHashMap;
 import org.uma.jmetal.util.measure.MeasureListener;
 import org.uma.jmetal.util.measure.MeasureManager;
 import org.uma.jmetal.util.measure.PullMeasure;
 import org.uma.jmetal.util.measure.PushMeasure;
-
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.WeakHashMap;
 
 /**
  * This measure is a facility to evaluate the time spent in
@@ -116,13 +115,13 @@ public class ListenerTimeMeasure extends SimplePullMeasure<Long> implements
 				wrapper = new PushMeasure<Value>() {
 
 					@Override
-					public String getName() {
-						return wrapped.getName();
+					public String name() {
+						return wrapped.name();
 					}
 
 					@Override
-					public String getDescription() {
-						return wrapped.getDescription();
+					public String description() {
+						return wrapped.description();
 					}
 
 					@Override

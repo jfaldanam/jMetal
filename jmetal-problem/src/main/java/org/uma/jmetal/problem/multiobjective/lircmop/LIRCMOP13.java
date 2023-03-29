@@ -1,13 +1,12 @@
 package org.uma.jmetal.problem.multiobjective.lircmop;
 
-import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
+import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
  * Class representing problem LIR-CMOP13, defined in: An Improved epsilon-constrained Method in
@@ -22,27 +21,26 @@ public class LIRCMOP13 extends AbstractDoubleProblem {
   }
   /** Constructor */
   public LIRCMOP13(int numberOfVariables) {
-    setNumberOfVariables(numberOfVariables);
-    setNumberOfObjectives(3);
-    setNumberOfConstraints(2);
-    setName("LIRCMOP13");
+    numberOfObjectives(3);
+    numberOfConstraints(2);
+    name("LIRCMOP13");
 
-    List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables());
-    List<Double> upperLimit = new ArrayList<>(getNumberOfVariables());
+    List<Double> lowerLimit = new ArrayList<>(numberOfVariables);
+    List<Double> upperLimit = new ArrayList<>(numberOfVariables);
 
-    for (int i = 0; i < getNumberOfVariables(); i++) {
+    for (int i = 0; i < numberOfVariables; i++) {
       lowerLimit.add(0.0);
       upperLimit.add(1.0);
     }
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */
   @Override
   public DoubleSolution evaluate(DoubleSolution solution) {
-    double[] x = new double[getNumberOfVariables()];
-    for (int i = 0; i < getNumberOfVariables(); i++) {
+    double[] x = new double[numberOfVariables()];
+    for (int i = 0; i < numberOfVariables(); i++) {
       x[i] = solution.variables().get(i);
     }
 
@@ -56,7 +54,7 @@ public class LIRCMOP13 extends AbstractDoubleProblem {
 
   /** EvaluateConstraints() method */
   public void evaluateConstraints(DoubleSolution solution) {
-    double[] constraint = new double[getNumberOfConstraints()];
+    double[] constraint = new double[numberOfConstraints()];
 
     double f = 0;
     for (int i = 0; i < solution.objectives().length; i++) {
@@ -71,7 +69,7 @@ public class LIRCMOP13 extends AbstractDoubleProblem {
 
   protected double g1(double[] x) {
     double result = 0.0;
-    for (int i = 2; i < getNumberOfVariables(); i += 2) {
+    for (int i = 2; i < numberOfVariables(); i += 2) {
       result += 10 * Math.pow(x[i] - 0.5, 2.0);
     }
     return result;

@@ -1,5 +1,7 @@
 package org.uma.jmetal.algorithm.multiobjective.nsgaii;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.impl.AbstractGeneticAlgorithm;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
@@ -12,9 +14,6 @@ import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Implementation of NSGA-II following the scheme used in jMetal4.5 and former versions, i.e,
@@ -101,7 +100,7 @@ public class NSGAII45<S extends Solution<?>> implements Algorithm<List<S>> {
   }
 
   @Override
-  public List<S> getResult() {
+  public List<S> result() {
     return getNonDominatedSolutions(population);
   }
 
@@ -132,12 +131,12 @@ public class NSGAII45<S extends Solution<?>> implements Algorithm<List<S>> {
   }
 
   @Override
-  public String getName() {
+  public String name() {
     return "NSGAII45";
   }
 
   @Override
-  public String getDescription() {
+  public String description() {
     return "Nondominated Sorting Genetic Algorithm version II. Version not using the AbstractGeneticAlgorithm template";
   }
 }

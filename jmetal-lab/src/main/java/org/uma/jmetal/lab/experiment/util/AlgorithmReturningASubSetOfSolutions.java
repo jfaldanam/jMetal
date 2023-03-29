@@ -1,10 +1,9 @@
 package org.uma.jmetal.lab.experiment.util;
 
+import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.SolutionListUtils;
-
-import java.util.List;
 
 @SuppressWarnings("serial")
 public class AlgorithmReturningASubSetOfSolutions<S extends Solution<?>> implements Algorithm<List<S>> {
@@ -23,18 +22,18 @@ public class AlgorithmReturningASubSetOfSolutions<S extends Solution<?>> impleme
   }
 
   @Override
-  public List<S> getResult() {
+  public List<S> result() {
     return SolutionListUtils.distanceBasedSubsetSelection(
-            algorithm.getResult(), numberOfSolutionsToReturn);
+            algorithm.result(), numberOfSolutionsToReturn);
   }
 
   @Override
-  public String getName() {
-    return algorithm.getName();
+  public String name() {
+    return algorithm.name();
   }
 
   @Override
-  public String getDescription() {
-    return algorithm.getDescription();
+  public String description() {
+    return algorithm.description();
   }
 }

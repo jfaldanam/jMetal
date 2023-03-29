@@ -1,5 +1,8 @@
 package org.uma.jmetal.algorithm.multiobjective.mocell;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import org.uma.jmetal.algorithm.impl.AbstractGeneticAlgorithm;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
@@ -7,8 +10,8 @@ import org.uma.jmetal.operator.selection.SelectionOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.BoundedArchive;
-import org.uma.jmetal.util.comparator.DominanceComparator;
 import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
+import org.uma.jmetal.util.comparator.dominanceComparator.impl.DominanceWithConstraintsComparator;
 import org.uma.jmetal.util.densityestimator.DensityEstimator;
 import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
@@ -16,14 +19,9 @@ import org.uma.jmetal.util.neighborhood.Neighborhood;
 import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 /**
- * @author JuanJo Durillo
  * @param <S>
+ * @author JuanJo Durillo
  */
 @SuppressWarnings("serial")
 public class MOCell<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, List<S>> {
@@ -69,7 +67,7 @@ public class MOCell<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, L
     this.crossoverOperator = crossoverOperator;
     this.mutationOperator = mutationOperator;
     this.selectionOperator = selectionOperator;
-    this.dominanceComparator = new DominanceComparator<S>();
+    this.dominanceComparator = new DominanceWithConstraintsComparator<S>();
 
     this.evaluator = evaluator;
   }
@@ -109,7 +107,7 @@ public class MOCell<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, L
 
     parents.add(selectionOperator.execute(currentNeighbors));
     if (archive.size() > 1) {
-      parents.add(selectionOperator.execute(archive.getSolutionList()));
+      parents.add(selectionOperator.execute(archive.solutions()));
     } else {
       parents.add(selectionOperator.execute(currentNeighbors));
     }
@@ -140,8 +138,8 @@ public class MOCell<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, L
   }
 
   @Override
-  public List<S> getResult() {
-    return archive.getSolutionList();
+  public List<S> result() {
+    return archive.solutions();
   }
 
   private List<S> insertNewIndividualWhenItDominatesTheCurrentOne(
@@ -163,7 +161,7 @@ public class MOCell<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, L
       crowdingDistance.compute(rank.getSubFront(j));
     }
 
-    Collections.sort(this.currentNeighbors, new RankingAndCrowdingDistanceComparator<S>());
+    this.currentNeighbors.sort(new RankingAndCrowdingDistanceComparator<S>());
     S worst = this.currentNeighbors.get(this.currentNeighbors.size() - 1);
 
     archive.add(offspringPopulation.get(0));
@@ -175,12 +173,12 @@ public class MOCell<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, L
   }
 
   @Override
-  public String getName() {
+  public String name() {
     return "MOCell";
   }
 
   @Override
-  public String getDescription() {
+  public String description() {
     return "Multi-Objective Cellular evolutionary algorithm";
   }
 }

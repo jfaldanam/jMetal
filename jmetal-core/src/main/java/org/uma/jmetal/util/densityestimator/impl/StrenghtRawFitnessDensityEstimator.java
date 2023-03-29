@@ -1,17 +1,16 @@
 package org.uma.jmetal.util.densityestimator.impl;
 
-import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.util.SolutionListUtils;
-import org.uma.jmetal.util.comparator.DominanceComparator;
-import org.uma.jmetal.util.densityestimator.DensityEstimator;
-import org.uma.jmetal.util.errorchecking.Check;
-
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.SolutionListUtils;
+import org.uma.jmetal.util.comparator.dominanceComparator.impl.DominanceWithConstraintsComparator;
+import org.uma.jmetal.util.densityestimator.DensityEstimator;
+import org.uma.jmetal.util.errorchecking.Check;
 
 /**
- * This class implements the a density estimator based on the distance to the k-th nearest solution
+ * This class implements the density estimator based on the distance to the k-th nearest solution
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
@@ -21,7 +20,7 @@ public class StrenghtRawFitnessDensityEstimator<S extends Solution<?>>
   private int k;
 
   private static final Comparator<Solution<?>> DOMINANCE_COMPARATOR =
-      new DominanceComparator<Solution<?>>();
+      new DominanceWithConstraintsComparator<Solution<?>>();
 
   public StrenghtRawFitnessDensityEstimator(int k) {
     this.k = k;
@@ -41,8 +40,8 @@ public class StrenghtRawFitnessDensityEstimator<S extends Solution<?>>
 
     // strength(i) = |{j | j <- SolutionSet and i dominate j}|
     for (int i = 0; i < solutionList.size(); i++) {
-      for (int j = 0; j < solutionList.size(); j++) {
-        if (DOMINANCE_COMPARATOR.compare(solutionList.get(i), solutionList.get(j)) == -1) {
+      for (S solution : solutionList) {
+        if (DOMINANCE_COMPARATOR.compare(solutionList.get(i), solution) == -1) {
           strength[i] += 1.0;
         }
       }
@@ -69,7 +68,7 @@ public class StrenghtRawFitnessDensityEstimator<S extends Solution<?>>
   }
 
   @Override
-  public Double getValue(S solution) {
+  public Double value(S solution) {
     Check.notNull(solution);
 
     Double result = 0.0;
@@ -80,7 +79,7 @@ public class StrenghtRawFitnessDensityEstimator<S extends Solution<?>>
   }
 
   @Override
-  public Comparator<S> getComparator() {
-    return Comparator.comparing(this::getValue);
+  public Comparator<S> comparator() {
+    return Comparator.comparing(this::value);
   }
 }

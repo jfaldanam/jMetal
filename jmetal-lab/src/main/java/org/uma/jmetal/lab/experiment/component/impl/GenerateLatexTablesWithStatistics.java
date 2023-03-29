@@ -1,13 +1,22 @@
 package org.uma.jmetal.lab.experiment.component.impl;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.uma.jmetal.lab.experiment.Experiment;
 import org.uma.jmetal.lab.experiment.component.ExperimentComponent;
 import org.uma.jmetal.util.JMetalLogger;
-
-import java.io.*;
-import java.util.*;
 
 /**
  * This class computes a number of statistical values (mean, median, standard deviation, interquartile range)
@@ -64,7 +73,7 @@ public class GenerateLatexTablesWithStatistics implements ExperimentComponent {
           directory += "/data/";
           directory += "/" + experiment.getAlgorithmList().get(algorithm).getAlgorithmTag();
           directory += "/" + experiment.getProblemList().get(problem).getTag();
-          directory += "/" + experiment.getIndicatorList().get(indicator).getName();
+          directory += "/" + experiment.getIndicatorList().get(indicator).name();
           // Read values from data files
           FileInputStream fis = new FileInputStream(directory);
           InputStreamReader isr = new InputStreamReader(fis);
@@ -198,8 +207,8 @@ public class GenerateLatexTablesWithStatistics implements ExperimentComponent {
     try(FileWriter os = new FileWriter(latexFile, true)){
     os.write("\n");
     os.write("\\begin{table}" + "\n");
-    os.write("\\caption{" + experiment.getIndicatorList().get(indicatorIndex).getName() + ". " + caption + "}" + "\n");
-    os.write("\\label{table: " + experiment.getIndicatorList().get(indicatorIndex).getName() + "}" + "\n");
+    os.write("\\caption{" + experiment.getIndicatorList().get(indicatorIndex).name() + ". " + caption + "}" + "\n");
+    os.write("\\label{table: " + experiment.getIndicatorList().get(indicatorIndex).name() + "}" + "\n");
     os.write("\\centering" + "\n");
     os.write("\\begin{scriptsize}" + "\n");
     os.write("\\begin{tabular}{l");

@@ -1,14 +1,16 @@
 package org.uma.jmetal.util.point.util;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.uma.jmetal.util.errorchecking.JMetalException;
+import org.uma.jmetal.util.errorchecking.exception.InvalidConditionException;
+import org.uma.jmetal.util.errorchecking.exception.NegativeValueException;
+import org.uma.jmetal.util.errorchecking.exception.NullParameterException;
 import org.uma.jmetal.util.point.Point;
+import org.uma.jmetal.util.point.comparator.PointDimensionComparator;
 import org.uma.jmetal.util.point.impl.ArrayPoint;
-import org.uma.jmetal.util.point.util.comparator.PointDimensionComparator;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author Antonio J. Nebro
@@ -22,13 +24,13 @@ public class PointDimensionComparatorTest {
 
   @Before public void setup() {
     point1 = new ArrayPoint(2) ;
-    point1.setValue(0, 1.0);
-    point1.setValue(1, -2.0);
+    point1.value(0, 1.0);
+    point1.value(1, -2.0);
 
     point2 = new ArrayPoint(3) ;
-    point2.setValue(0, 1.0);
-    point2.setValue(1, -3.0);
-    point2.setValue(2, 5.0);
+    point2.value(0, 1.0);
+    point2.value(1, -3.0);
+    point2.value(2, 5.0);
   }
 
   @After public void clean() {
@@ -43,36 +45,36 @@ public class PointDimensionComparatorTest {
 
   @Test public void shouldCompareReturnMinusOneIfTheFirstValueIsLower() throws Exception {
     comparator = new PointDimensionComparator(0) ;
-    point1.setValue(0, 0.0);
+    point1.value(0, 0.0);
 
     assertEquals(-1, comparator.compare(point1, point2)) ;
   }
 
   @Test public void shouldCompareReturnPlusOneIfTheFirstValueIsGreater() throws Exception {
     comparator = new PointDimensionComparator(0) ;
-    point1.setValue(0, 3.0);
+    point1.value(0, 3.0);
 
     assertEquals(1, comparator.compare(point1, point2)) ;
   }
 
-  @Test (expected = JMetalException.class)
-  public void shouldIndexLessThanZeroRaiseAnException() throws Exception {
+  @Test (expected = NegativeValueException.class)
+  public void shouldIndexLessThanZeroRaiseAnException()  {
     comparator = new PointDimensionComparator(-1) ;
   }
 
-  @Test (expected = JMetalException.class)
+  @Test (expected = NullParameterException.class)
   public void shouldFirstPointToCompareEqualsToNullRaiseAnException() throws Exception {
     comparator = new PointDimensionComparator(0) ;
     comparator.compare(null, point2);
   }
 
-  @Test (expected = JMetalException.class)
+  @Test (expected = NullParameterException.class)
   public void shouldSecondPointToCompareEqualsToNullRaiseAnException() throws Exception {
     comparator = new PointDimensionComparator(0) ;
     comparator.compare(point1, null);
   }
 
-  @Test (expected = JMetalException.class)
+  @Test (expected = InvalidConditionException.class)
   public void shouldIndexValueGreaterThanFirstPointDimensionsRaiseAnException() throws Exception {
     point1 = new ArrayPoint(3) ;
     point2 = new ArrayPoint(6) ;
@@ -80,7 +82,7 @@ public class PointDimensionComparatorTest {
     comparator.compare(point1, point2);
   }
 
-  @Test (expected = JMetalException.class)
+  @Test (expected = InvalidConditionException.class)
   public void shouldIndexValueGreaterThanSecondPointDimensionsRaiseAnException() throws Exception {
     point1 = new ArrayPoint(6) ;
     point2 = new ArrayPoint(3) ;

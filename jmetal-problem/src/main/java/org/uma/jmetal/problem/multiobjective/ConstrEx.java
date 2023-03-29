@@ -1,10 +1,9 @@
 package org.uma.jmetal.problem.multiobjective;
 
-import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
 import java.util.Arrays;
 import java.util.List;
+import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /** Class representing problem ConstrEx */
 @SuppressWarnings("serial")
@@ -12,15 +11,14 @@ public class ConstrEx extends AbstractDoubleProblem {
 
   /** Constructor Creates a default instance of the ConstrEx problem */
   public ConstrEx() {
-    setNumberOfVariables(2);
-    setNumberOfObjectives(2);
-    setNumberOfConstraints(2);
-    setName("ConstrEx");
+    numberOfObjectives(2);
+    numberOfConstraints(2);
+    name("ConstrEx");
 
     List<Double> lowerLimit = Arrays.asList(0.1, 0.0);
     List<Double> upperLimit = Arrays.asList(1.0, 5.0);
 
-    setVariableBounds(lowerLimit, upperLimit);
+    variableBounds(lowerLimit, upperLimit);
   }
 
   /** Evaluate() method */

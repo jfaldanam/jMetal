@@ -1,25 +1,40 @@
 package org.uma.jmetal.lab.experiment.studies;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import org.uma.jmetal.lab.experiment.Experiment;
 import org.uma.jmetal.lab.experiment.ExperimentBuilder;
-import org.uma.jmetal.lab.experiment.component.impl.*;
+import org.uma.jmetal.lab.experiment.component.impl.ComputeQualityIndicators;
+import org.uma.jmetal.lab.experiment.component.impl.ExecuteAlgorithms;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateBoxplotsWithR;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateFriedmanHolmTestTables;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateHtmlPages;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateLatexTablesWithStatistics;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateReferenceParetoSetAndFrontFromDoubleSolutions;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateWilcoxonTestTablesWithR;
 import org.uma.jmetal.lab.experiment.util.ExperimentAlgorithm;
 import org.uma.jmetal.lab.experiment.util.ExperimentProblem;
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.multiobjective.zdt.*;
-import org.uma.jmetal.qualityindicator.impl.*;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT2;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT6;
+import org.uma.jmetal.qualityindicator.impl.Epsilon;
+import org.uma.jmetal.qualityindicator.impl.GenerationalDistance;
+import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistance;
+import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
+import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
+import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Example of experimental study based on solving the ZDT problems with four versions of NSGA-II,
@@ -106,7 +121,7 @@ public class NSGAIIComputingReferenceParetoFrontsStudy {
         Algorithm<List<DoubleSolution>> algorithm = new NSGAIIBuilder<>(
                 experimentProblem.getProblem(),
                 new SBXCrossover(1.0, 5),
-                new PolynomialMutation(1.0 / experimentProblem.getProblem().getNumberOfVariables(),
+                new PolynomialMutation(1.0 / experimentProblem.getProblem().numberOfVariables(),
                         10.0),
                 100)
                 .setMaxEvaluations(25000)
@@ -118,7 +133,7 @@ public class NSGAIIComputingReferenceParetoFrontsStudy {
         Algorithm<List<DoubleSolution>> algorithm = new NSGAIIBuilder<>(
                 experimentProblem.getProblem(),
                 new SBXCrossover(1.0, 20.0),
-                new PolynomialMutation(1.0 / experimentProblem.getProblem().getNumberOfVariables(),
+                new PolynomialMutation(1.0 / experimentProblem.getProblem().numberOfVariables(),
                         20.0),
                 100)
                 .setMaxEvaluations(25000)
@@ -129,7 +144,7 @@ public class NSGAIIComputingReferenceParetoFrontsStudy {
       for (ExperimentProblem<DoubleSolution> experimentProblem : problemList) {
         Algorithm<List<DoubleSolution>> algorithm = new NSGAIIBuilder<>(
                 experimentProblem.getProblem(), new SBXCrossover(1.0, 40.0),
-                new PolynomialMutation(1.0 / experimentProblem.getProblem().getNumberOfVariables(),
+                new PolynomialMutation(1.0 / experimentProblem.getProblem().numberOfVariables(),
                         40.0),
                 100)
                 .setMaxEvaluations(25000)
@@ -140,7 +155,7 @@ public class NSGAIIComputingReferenceParetoFrontsStudy {
       for (ExperimentProblem<DoubleSolution> experimentProblem : problemList) {
         Algorithm<List<DoubleSolution>> algorithm = new NSGAIIBuilder<>(
                 experimentProblem.getProblem(), new SBXCrossover(1.0, 80.0),
-                new PolynomialMutation(1.0 / experimentProblem.getProblem().getNumberOfVariables(),
+                new PolynomialMutation(1.0 / experimentProblem.getProblem().numberOfVariables(),
                         80.0),
                 100)
                 .setMaxEvaluations(25000)
