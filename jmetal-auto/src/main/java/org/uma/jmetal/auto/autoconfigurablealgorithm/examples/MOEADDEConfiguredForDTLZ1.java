@@ -21,12 +21,13 @@ public class MOEADDEConfiguredForDTLZ1 {
 
     String[] parameters =
         ("--problemName org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1 "
-            + "--referenceFrontFileName DTLZ1.3D.csv "
+            + "--referenceFrontFileName " + referenceFrontFileName + " "
             + "--randomGeneratorSeed 124 "
             + "--maximumNumberOfEvaluations 50000 "
             + "--algorithmResult population "
             + "--normalizeObjectives false "
             + "--populationSize 91 "
+            + "--sequenceGenerator integerSequence "
             + "--offspringPopulationSize 1 "
             + "--createInitialSolutions random "
             + "--neighborhoodSize 30 "

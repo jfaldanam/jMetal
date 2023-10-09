@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.uma.jmetal</groupId>
         <artifactId>jmetal</artifactId>
-        <version>6.1-SNAPSHOT</version>
+        <version>6.2.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>jmetal-lab</artifactId>
@@ -75,12 +75,12 @@
         <dependency>
             <groupId>tech.tablesaw</groupId>
             <artifactId>tablesaw-core</artifactId>
-            <version>0.38.1</version>
+            <version>0.43.1</version>
         </dependency>
         <dependency>
             <groupId>tech.tablesaw</groupId>
             <artifactId>tablesaw-jsplot</artifactId>
-            <version>0.38.1</version>
+            <version>0.43.1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -89,12 +89,12 @@
         <dependency>
             <groupId>com.github.haifengl</groupId>
             <artifactId>smile-core</artifactId>
-            <version>2.6.0</version>
+            <version>3.0.2</version>
         </dependency>
         <dependency>
             <groupId>com.github.haifengl</groupId>
             <artifactId>smile-plot</artifactId>
-            <version>2.6.0</version>
+            <version>3.0.2</version>
         </dependency>
     </dependencies>
 </project>

@@ -11,9 +11,9 @@ import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.VectorUtils;
-import org.uma.jmetal.util.plot.SingleValueScatterPlot;
 import org.uma.jmetal.util.observable.Observable;
 import org.uma.jmetal.util.observer.Observer;
+import org.uma.jmetal.util.plot.SingleValueScatterPlot;
 
 /**
 
@@ -44,7 +44,7 @@ public class IndicatorPlotObserver<S extends Solution<?>> implements Observer<Ma
   }
 
   /**
-   * This method displays a front (population)
+   * This method displays a chart with the values of the quality indicator
    * @param data Map of pairs (key, value)
    */
   @Override

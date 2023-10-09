@@ -14,8 +14,8 @@ import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
-import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.EstimatingIdealAndNadirPointsPlotObserver;
+import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
@@ -27,7 +27,7 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 public class NSGAIIPlottingEstimationsOfNadirAndIdealPointsExample {
 
   public static void main(String[] args) throws JMetalException {
-    String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1_2D";
+    String problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT4";
 
     Problem<DoubleSolution> problem = ProblemFactory.<DoubleSolution>loadProblem(problemName);
 
@@ -53,7 +53,7 @@ public class NSGAIIPlottingEstimationsOfNadirAndIdealPointsExample {
         .setTermination(termination)
         .build();
 
-    EvaluationObserver evaluationObserver = new EvaluationObserver(100);
+    EvaluationObserver evaluationObserver = new EvaluationObserver(500);
     var chartObserver =
         new EstimatingIdealAndNadirPointsPlotObserver<>("NSGA-II", "F1", "F2", problem.name(), 100, 200);
 

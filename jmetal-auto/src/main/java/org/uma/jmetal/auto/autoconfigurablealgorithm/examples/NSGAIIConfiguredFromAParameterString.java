@@ -25,23 +25,20 @@ public class NSGAIIConfiguredFromAParameterString {
             + "--randomGeneratorSeed 12 "
             + "--referenceFrontFileName " + referenceFrontFileName + " "
             + "--maximumNumberOfEvaluations 25000 "
-            + "--algorithmResult population "
             + "--populationSize 100 "
-            + "--offspringPopulationSize 100 "
+            + "--algorithmResult population  "
             + "--createInitialSolutions random "
-            + "--variation crossoverAndMutationVariation "
-            + "--selection tournament "
-            + "--selectionTournamentSize 2 "
-            + "--rankingForSelection dominanceRanking "
-            + "--densityEstimatorForSelection crowdingDistance "
-            + "--crossover SBX "
-            + "--crossoverProbability 0.9 "
+            + "--offspringPopulationSize 100 "
+            + "--variation crossoverAndMutationVariation --crossover SBX "
+            + "--crossoverProbability 0.7010787592319431 "
             + "--crossoverRepairStrategy bounds "
             + "--sbxDistributionIndex 20.0 "
             + "--mutation polynomial "
             + "--mutationProbabilityFactor 1.0 "
+            + "--polynomialMutationDistributionIndex 20.0 "
             + "--mutationRepairStrategy bounds "
-            + "--polynomialMutationDistributionIndex 20.0 ")
+            + "--selection tournament "
+            + "--selectionTournamentSize 2 \n")
             .split("\\s+");
 
     AutoNSGAII autoNSGAII = new AutoNSGAII();
